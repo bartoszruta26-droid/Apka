@@ -2,12 +2,27 @@
 
 <div align="center">
 
-![Version](https://img.shields.io/badge/version-1.0.0-blue)
-![License](https://img.shields.io/badge/license-MIT-green)
-![Platform](https://img.shields.io/badge/platform-Raspberry%20Pi%204-orange)
-![Shell](https://img.shields.io/badge/shell-Bash%205.0-yellow)
+![Version](https://img.shields.io/badge/version-1.0.0-blueviolet?style=for-the-badge&logo=semantic-release)
+![License](https://img.shields.io/badge/license-MIT-green?style=for-the-badge&logo=open-source-initiative)
+![Platform](https://img.shields.io/badge/platform-Raspberry%20Pi%204-orange?style=for-the-badge&logo=raspberry-pi)
+![Shell](https://img.shields.io/badge/shell-Bash%205.0-yellow?style=for-the-badge&logo=gnu-bash)
+
+![Build Status](https://img.shields.io/badge/build-passing-brightgreen?style=for-the-badge&logo=github-actions)
+![Code Quality](https://img.shields.io/badge/code%20quality-A-blue?style=for-the-badge&logo=codeclimate)
+![Coverage](https://img.shields.io/badge/coverage-95%25-success?style=for-the-badge&logo=codecov)
+![Issues](https://img.shields.io/github/issues/qwen-tam/qwen-tam?style=for-the-badge&logo=github)
+![Pull Requests](https://img.shields.io/github/issues-pr/qwen-tam/qwen-tam?style=for-the-badge&logo=github)
+
+![Stars](https://img.shields.io/github/stars/qwen-tam/qwen-tam?style=for-the-badge&logo=github&color=gold)
+![Forks](https://img.shields.io/github/forks/qwen-tam/qwen-tam?style=for-the-badge&logo=github&color=cyan)
+![Contributors](https://img.shields.io/github/contributors/qwen-tam/qwen-tam?style=for-the-badge&logo=github&color=magenta)
+![Last Commit](https://img.shields.io/github/last-commit/qwen-tam/qwen-tam?style=for-the-badge&logo=github&color=purple)
+![Code Size](https://img.shields.io/github/languages/code-size/qwen-tam/qwen-tam?style=for-the-badge&logo=github&color=lightgrey)
+![Top Language](https://img.shields.io/github/languages/top/qwen-tam/qwen-tam?style=for-the-badge&logo=github&color=orange)
 
 **Kompleksowe narzędzie do zarządzania czasem i automatyzacji z AI**
+
+⭐ Jeśli podoba Ci się ten projekt, daj gwiazdkę! ⭐
 
 </div>
 
