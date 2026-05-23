@@ -1236,6 +1236,208 @@ nats sub "qwen-tam.results.>" --queue workers
 
 ---
 
+## 🤖 Qwen Agent & Coder Workflow - Automatyczne Pisanie Kodu
+
+### Cel Workflow
+Automatyzacja procesu tworzenia aplikacji w wybranym repozytorium przy użyciu **Qwen Agent** i **Qwen Coder**, zgodnie z zasadą **NO PYTHON**.
+
+### Architektura Workflow
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    UŻYTKOWNIK                               │
+│  (określa wymagania aplikacji w języku naturalnym)          │
+└────────────────────┬────────────────────────────────────────┘
+                     │
+                     ▼
+┌─────────────────────────────────────────────────────────────┐
+│                  QWEN AGENT                                 │
+│  - Analiza wymagań i dyskusja z użytkownikiem               │
+│  - Planowanie wieloetapowych zadań                          │
+│  - Wybór technologii z dozwolonej listy                     │
+│  - Koordynacja całego procesu                               │
+└────────────────────┬────────────────────────────────────────┘
+                     │
+                     ▼
+┌─────────────────────────────────────────────────────────────┐
+│                  QWEN CODER                                 │
+│  - Generowanie kodu źródłowego                              │
+│  - Tworzenie struktury projektu                             │
+│  - Pisanie testów jednostkowych                             │
+│  - Dokumentacja inline                                      │
+└────────────────────┬────────────────────────────────────────┘
+                     │
+                     ▼
+┌─────────────────────────────────────────────────────────────┐
+│            WERYFIKACJA KODU                                 │
+│  - Statyczna analiza składni                                │
+│  - Uruchomienie testów                                      │
+│  - Sprawdzenie zgodności z NO PYTHON                        │
+│  - Raport błędów i sugestii                                 │
+└────────────────────┬────────────────────────────────────────┘
+                     │
+                     ▼
+┌─────────────────────────────────────────────────────────────┐
+│            GIT COMMIT & PUSH                                │
+│  - Automatyczny commit wygenerowanego kodu                  │
+│  - Push do wybranego repozytorium GitHub                    │
+│  - Tagowanie wersji                                         │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### Kroki Workflow
+
+#### Krok 1: Inicjalizacja Projektu
+```bash
+./qwen-tam.sh --init-project \
+  --repo="my-awesome-app" \
+  --tech="cpp-qt" \
+  --desc="Cross-platform GUI app for time tracking"
+```
+
+**Działanie Qwen Agent:**
+- Analiza opisu projektu
+- Dobór odpowiednich frameworków (Qt dla C++, .NET MAUI dla C#, etc.)
+- Generowanie struktury katalogów
+- Tworzenie plików konfiguracyjnych (CMakeLists.txt, .csproj, Makefile)
+
+#### Krok 2: Generowanie Kodu Źródłowego
+```bash
+./qwen-tam.sh --generate-code \
+  --repo="my-awesome-app" \
+  --tech="c++" \
+  --prompt="Create main window with menu bar, status bar, and time entry form"
+```
+
+**Działanie Qwen Coder:**
+- Generowanie plików `.cpp`, `.h` (dla C++)
+- Tworzenie plików `.xaml`, `.cs` (dla C#)
+- Pisanie skryptów `.sh` (dla Bash)
+- Tworzenie plików `.java`, `.kt` (dla Android)
+- Generowanie plików `.html`, `.css`, `.js` (dla WebUI)
+
+#### Krok 3: Weryfikacja i Testy
+```bash
+./qwen-tam.sh --verify \
+  --repo="my-awesome-app" \
+  --run-tests
+```
+
+**Działanie Qwen Agent:**
+- Uruchomienie kompilatora (g++, clang, dotnet build)
+- Wykonanie testów jednostkowych
+- Sprawdzenie czy nie ma importów/odwołań do Pythona
+- Generowanie raportu jakości kodu
+
+#### Krok 4: Iteracyjne Poprawki
+```bash
+./qwen-tam.sh --refine \
+  --repo="my-awesome-app" \
+  --feedback="Add dark mode theme support"
+```
+
+**Działanie Qwen Coder:**
+- Analiza feedbacku użytkownika
+- Modyfikacja istniejącego kodu
+- Dodanie nowych funkcjonalności
+- Refaktoryzacja według wskazówek
+
+#### Krok 5: Finalizacja i Deploy
+```bash
+./qwen-tam.sh --finalize \
+  --repo="my-awesome-app" \
+  --build \
+  --push
+```
+
+**Działanie Qwen Agent:**
+- Kompilacja finalnej wersji
+- Pakowanie artefaktów (binaries, containers)
+- Push do repozytorium
+- Aktualizacja dokumentacji README
+
+### Dozwolone Technologie w Workflow
+
+| Typ Aplikacji | Technologie | Frameworki | Platformy |
+|--------------|-------------|------------|-----------|
+| **Bash Script** | Bash 4.0+ | ncurses, dialog | Linux |
+| **Desktop GUI** | C++, C# | Qt, .NET MAUI, Avalonia, GTK, WinForms/WPF | Linux, Windows, macOS |
+| **WebUI** | Go, Node.js, C# | Apache2 + Reverse Proxy | Linux |
+| **Android App** | Kotlin, Java, Dart, C# | Native, Flutter, .NET MAUI | Android |
+| **Backend API** | Go, C++, C# | gRPC, REST, NATS, MQTT | All |
+
+### Przykład Sesji Workflow
+
+```bash
+# 1. Użytkownik inicjuje projekt
+$ ./qwen-tam.sh --new-project
+> Podaj nazwę projektu: time-tracker-desktop
+> Wybierz technologię: [1] Bash [2] C++ Qt [3] C# MAUI [4] WebUI [5] Android
+> Wybór: 2
+> Opis projektu: Desktop app for tracking work time with SQLite storage
+
+# 2. Qwen Agent planuje strukturę
+✓ Created: time-tracker-desktop/
+✓ Created: time-tracker-desktop/src/
+✓ Created: time-tracker-desktop/include/
+✓ Created: time-tracker-desktop/CMakeLists.txt
+✓ Created: time-tracker-desktop/README.md
+
+# 3. Qwen Coder generuje kod główny
+✓ Generated: src/main.cpp (main entry point)
+✓ Generated: src/mainwindow.cpp (GUI window)
+✓ Generated: src/timemodel.cpp (business logic)
+✓ Generated: include/mainwindow.h
+✓ Generated: include/timemodel.h
+
+# 4. Weryfikacja
+$ ./qwen-tam.sh --verify time-tracker-desktop
+✓ Syntax check passed (g++ -std=c++17)
+✓ Build successful (CMake + make)
+✓ No Python imports detected
+✓ Unit tests: 12/12 passed
+
+# 5. Commit i push
+$ ./qwen-tam.sh --commit-push -m "Initial version of time tracker"
+✓ Git add completed
+✓ Git commit: a3f8b2c
+✓ Git push to origin/main
+✓ Tag v0.1.0 created
+```
+
+### Reguły Workflow
+
+1. **Zawsze sprawdzaj technologię** przed generowaniem kodu
+2. **Nigdy nie proponuj Pythona** - automatyczny filtr blokuje jakiekolwiek odwołania do `.py`, `import python`, `pip`, itp.
+3. **Preferuj rozwiązania cross-platform** gdy cel to aplikacje desktopowe
+4. **Generuj testy razem z kodem** - każdy moduł musi mieć pokrycie testowe
+5. **Dokumentuj na bieżąco** - komentarze inline + aktualizacja README
+6. **Weryfikuj po każdej iteracji** - kompilacja i testy przed commitem
+
+### Tryby Pracy Qwen Agent
+
+| Tryb | Opis | Komenda |
+|------|------|---------|
+| **Interactive** | Dyskusja krok-po-kroku z użytkownikiem | `--mode=interactive` |
+| **Autonomous** | Pełna automatyzacja bez interwencji | `--mode=autonomous` |
+| **Supervised** | Autonomiczny z zatwierdzaniem krytycznych kroków | `--mode=supervised` |
+| **Batch** | Przetwarzanie wielu zadań naraz | `--mode=batch` |
+
+### Logowanie i Monitorowanie
+
+Wszystkie operacje workflow są logowane:
+- `logs/agent.log` - decyzje i plany Qwen Agent
+- `logs/coder.log` - wygenerowany kod i zmiany
+- `logs/verify.log` - wyniki weryfikacji i testów
+- `logs/git.log` - operacje na repozytorium
+
+Podgląd w czasie rzeczywistym:
+```bash
+./qwen-tam.sh --monitor-workflow --repo="my-app"
+```
+
+---
+
 ## 🛠️ Technologie i Języki Programowania
 
 ### Zasada Nadrzędna: **NO PYTHON**
