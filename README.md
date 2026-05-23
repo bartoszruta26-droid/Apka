@@ -30,10 +30,13 @@ Aplikacja działa jako TUI (Text User Interface) w terminalu i służy do:
 - Automatyczna inicjalizacja `.git` i pierwsze commity
 
 ### 2. Generowanie treści z Qwen Coder
-- Pisanie plików Markdown (.md) - dokumentacja, README, specyfikacje
-- Generowanie kodu źródłowego w różnych językach
-- Wykonywanie poleceń systemowych na żądanie AI
-- Kontekstowa pamięć rozmowy z modelem
+- **Nowe menu bez Pythona!**
+- [2.1] Create/Update Project Structure - tworzenie struktury projektu
+- [2.2] Create/Update Shell Script - generowanie skryptów bash
+- [2.3] Create/Update C/C#/C++ Code with GUI - kod C/C++/C# z interfejsem GUI
+- [2.4] Create/Update WebUI Script - komponenty React, Vue, Angular, Svelte
+- [2.5] Create/Update Android App - aplikacje Android (Kotlin, Java, Flutter, React Native)
+- [2.6] Edit Existing File with AI - edycja istniejących plików z AI
 
 ### 3. Weryfikacja kodu
 - Statyczna analiza wygenerowanego kodu
@@ -135,15 +138,13 @@ Główny punkt wejścia aplikacji, odpowiedzialny za:
 ╔══════════════════════════════════════════════════════════════╗
 ║                QWEN CODER - CODE GENERATION                  ║
 ╠══════════════════════════════════════════════════════════════╣
-║  [2.1] 📝 Generate Markdown Documentation                    ║
-║  [2.2] 💻 Generate Source Code                               ║
-║  [2.3] 📜 Generate Shell Scripts                             ║
-║  [2.4] 🐍 Generate Python Scripts                            ║
-║  [2.5] 🌐 Generate Web Files (HTML/CSS/JS)                   ║
-║  [2.6] 📁 Create Project Structure                           ║
-║  [2.7] ✏️  Edit Existing File with AI                        ║
-║  [2.8] 📤 Execute Custom Command                             ║
-║  [2.9] ⬅️  Back to Main Menu                                 ║
+║  [2.1] 📁 Create/Update Project Structure                    ║
+║  [2.2] 📜 Create/Update Shell Script                         ║
+║  [2.3] 💻 Create/Update C/C#/C++ Code with GUI               ║
+║  [2.4] 🌐 Create/Update WebUI Script                         ║
+║  [2.5] 📱 Create/Update Android App                          ║
+║  [2.6] ✏️  Edit Existing File with AI                        ║
+║  [2.7] ⬅️  Back to Main Menu                                 ║
 ╚══════════════════════════════════════════════════════════════╝
 ```
 
@@ -154,7 +155,7 @@ Główny punkt wejścia aplikacji, odpowiedzialny za:
 ║                   CODE VERIFICATION                          ║
 ╠══════════════════════════════════════════════════════════════╣
 ║  [3.1] 🔍 Syntax Check (Shell)                               ║
-║  [3.2] 🔍 Syntax Check (Python)                              ║
+║  [3.2] 🔍 Syntax Check (C/C++)                               ║
 ║  [3.3] 🛡️  Security Scan                                     ║
 ║  [3.4] 📏 Code Style Check                                   ║
 ║  [3.5] 🧪 Run Unit Tests                                     ║
