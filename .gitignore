@@ -1,18 +1,1 @@
-```bash
-# Logs and temp files
-*.log
-*.tmp
-*.swp
-
-# Environment
-.env
-.env.local
-*.env.*
-
-# Editors
-.vscode/
-.idea/
-
-# Original rules preserved
-*.log
-```
+Nothing should be ignored based on the provided file changes. The only added file is `instrukcja.md`, which is a markdown document and should not be ignored.
