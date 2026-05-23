@@ -286,16 +286,76 @@ show_submenu_update() {
 }
 
 #-------------------------------------------------------------------------------
-# Stuby funkcji dla poszczególnych modułów
+# Integracja z podskryptami - GitHub Repository Management
 #-------------------------------------------------------------------------------
 
-# GitHub Repository Management
-github_configure_credentials() { log_info "GitHub Configure Credentials (stub)"; }
-github_create_repository() { log_info "GitHub Create Repository (stub)"; }
-github_list_repositories() { log_info "GitHub List Repositories (stub)"; }
-github_delete_repository() { log_info "GitHub Delete Repository (stub)"; }
-github_clone_repository() { log_info "GitHub Clone Repository (stub)"; }
-github_sync_local_remote() { log_info "GitHub Sync Local with Remote (stub)"; }
+# GitHub Repository Management - delegowanie do podskryptów
+github_configure_credentials() {
+    log_event "GitHub Configure Credentials"
+    if [[ -f "${SCRIPT_DIR}/scripts/auth.sh" ]]; then
+        source "${SCRIPT_DIR}/scripts/auth.sh"
+        auth_menu
+    else
+        log_error "Podskrypt auth.sh nie znaleziony!"
+        echo "Uruchomienie trybu interaktywnego konfiguracji GitHub..."
+        echo "Wymagane pliki: scripts/auth.sh"
+    fi
+}
+
+github_create_repository() {
+    log_event "GitHub Create Repository"
+    if [[ -f "${SCRIPT_DIR}/scripts/repo.sh" ]]; then
+        source "${SCRIPT_DIR}/scripts/repo.sh"
+        create_repo_interactive
+    else
+        log_error "Podskrypt repo.sh nie znaleziony!"
+        echo "Tworzenie nowego repozytorium GitHub..."
+    fi
+}
+
+github_list_repositories() {
+    log_event "GitHub List Repositories"
+    if [[ -f "${SCRIPT_DIR}/scripts/repo.sh" ]]; then
+        source "${SCRIPT_DIR}/scripts/repo.sh"
+        list_repositories
+        read -rp "Press Enter to continue..."
+    else
+        log_error "Podskrypt repo.sh nie znaleziony!"
+    fi
+}
+
+github_delete_repository() {
+    log_event "GitHub Delete Repository"
+    if [[ -f "${SCRIPT_DIR}/scripts/repo.sh" ]]; then
+        source "${SCRIPT_DIR}/scripts/repo.sh"
+        delete_repository
+        read -rp "Press Enter to continue..."
+    else
+        log_error "Podskrypt repo.sh nie znaleziony!"
+    fi
+}
+
+github_clone_repository() {
+    log_event "GitHub Clone Repository"
+    if [[ -f "${SCRIPT_DIR}/scripts/repo.sh" ]]; then
+        source "${SCRIPT_DIR}/scripts/repo.sh"
+        clone_repository
+        read -rp "Press Enter to continue..."
+    else
+        log_error "Podskrypt repo.sh nie znaleziony!"
+    fi
+}
+
+github_sync_local_remote() {
+    log_event "GitHub Sync Local with Remote"
+    if [[ -f "${SCRIPT_DIR}/scripts/repo.sh" ]]; then
+        source "${SCRIPT_DIR}/scripts/repo.sh"
+        sync_local_with_remote
+        read -rp "Press Enter to continue..."
+    else
+        log_error "Podskrypt repo.sh nie znaleziony!"
+    fi
+}
 
 # Qwen Coder
 coder_generate_markdown() { log_info "Generate Markdown Documentation (stub)"; }

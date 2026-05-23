@@ -1,1 +1,16 @@
-Nothing should be ignored based on the provided file changes. The added file `qwen-tam.sh` appears to be a shell script source file, which should not be ignored according to rule #7. Since there are no build artifacts, dependencies, or temporary files in the changes, no additional ignore rules are needed.
+# Scripts and temporary files
+*.sh.swp
+*.tmp
+
+# Environment files
+.env
+.env.local
+*.env.*
+
+# Logs
+*.log
+
+# Backup files
+*~
+*.bak
+*.backup
