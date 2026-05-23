@@ -1,4 +1,4 @@
-```
+```bash
 # Logs and temp files
 *.log
 *.tmp
@@ -7,7 +7,7 @@
 # Environment
 .env
 .env.local
-.env.*
+*.env.*
 
 # Editors
 .vscode/
@@ -25,7 +25,7 @@ build/
 target/
 .gradle/
 
-# System files
+# OS generated files
 .DS_Store
 Thumbs.db
 
@@ -40,12 +40,7 @@ Thumbs.db
 *.obj
 *.out
 
-# Coverage
-coverage/
-htmlcov/
-.coverage
-
-# Compressed files
+# Archives
 *.zip
 *.gz
 *.tar
@@ -68,4 +63,9 @@ htmlcov/
 *.tar.bz2
 *.tar.xz
 *.tar.zst
+
+# Coverage reports
+coverage/
+htmlcov/
+.coverage
 ```
