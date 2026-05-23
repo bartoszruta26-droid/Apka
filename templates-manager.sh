@@ -71,8 +71,14 @@ list_templates() {
 }
 
 get_template_by_index() {
-    local index=$1
+    local index="$1"
     local i=1
+    
+    # Validate that index is a positive integer
+    if ! [[ "$index" =~ ^[0-9]+$ ]]; then
+        log_error "Invalid selection: '$index' is not a number"
+        return 1
+    fi
     
     for template in "$TEMPLATES_DIR"/*-template.sh; do
         if [[ -f "$template" ]]; then
