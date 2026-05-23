@@ -2,6 +2,8 @@
 
 Aplikacja bash shell script do zarządzania czasem i automatyzacji procesów z wykorzystaniem lokalnych modeli AI Qwen Agent i Qwen Coder.
 
+**Nowość:** Obsługa Multi-Agent Workflows - praca rozproszona na wielu Raspberry Pi 4 z różnymi modelami LLM!
+
 ## Szybki Start
 
 ### Instalacja
@@ -49,10 +51,18 @@ Aplikacja działa jako TUI (Text User Interface) w terminalu i służy do:
 
 ## Wymagania sprzętowe
 
+### Konfiguracja pojedynczego urządzenia:
 - Raspberry Pi 4 (zalecane minimum 4GB RAM)
 - System: Raspberry Pi OS / Debian / Ubuntu
 - Dostęp do internetu (do operacji GitHub)
 - Lokalnie uruchomione modele Qwen (przez Ollama, LM Studio lub podobne)
+
+### Konfiguracja Multi-Agent (Klaster RPi4):
+- **Minimum 2 urządzenia Raspberry Pi 4** w sieci LAN
+- **Każde urządzenie z Ollama** i załadowanym modelem Qwen
+- **Komunikacja sieciowa** - port 11434 otwarty dla ruchu wewnętrznego
+- **Zalecane:** statyczne adresy IP lub DHCP reservation dla każdego węzła
+- **Opcjonalnie:** Raspberry Pi 5 jako coordinator klastra dla lepszej wydajności
 
 ## Główne funkcjonalności
 
@@ -88,6 +98,23 @@ Aplikacja działa jako TUI (Text User Interface) w terminalu i służy do:
 - Praca w tle z trybem verbose
 - Szczegółowe logowanie (debug mode)
 
+### 5. Multi-Agent Workflows (Klaster RPi4)
+- **Praca rozproszona** - wykorzystanie wielu Raspberry Pi 4 jako węzłów obliczeniowych
+- **Multi-LLM** - obsługa różnych modeli Qwen na różnych urządzeniach
+- **Typy agentów:**
+  - Coordinator - koordynacja przepływu pracy między agentami
+  - Worker - wykonywanie zadań specjalistycznych
+  - Validator - weryfikacja wyników i kontrola jakości
+  - Specialist - zadania domenowe (kodowanie, analiza, dokumentacja)
+- **Workflow Engine** - definiowanie wieloetapowych procesów AI
+- **Load Balancing** - inteligentne rozdzielanie zadań między węzły
+- **Health Monitoring** - monitorowanie dostępności węzłów
+- **Komunikacja sieciowa** - unicast/broadcast między urządzeniami
+- **Tryby interakcji:**
+  - Interaktywne menu TUI
+  - Tryb daemon dla zadań długotrwałych
+  - API REST dla integracji zewnętrznych
+
 ---
 
 ## Struktura Aplikacji
@@ -104,6 +131,7 @@ qwen-tam/
 │   ├── coder.sh          # Integracja z Qwen Coder - generowanie kodu
 │   ├── verify.sh         # Weryfikacja kodu (syntax check, security scan)
 │   ├── automation.sh     # Automatyzacja procesów z Qwen Agent
+│   ├── multi_agent.sh    # Multi-Agent Workflows - zarządzanie klastrem RPi4
 │   ├── config.sh         # Konfiguracja i zmienne globalne
 │   ├── logs.sh           # Zarządzanie logami i monitoring
 │   ├── system.sh         # Informacje systemowe i diagnostyka
@@ -118,6 +146,7 @@ qwen-tam/
 │   └── events.log        # Logi zdarzeń
 ├── LICENSE               # Licencja projektu
 ├── SECURITY_IMPROVEMENTS.md # Dokumentacja bezpieczeństwa
+├── MULTI_AGENT_README.md # Dokumentacja Multi-Agent Workflows
 └── README.md             # Ten plik
 ```
 
@@ -245,9 +274,22 @@ Główny punkt wejścia aplikacji, odpowiedzialny za:
 ║      ├─ [4.8.2] Daily Backup                                 ║
 ║      ├─ [4.8.3] Code Review Loop                             ║
 ║      └─ [4.8.4] Custom Script Runner                         ║
-║  [4.9] ⬅️  Back to Main Menu                                 ║
+║  [4.9] 🤖 Multi-Agent Workflows                              ║
+║  [4.10] ⬅️  Back to Main Menu                                ║
 ╚══════════════════════════════════════════════════════════════╝
 ```
+
+**Nowość [4.9] Multi-Agent Workflows:**
+- Uruchomienie interaktywnego menu zarządzania klastrem Multi-Agent
+- Dostępne funkcje:
+  - Zarządzanie węzłami (dodawanie, usuwanie, skanowanie sieci)
+  - Definiowanie agentów (coordinator, worker, validator, specialist)
+  - Tworzenie i wykonywanie workflow wieloetapowych
+  - Monitorowanie zdrowia węzłów i load balancing
+  - Komunikacja broadcast/unicast między urządzeniami
+  - Tryb daemon dla długotrwałych zadań rozproszonych
+
+---
 
 ### Podmenu 5: Configuration & Settings
 
@@ -1791,6 +1833,19 @@ Podgląd w czasie rzeczywistym:
 ## Licencja
 
 MIT License - zobacz plik LICENSE dla szczegółów.
+
+---
+
+## Dokumentacja Multi-Agent Workflows
+
+Szczegółowa dokumentacja systemu Multi-Agent Workflows znajduje się w pliku [MULTI_AGENT_README.md](MULTI_AGENT_README.md).
+
+Zawiera ona:
+- Instrukcję konfiguracji klastra RPi4
+- Przykłady workflow wieloetapowych
+- Opis typów agentów i ich ról
+- Komendy CLI i przykłady użycia
+- Rozwiązywanie problemów (troubleshooting)
 
 ---
 
