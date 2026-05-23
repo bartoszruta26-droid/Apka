@@ -237,7 +237,139 @@ Główny punkt wejścia aplikacji, odpowiedzialny za:
 ╚══════════════════════════════════════════════════════════════╝
 ```
 
-### Podmenu 8: Update Application
+**Opis funkcjonalności Podmenu 7 - System Information:**
+
+#### [7.1] System Resources (CPU/RAM/Disk)
+Wyświetla szczegółowe informacje o zasobach systemowych:
+- **CPU Information:**
+  - Model procesora i architektura
+  - Liczba rdzeni i wątków
+  - Aktualne zużycie CPU (%)
+  - Częstotliwość taktowania (MHz)
+- **Memory Information:**
+  - Całkowita pamięć RAM
+  - Zużyta pamięć z procentowym wykresem
+  - Wolna i dostępna pamięć
+  - Bufory i cache
+  - Wizualny pasek wykorzystania RAM
+- **Disk Usage:**
+  - Utilizacja każdej zamontowanej partycji
+  - Rozmiar, użyte miejsce, dostępne miejsce
+  - Statystyki I/O dysku (odczyt/zapis)
+- **System Load:**
+  - Średnie obciążenie (1/5/15 minut)
+  - Liczba działających procesów
+
+#### [7.2] Temperature & Health Status
+Monitorowanie temperatury i zdrowia systemu:
+- **Temperature Readings:**
+  - Temperatura CPU (°C i °F)
+  - Temperatura GPU (dla Raspberry Pi przez vcgencmd)
+  - Status temperaturowy z ikonami:
+    - ✅ Normal (< 60°C)
+    - 🟡 Caution (60-70°C)
+    - 🟠 Warning (70-85°C)
+    - 🔴 Critical (> 85°C)
+  - Wizualny termometr 0-100°C
+- **System Health Checks:**
+  - Czas działania systemu (uptime)
+  - Sprawdzenie miejsca na dysku (ostrzeżenia >85%, krytyczne >95%)
+  - Presja pamięci RAM
+  - Wykrywanie procesów zombie
+  - Użycie swap
+- **Health Summary:**
+  - Podsumowanie wszystkich kontroli
+  - Liczba problemów krytycznych i ostrzeżeń
+  - Rekomendacje działań
+
+#### [7.3] Installed Dependencies
+Sprawdzanie zainstalowanych zależności:
+- **Core System Tools:**
+  - git, curl, wget, jq, bash
+  - python3, node, npm
+  - make, gcc
+- **AI/ML Tools:**
+  - Ollama (status i wersja)
+  - Lista dostępnych modeli AI
+  - Python AI packages (PyTorch, Transformers)
+- **Container Tools:**
+  - Docker (wersja i status)
+  - Docker Compose
+- **Development Tools:**
+  - Kompilatory C/C++ (gcc, g++)
+  - Narzędzia build (make)
+- **Package Manager Info:**
+  - Liczba zainstalowanych pakietów
+  - Liczba pakietów do aktualizacji
+
+#### [7.4] Qwen Model Status
+Status modeli Qwen i konfiguracja AI:
+- **Ollama Service Status:**
+  - Status usługi Ollama (running/not running)
+  - Lista aktywnych modeli
+  - Instrukcje uruchamiania
+- **Qwen Models Availability:**
+  - Sprawdzenie zainstalowanych modeli Qwen:
+    - qwen:0.5b, 1.5b, 3b, 7b, 14b, 32b, 72b
+    - qwen2: wszystkie warianty
+    - qwen2.5: wszystkie warianty
+    - qwen-coder: wersje 1.5b, 7b, 32b
+  - Licznik zainstalowanych modeli
+- **API Endpoint Configuration:**
+  - Skonfigurowany endpoint API
+  - Host Ollama (domyślnie localhost:11434)
+- **Recommendations for Raspberry Pi 4:**
+  - Rekomendowane modele dla 4GB RAM
+  - Wskazówki optymalizacyjne
+  - Informacje o modelach skwantyzowanych
+
+#### [7.5] Network Connectivity
+Testy łączności sieciowej:
+- **Network Interfaces:**
+  - Lista wszystkich interfejsów
+  - Status (UP/DOWN)
+  - Przypisane adresy IP
+- **Default Gateway:**
+  - Adres bramy domyślnej
+  - Interfejs wyjściowy
+- **DNS Configuration:**
+  - Skonfigurowane serwery DNS
+- **Internet Connectivity Test:**
+  - Ping test do: 8.8.8.8, 1.1.1.1, google.com, github.com
+  - Czas odpowiedzi (ms)
+- **GitHub API Connectivity:**
+  - Test połączenia z API GitHub
+  - Kod HTTP odpowiedzi
+- **Network Speed Test:**
+  - Basic test prędkości (wymaga speedtest-cli)
+- **WiFi Signal Strength:**
+  - Siła sygnału dla interfejsów bezprzewodowych
+- **SSH Service:**
+  - Status usługi SSH
+  - Numer portu
+
+#### [7.6] Version & Changelog
+Informacje o wersji i historia zmian:
+- **Current Version:**
+  - Nazwa aplikacji
+  - Numer wersji
+  - Edition (Raspberry Pi 4)
+  - Data buildu
+- **Git Information:**
+  - Current branch
+  - Commit hash
+  - Data ostatniego commitu
+- **Changelog:**
+  - ✨ New Features
+  - 🐛 Bug Fixes
+  - 🔒 Security Updates
+  - ⚡ Performance Improvements
+  - 📝 Documentation
+- **Release Notes:**
+  - Informacje o obecnej wersji
+  - Planowane funkcje w przyszłych wersjach
+
+---
 
 ```
 ╔══════════════════════════════════════════════════════════════╗
