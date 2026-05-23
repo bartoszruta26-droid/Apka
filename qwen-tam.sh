@@ -426,28 +426,212 @@ verify_generate_report() {
     fi
 }
 
-# Automation & AI Agent
-automation_start_discussion() { log_info "Start AI Discussion Session (stub)"; }
-automation_create_workflow() { log_info "Create Automation Workflow (stub)"; }
-automation_run_task() { log_info "Run Automation Task (stub)"; }
-automation_pause_resume() { log_info "Pause/Resume Background Tasks (stub)"; }
-automation_stop_tasks() { log_info "Stop Running Tasks (stub)"; }
-automation_schedule_task() { log_info "Schedule Automated Task (stub)"; }
-automation_view_history() { log_info "View Task History (stub)"; }
-automation_quick_autocommit() { log_info "Auto-commit & Push (stub)"; }
-automation_quick_backup() { log_info "Daily Backup (stub)"; }
-automation_quick_review() { log_info "Code Review Loop (stub)"; }
-automation_quick_custom() { log_info "Custom Script Runner (stub)"; }
+# Automation & AI Agent - delegowanie do podskryptu automation.sh
+automation_start_discussion() {
+    log_event "Automation Start Discussion Session"
+    if [[ -f "${SCRIPT_DIR}/scripts/automation.sh" ]]; then
+        source "${SCRIPT_DIR}/scripts/automation.sh"
+        ai_discussion_session
+    else
+        log_error "Podskrypt automation.sh nie znaleziony!"
+        echo "Uruchomienie trybu interaktywnego sesji dyskusyjnej z AI..."
+    fi
+}
 
-# Configuration & Settings
-config_manage_github_token() { log_info "Manage GitHub Token (stub)"; }
-config_configure_qwen_api() { log_info "Configure Qwen API Endpoint (stub)"; }
-config_set_working_directory() { log_info "Set Working Directory (stub)"; }
-config_theme_display() { log_info "Theme & Display Options (stub)"; }
-config_notification_settings() { log_info "Notification Settings (stub)"; }
-config_backup() { log_info "Backup Configuration (stub)"; }
-config_restore() { log_info "Restore Configuration (stub)"; }
-config_reset_defaults() { log_info "Reset to Defaults (stub)"; }
+automation_create_workflow() {
+    log_event "Automation Create Workflow"
+    if [[ -f "${SCRIPT_DIR}/scripts/automation.sh" ]]; then
+        source "${SCRIPT_DIR}/scripts/automation.sh"
+        create_automation_workflow
+    else
+        log_error "Podskrypt automation.sh nie znaleziony!"
+        echo "Tworzenie nowego workflow automatyzacji..."
+    fi
+}
+
+automation_run_task() {
+    log_event "Automation Run Task"
+    if [[ -f "${SCRIPT_DIR}/scripts/automation.sh" ]]; then
+        source "${SCRIPT_DIR}/scripts/automation.sh"
+        run_automation_task
+    else
+        log_error "Podskrypt automation.sh nie znaleziony!"
+        echo "Uruchamianie zadania automatyzacji..."
+    fi
+}
+
+automation_pause_resume() {
+    log_event "Automation Pause/Resume Tasks"
+    if [[ -f "${SCRIPT_DIR}/scripts/automation.sh" ]]; then
+        source "${SCRIPT_DIR}/scripts/automation.sh"
+        pause_resume_tasks
+    else
+        log_error "Podskrypt automation.sh nie znaleziony!"
+        echo "Zarządzanie zadaniami w tle..."
+    fi
+}
+
+automation_stop_tasks() {
+    log_event "Automation Stop Tasks"
+    if [[ -f "${SCRIPT_DIR}/scripts/automation.sh" ]]; then
+        source "${SCRIPT_DIR}/scripts/automation.sh"
+        stop_running_tasks
+    else
+        log_error "Podskrypt automation.sh nie znaleziony!"
+        echo "Zatrzymywanie działających zadań..."
+    fi
+}
+
+automation_schedule_task() {
+    log_event "Automation Schedule Task"
+    if [[ -f "${SCRIPT_DIR}/scripts/automation.sh" ]]; then
+        source "${SCRIPT_DIR}/scripts/automation.sh"
+        schedule_automated_task
+    else
+        log_error "Podskrypt automation.sh nie znaleziony!"
+        echo "Planowanie zadania automatycznego..."
+    fi
+}
+
+automation_view_history() {
+    log_event "Automation View History"
+    if [[ -f "${SCRIPT_DIR}/scripts/automation.sh" ]]; then
+        source "${SCRIPT_DIR}/scripts/automation.sh"
+        view_task_history
+    else
+        log_error "Podskrypt automation.sh nie znaleziony!"
+        echo "Przegląd historii zadań..."
+    fi
+}
+
+automation_quick_autocommit() {
+    log_event "Automation Quick Auto-commit"
+    if [[ -f "${SCRIPT_DIR}/scripts/automation.sh" ]]; then
+        source "${SCRIPT_DIR}/scripts/automation.sh"
+        quick_autocommit_push
+    else
+        log_error "Podskrypt automation.sh nie znaleziony!"
+        echo "Auto-commit & Push..."
+    fi
+}
+
+automation_quick_backup() {
+    log_event "Automation Quick Backup"
+    if [[ -f "${SCRIPT_DIR}/scripts/automation.sh" ]]; then
+        source "${SCRIPT_DIR}/scripts/automation.sh"
+        quick_daily_backup
+    else
+        log_error "Podskrypt automation.sh nie znaleziony!"
+        echo "Daily Backup..."
+    fi
+}
+
+automation_quick_review() {
+    log_event "Automation Quick Code Review"
+    if [[ -f "${SCRIPT_DIR}/scripts/automation.sh" ]]; then
+        source "${SCRIPT_DIR}/scripts/automation.sh"
+        quick_code_review_loop
+    else
+        log_error "Podskrypt automation.sh nie znaleziony!"
+        echo "Code Review Loop..."
+    fi
+}
+
+automation_quick_custom() {
+    log_event "Automation Quick Custom Script"
+    if [[ -f "${SCRIPT_DIR}/scripts/automation.sh" ]]; then
+        source "${SCRIPT_DIR}/scripts/automation.sh"
+        quick_custom_script_runner
+    else
+        log_error "Podskrypt automation.sh nie znaleziony!"
+        echo "Custom Script Runner..."
+    fi
+}
+
+#-------------------------------------------------------------------------------
+# Configuration & Settings - delegowanie do podskryptu config.sh
+#-------------------------------------------------------------------------------
+
+config_manage_github_token() {
+    log_event "Configuration: Manage GitHub Token"
+    if [[ -f "${SCRIPT_DIR}/scripts/config.sh" ]]; then
+        source "${SCRIPT_DIR}/scripts/config.sh"
+        menu_manage_github_token
+    else
+        log_error "Podskrypt config.sh nie znaleziony!"
+        echo "Uruchomienie trybu interaktywnego konfiguracji..."
+    fi
+}
+
+config_configure_qwen_api() {
+    log_event "Configuration: Configure Qwen API Endpoint"
+    if [[ -f "${SCRIPT_DIR}/scripts/config.sh" ]]; then
+        source "${SCRIPT_DIR}/scripts/config.sh"
+        menu_configure_qwen_api
+    else
+        log_error "Podskrypt config.sh nie znaleziony!"
+    fi
+}
+
+config_set_working_directory() {
+    log_event "Configuration: Set Working Directory"
+    if [[ -f "${SCRIPT_DIR}/scripts/config.sh" ]]; then
+        source "${SCRIPT_DIR}/scripts/config.sh"
+        menu_set_working_directory
+    else
+        log_error "Podskrypt config.sh nie znaleziony!"
+    fi
+}
+
+config_theme_display() {
+    log_event "Configuration: Theme & Display Options"
+    if [[ -f "${SCRIPT_DIR}/scripts/config.sh" ]]; then
+        source "${SCRIPT_DIR}/scripts/config.sh"
+        menu_theme_display
+    else
+        log_error "Podskrypt config.sh nie znaleziony!"
+    fi
+}
+
+config_notification_settings() {
+    log_event "Configuration: Notification Settings"
+    if [[ -f "${SCRIPT_DIR}/scripts/config.sh" ]]; then
+        source "${SCRIPT_DIR}/scripts/config.sh"
+        menu_notification_settings
+    else
+        log_error "Podskrypt config.sh nie znaleziony!"
+    fi
+}
+
+config_backup() {
+    log_event "Configuration: Backup Configuration"
+    if [[ -f "${SCRIPT_DIR}/scripts/config.sh" ]]; then
+        source "${SCRIPT_DIR}/scripts/config.sh"
+        menu_backup_configuration
+    else
+        log_error "Podskrypt config.sh nie znaleziony!"
+    fi
+}
+
+config_restore() {
+    log_event "Configuration: Restore Configuration"
+    if [[ -f "${SCRIPT_DIR}/scripts/config.sh" ]]; then
+        source "${SCRIPT_DIR}/scripts/config.sh"
+        menu_restore_configuration
+    else
+        log_error "Podskrypt config.sh nie znaleziony!"
+    fi
+}
+
+config_reset_defaults() {
+    log_event "Configuration: Reset to Defaults"
+    if [[ -f "${SCRIPT_DIR}/scripts/config.sh" ]]; then
+        source "${SCRIPT_DIR}/scripts/config.sh"
+        menu_reset_defaults
+    else
+        log_error "Podskrypt config.sh nie znaleziony!"
+    fi
+}
 
 # Logs & Monitoring
 logs_view_app() { log_info "View Application Log (stub)"; }

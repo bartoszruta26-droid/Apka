@@ -1,48 +1,45 @@
-```bash
-# System and environment files
-*.swp
-*.swo
-*.tmp
-*.log
+# Environment and config files
 .env
 .env.local
-*.env.*
+.env.*
 
-# Editor/IDE files
+# Logs and temporary files
+*.log
+*.tmp
+*.swp
+
+# Editors and IDE
 .vscode/
 .idea/
 
 # Dependencies
-node_modules/
-venv/
 .venv/
-__pycache__/
-.mypy_cache/
-.pytest_cache/
-.julia/
-zig*/
-target/
-.gradle/
+venv/
+node_modules/
 
 # Build artifacts
+dist/
+build/
+target/
 *.pyc
+__pycache__/
 *.class
 *.o
+*.obj
 *.exe
 *.dll
 *.so
 *.a
-*.obj
 *.out
-dist/
-build/
-coverage/
-htmlcov/
-.coverage
 
 # System files
 .DS_Store
 Thumbs.db
+
+# Coverage
+coverage/
+htmlcov/
+.coverage
 
 # Compressed files
 *.zip
