@@ -105,7 +105,8 @@ Główny punkt wejścia aplikacji, odpowiedzialny za:
 ║  [5] ⚙️  Configuration & Settings                            ║
 ║  [6] 📊 Logs & Monitoring                                    ║
 ║  [7] ℹ️  System Information                                  ║
-║  [8] 🚪 Exit                                                 ║
+║  [8] 🔄 Update Application                                   ║
+║  [9] 🚪 Exit                                                 ║
 ╠══════════════════════════════════════════════════════════════╣
 ║  Status: ● Connected  |  Mode: Interactive  |  Debug: OFF   ║
 ║  Press 'D' for Debug mode | 'V' for Verbose | 'Q' to quit   ║
@@ -234,6 +235,85 @@ Główny punkt wejścia aplikacji, odpowiedzialny za:
 ║  [7.7] ⬅️  Back to Main Menu                                 ║
 ╚══════════════════════════════════════════════════════════════╝
 ```
+
+### Podmenu 8: Update Application
+
+```
+╔══════════════════════════════════════════════════════════════╗
+║                  UPDATE APPLICATION                          ║
+╠══════════════════════════════════════════════════════════════╣
+║  [8.1] 🔄 Check for Updates                                  ║
+║  [8.2] ⬇️  Download Latest Version                           ║
+║  [8.3] 📦 Auto-Install Dependencies                          ║
+║  [8.4] 🚀 Install Update (Rolling/Blue-Green)                ║
+║  [8.5] 📋 View Changelog                                     ║
+║  [8.6] ↩️  Rollback to Previous Version                      ║
+║  [8.7] ⚙️  Configure Auto-Update Settings                    ║
+║  [8.8] 📊 Update Cluster Nodes (Swarm)                       ║
+║  [8.9] ⬅️  Back to Main Menu                                 ║
+╚══════════════════════════════════════════════════════════════╝
+```
+
+**Opis funkcjonalności Podmenu 8 - Update Application:**
+
+#### [8.1] Check for Updates
+- Sprawdza dostępność nowej wersji w repozytorium GitHub
+- Porównuje wersję lokalną z remotową (plik VERSION lub tag git)
+- Wyświetla informacje o dostępnych aktualizacjach
+- Pokazuje rozmiar aktualizacji i listę zmian
+
+#### [8.2] Download Latest Version
+- Pobiera najnowszą wersję aplikacji z GitHub
+- Weryfikacja sumy kontrolnej (SHA256 checksum)
+- Pobieranie z progresem i możliwością pauzy
+- Zapis do tymczasowego katalogu staging
+
+#### [8.3] Auto-Install Dependencies
+- Automatyczna detekcja brakujących zależności
+- Instalacja pakietów systemowych (apt, pip, npm)
+- Konfiguracja środowiska uruchomieniowego
+- Walidacja poprawności instalacji
+- Obsługa zależności dla:
+  - `git`, `curl`, `jq` (narzędzia systemowe)
+  - `python3`, `pip3` (skrypty Python)
+  - `nodejs`, `npm` (komponenty web)
+  - `ollama` (lokalne modele AI)
+  - `docker`, `docker-compose` ( Swarm cluster)
+
+#### [8.4] Install Update
+- **Rolling Update**: Aktualizacja po kolei z restartem usług
+- **Blue-Green Deployment**: Równoległe wersje z przełączeniem ruchu
+- Backup obecnej wersji przed instalacją
+- Migracja konfiguracji i danych
+- Restart usług w tle bez przerywania działania
+
+#### [8.5] View Changelog
+- Wyświetla historię zmian między wersjami
+- Formatowanie Markdown z podziałem na kategorie:
+  - ✨ New Features
+  - 🐛 Bug Fixes
+  - 🔒 Security Updates
+  - ⚡ Performance Improvements
+  - 📝 Documentation
+
+#### [8.6] Rollback to Previous Version
+- Przywracanie poprzedniej stabilnej wersji
+- Automatyczny rollback w przypadku błędu aktualizacji
+- Zachowanie danych i konfiguracji
+- Logowanie przyczyn rollbacku
+
+#### [8.7] Configure Auto-Update Settings
+- Harmonogram automatycznych aktualizacji (cron)
+- Powiadomienia o dostępnych aktualizacjach
+- Wybór kanału aktualizacji (stable/beta/dev)
+- Konfiguracja okna mantenimiento (maintenance window)
+
+#### [8.8] Update Cluster Nodes (Swarm)
+- Aktualizacja wszystkich węzłów klastra 4x RPi4
+- Strategia rolling update z health checks
+- Load balancing podczas aktualizacji
+- Synchronizacja wersji między node'ami
+- Raport statusu każdego węzła
 
 ---
 
