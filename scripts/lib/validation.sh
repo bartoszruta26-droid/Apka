@@ -353,6 +353,7 @@ validate_workflow_name() {
     fi
     
     # Allow alphanumeric, hyphens, underscores, spaces
+    # Note: space must be escaped to avoid range interpretation
     if [[ ! "$name" =~ ^[a-zA-Z0-9_-][a-zA-Z0-9_\ -]*$ ]]; then
         return 1
     fi

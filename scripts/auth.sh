@@ -7,7 +7,8 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-CONFIG_DIR="$HOME/.config/qwen-tam"
+# Use consistent config directory with security library
+CONFIG_DIR="${QWEN_TAM_CONFIG_DIR:-$HOME/.qwen_tam}"
 GITHUB_CONF="$CONFIG_DIR/github.conf.enc"
 LOG_FILE="/tmp/qwen-tam.log"
 
