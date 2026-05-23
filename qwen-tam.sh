@@ -130,6 +130,7 @@ show_main_menu() {
     echo -e "${GREEN}║  [6] 📊 Logs & Monitoring                                    ║${NC}"
     echo -e "${GREEN}║  [7] ℹ️  System Information                                  ║${NC}"
     echo -e "${GREEN}║  [8] 🔄 Update Application                                   ║${NC}"
+    echo -e "${GREEN}║  [10] 📤 Export Results (Moodle/Joomla/Nextcloud)            ║${NC}"
     echo -e "${YELLOW}║  [9] 🚪 Exit                                                 ║${NC}"
     echo -e "${CYAN}╠══════════════════════════════════════════════════════════════╣${NC}"
     
@@ -890,13 +891,248 @@ handle_update_menu() {
 }
 
 #-------------------------------------------------------------------------------
-# Główne menu TUI
+# Export Results Module - Moodle/Joomla/Nextcloud
 #-------------------------------------------------------------------------------
+
+# Stałe konfiguracyjne dla eksportu
+readonly FINISH_DIR="${SCRIPT_DIR}/finish"
+readonly MOODLE_DEFAULT_FORMAT="book"
+readonly JOOMLA_DEFAULT_CATEGORY="1"
+readonly NEXTCLOUD_DEFAULT_PATH="/"
+
+# Funkcje eksportu
+export_to_moodle_book() {
+    log_event "Export to Moodle as Book Activity"
+    echo ""
+    echo -e "${CYAN}═══ EXPORT TO MOODLE - BOOK ACTIVITY ═══${NC}"
+    echo ""
+    
+    # Sprawdź czy katalog /finish istnieje
+    if [[ ! -d "$FINISH_DIR" ]]; then
+        log_error "Directory $FINISH_DIR does not exist!"
+        echo "Creating directory: $FINISH_DIR"
+        mkdir -p "$FINISH_DIR"
+    fi
+    
+    # Lista plików w /finish
+    echo "Available files in $FINISH_DIR:"
+    ls -la "$FINISH_DIR" 2>/dev/null || echo "No files found."
+    echo ""
+    
+    read -rp "Enter Moodle URL (e.g., https://moodle.example.com): " moodle_url
+    read -rp "Enter Moodle username: " moodle_username
+    read -sp "Enter Moodle password/token: " moodle_password
+    echo ""
+    read -rp "Enter course ID: " course_id
+    read -rp "Enter book title: " book_title
+    read -rp "Enter chapter name (or press Enter for auto): " chapter_name
+    [[ -z "$chapter_name" ]] && chapter_name="Auto-generated chapter"
+    
+    echo ""
+    echo -e "${GREEN}Preparing export to Moodle...${NC}"
+    echo "  Target: $moodle_url"
+    echo "  Course ID: $course_id"
+    echo "  Book Title: $book_title"
+    echo "  Chapter: $chapter_name"
+    echo ""
+    
+    # Symulacja eksportu (do implementacji API Moodle)
+    log_info "Moodle export initiated (stub - requires Moodle Web Services API)"
+    echo -e "${YELLOW}Note: Full implementation requires Moodle Web Services configuration.${NC}"
+    echo ""
+    read -rp "Press Enter to continue..."
+}
+
+export_to_moodle_file() {
+    log_event "Export to Moodle as MD File"
+    echo ""
+    echo -e "${CYAN}═══ EXPORT TO MOODLE - MARKDOWN FILE ═══${NC}"
+    echo ""
+    
+    # Sprawdź czy katalog /finish istnieje
+    if [[ ! -d "$FINISH_DIR" ]]; then
+        log_error "Directory $FINISH_DIR does not exist!"
+        mkdir -p "$FINISH_DIR"
+    fi
+    
+    # Lista plików w /finish
+    echo "Available files in $FINISH_DIR:"
+    ls -la "$FINISH_DIR" 2>/dev/null || echo "No files found."
+    echo ""
+    
+    read -rp "Enter Moodle URL (e.g., https://moodle.example.com): " moodle_url
+    read -rp "Enter Moodle username: " moodle_username
+    read -sp "Enter Moodle password/token: " moodle_password
+    echo ""
+    read -rp "Enter target directory path (press Enter for root): " target_path
+    [[ -z "$target_path" ]] && target_path="/"
+    
+    echo ""
+    echo -e "${GREEN}Preparing .md file export to Moodle...${NC}"
+    echo "  Target: $moodle_url"
+    echo "  Directory: $target_path"
+    echo ""
+    
+    # Symulacja eksportu
+    log_info "Moodle .md file export initiated (stub - requires Moodle Web Services API)"
+    echo -e "${YELLOW}Note: Full implementation requires Moodle Web Services configuration.${NC}"
+    echo ""
+    read -rp "Press Enter to continue..."
+}
+
+export_to_joomla_article() {
+    log_event "Export to Joomla as Article"
+    echo ""
+    echo -e "${CYAN}═══ EXPORT TO JOOMLA - ARTICLE ═══${NC}"
+    echo ""
+    
+    # Sprawdź czy katalog /finish istnieje
+    if [[ ! -d "$FINISH_DIR" ]]; then
+        log_error "Directory $FINISH_DIR does not exist!"
+        mkdir -p "$FINISH_DIR"
+    fi
+    
+    # Lista plików w /finish
+    echo "Available files in $FINISH_DIR:"
+    ls -la "$FINISH_DIR" 2>/dev/null || echo "No files found."
+    echo ""
+    
+    read -rp "Enter Joomla URL (e.g., https://joomla.example.com): " joomla_url
+    read -rp "Enter Joomla username: " joomla_username
+    read -sp "Enter Joomla password: " joomla_password
+    echo ""
+    read -rp "Enter article title: " article_title
+    read -rp "Enter category ID (default: $JOOMLA_DEFAULT_CATEGORY): " category_id
+    [[ -z "$category_id" ]] && category_id="$JOOMLA_DEFAULT_CATEGORY"
+    read -rp "Enter article alias (optional): " article_alias
+    
+    echo ""
+    echo -e "${GREEN}Preparing export to Joomla...${NC}"
+    echo "  Target: $joomla_url"
+    echo "  Title: $article_title"
+    echo "  Category ID: $category_id"
+    echo "  Alias: ${article_alias:-auto-generated}"
+    echo ""
+    
+    # Symulacja eksportu
+    log_info "Joomla article export initiated (stub - requires Joomla API)"
+    echo -e "${YELLOW}Note: Full implementation requires Joomla Web Services configuration.${NC}"
+    echo ""
+    read -rp "Press Enter to continue..."
+}
+
+export_to_nextcloud() {
+    log_event "Export to Nextcloud"
+    echo ""
+    echo -e "${CYAN}═══ EXPORT TO NEXTCLOUD ═══${NC}"
+    echo ""
+    
+    # Sprawdź czy katalog /finish istnieje
+    if [[ ! -d "$FINISH_DIR" ]]; then
+        log_error "Directory $FINISH_DIR does not exist!"
+        mkdir -p "$FINISH_DIR"
+    fi
+    
+    # Lista plików w /finish
+    echo "Available files in $FINISH_DIR:"
+    ls -la "$FINISH_DIR" 2>/dev/null || echo "No files found."
+    echo ""
+    
+    read -rp "Enter Nextcloud URL (e.g., https://nextcloud.example.com): " nextcloud_url
+    read -rp "Enter Nextcloud username: " nextcloud_username
+    read -sp "Enter Nextcloud password/app-token: " nextcloud_password
+    echo ""
+    read -rp "Enter target path in Nextcloud (default: $NEXTCLOUD_DEFAULT_PATH): " target_path
+    [[ -z "$target_path" ]] && target_path="$NEXTCLOUD_DEFAULT_PATH"
+    
+    echo ""
+    echo -e "${GREEN}Preparing export to Nextcloud...${NC}"
+    echo "  Target: $nextcloud_url"
+    echo "  Path: $target_path"
+    echo ""
+    
+    # Symulacja eksportu
+    log_info "Nextcloud export initiated (stub - requires Nextcloud WebDAV/API)"
+    echo -e "${YELLOW}Note: Full implementation requires Nextcloud WebDAV or OCS API configuration.${NC}"
+    echo ""
+    read -rp "Press Enter to continue..."
+}
+
+show_submenu_export() {
+    clear_screen
+    show_header
+    echo -e "${CYAN}║           EXPORT RESULTS - MOODLE/JOOMLA/NEXTCLOUD           ║${NC}"
+    echo -e "${CYAN}╠══════════════════════════════════════════════════════════════╣${NC}"
+    echo -e "${GREEN}║  [10.1] 📚 Export to Moodle as Book Activity                 ║${NC}"
+    echo -e "${GREEN}║  [10.2] 📄 Export to Moodle as Markdown File                 ║${NC}"
+    echo -e "${GREEN}║  [10.3] 📝 Export to Joomla as Article                       ║${NC}"
+    echo -e "${GREEN}║  [10.4] ☁️  Export to Nextcloud                               ║${NC}"
+    echo -e "${GREEN}║  [10.5] ⚙️  Configure Export Settings                         ║${NC}"
+    echo -e "${YELLOW}║  [10.6] ⬅️  Back to Main Menu                                 ║${NC}"
+    echo -e "${CYAN}╚══════════════════════════════════════════════════════════════╝${NC}"
+    echo ""
+}
+
+handle_export_menu() {
+    while true; do
+        show_submenu_export
+        read -rp "  Enter choice [10.1-10.6]: " choice
+        case $choice in
+            10.1|101) export_to_moodle_book ;;
+            10.2|102) export_to_moodle_file ;;
+            10.3|103) export_to_joomla_article ;;
+            10.4|104) export_to_nextcloud ;;
+            10.5|105) export_configure_settings ;;
+            10.6|106) break ;;
+            *) echo -e "${RED}Invalid option!${NC}"; sleep 1 ;;
+        esac
+        [[ $choice != "10.6" && $choice != "106" ]] && read -rp "Press Enter to continue..."
+    done
+}
+
+export_configure_settings() {
+    log_event "Configure Export Settings"
+    echo ""
+    echo -e "${CYAN}═══ CONFIGURE EXPORT SETTINGS ═══${NC}"
+    echo ""
+    echo "This menu allows you to configure export constants."
+    echo "Settings will be saved to: $CONFIG_FILE"
+    echo ""
+    
+    # Dodaj nowe stałe do pliku konfiguracyjnego
+    echo "Current export settings:"
+    grep -E "^EXPORT_|^MOODLE_|^JOOMLA_|^NEXTCLOUD_" "$CONFIG_FILE" 2>/dev/null || echo "No export settings configured yet."
+    echo ""
+    
+    read -rp "Enter default Moodle URL: " moodle_url_default
+    read -rp "Enter default Joomla URL: " joomla_url_default
+    read -rp "Enter default Nextcloud URL: " nextcloud_url_default
+    read -rp "Enter default finish directory path (default: $FINISH_DIR): " finish_dir
+    [[ -z "$finish_dir" ]] && finish_dir="$FINISH_DIR"
+    
+    # Zapisz do pliku konfiguracyjnego
+    cat >> "$CONFIG_FILE" << EOF
+
+# Export Settings - Added by qwen-tam.sh
+EXPORT_MOODLE_URL="${moodle_url_default}"
+EXPORT_JOOMLA_URL="${joomla_url_default}"
+EXPORT_NEXTCLOUD_URL="${nextcloud_url_default}"
+EXPORT_FINISH_DIR="${finish_dir}"
+MOODLE_DEFAULT_FORMAT="${MOODLE_DEFAULT_FORMAT}"
+JOOMLA_DEFAULT_CATEGORY="${JOOMLA_DEFAULT_CATEGORY}"
+NEXTCLOUD_DEFAULT_PATH="${NEXTCLOUD_DEFAULT_PATH}"
+EOF
+    
+    echo ""
+    echo -e "${GREEN}Export settings saved to $CONFIG_FILE${NC}"
+    read -rp "Press Enter to continue..."
+}
+
 
 main_menu_loop() {
     while true; do
         show_main_menu
-        read -rp "  Enter choice [1-9]: " choice
+        read -rp "  Enter choice [1-10]: " choice
         
         case $choice in
             1) handle_github_menu ;;
@@ -907,6 +1143,7 @@ main_menu_loop() {
             6) handle_logs_menu ;;
             7) handle_system_menu ;;
             8) handle_update_menu ;;
+            10) handle_export_menu ;;
             9) 
                 log_info "Exiting Qwen Time & Automation Manager"
                 log_event "Application exited by user"
