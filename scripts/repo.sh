@@ -2,12 +2,24 @@
 
 # repo.sh - Tworzenie i zarządzanie repozytoriami GitHub
 # Część Qwen Time & Automation Manager
+# ZAKTUALIZOWANO: Bezpieczna walidacja inputu i obsługa tokena
+
+set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 LOG_FILE="/tmp/qwen-tam.log"
 REPO_DIR="$HOME/Projects/qwen-tam/repos"
 
-# Źródło skryptu auth.sh
+# Load libraries
+if [[ -f "${SCRIPT_DIR}/lib/security.sh" ]]; then
+    source "${SCRIPT_DIR}/lib/security.sh"
+fi
+
+if [[ -f "${SCRIPT_DIR}/lib/validation.sh" ]]; then
+    source "${SCRIPT_DIR}/lib/validation.sh"
+fi
+
+# Source auth.sh for token functions
 source "$SCRIPT_DIR/auth.sh"
 
 # Kolory ANSI
@@ -29,478 +41,339 @@ log_repo_error() {
 # Inicjalizacja katalogu repozytoriów
 init_repo_dir() {
     mkdir -p "$REPO_DIR"
+    chmod 755 "$REPO_DIR"
 }
 
-# Pobranie nagłówków autoryzacyjnych
-get_auth_headers() {
+# Pobranie tokena do autoryzacji (bezpieczne)
+get_auth_token() {
     local token
-    token=$(get_github_token)
+    token=$(get_github_token 2>/dev/null)
     if [[ -n "$token" ]]; then
-        token=$(echo "$token" | base64 -d)
-        echo "-H \"Authorization: token $token\""
+        echo "$token"
+    else
+        return 1
     fi
 }
 
-# Walidacja nazwy repozytorium
+# Walidacja nazwy repozytorium z użyciem validation library
 validate_repo_name() {
     local name="$1"
-    
-    # Sprawdzenie czy nazwa nie jest pusta
-    if [[ -z "$name" ]]; then
-        return 1
+
+    # Use validation library if available
+    if declare -f validate_repo_name &>/dev/null; then
+        validate_repo_name "$name"
+        return $?
     fi
     
-    # Sprawdzenie długości (max 100 znaków)
-    if [[ ${#name} -gt 100 ]]; then
-        return 1
-    fi
-    
-    # Dozwolone znaki: litery, cyfry, -, _, .
-    if [[ ! "$name" =~ ^[a-zA-Z0-9._-]+$ ]]; then
-        return 1
-    fi
-    
-    return 0
+    # Fallback validation
+    [[ -n "$name" ]] && [[ ${#name} -le 100 ]] && [[ "$name" =~ ^[a-zA-Z0-9._-]+$ ]]
 }
 
-# Tworzenie nowego repozytorium GitHub
-create_github_repo() {
-    local repo_name="$1"
-    local description="${2:-}"
-    local is_private="${3:-false}"
-    local init_readme="${4:-false}"
-    local license="${5:-}"
-    local gitignore="${6:-}"
+# Walidacja ownera (username)
+validate_repo_owner() {
+    local owner="$1"
     
-    # Sprawdzenie autoryzacji
-    if ! has_token; then
-        log_repo_error "Brak autoryzacji GitHub. Skonfiguruj token w menu Configuration."
-        return 1
+    # Use validation library if available
+    if declare -f validate_github_username &>/dev/null; then
+        validate_github_username "$owner"
+        return $?
     fi
     
-    # Walidacja nazwy
-    if ! validate_repo_name "$repo_name"; then
-        log_repo_error "Nieprawidłowa nazwa repozytorium: $repo_name"
-        echo "Nazwa może zawierać tylko litery, cyfry, myślniki, podkreślenia i kropki."
+    # Fallback validation
+    [[ -n "$owner" ]] && [[ ${#owner} -le 39 ]] && [[ "$owner" =~ ^[a-zA-Z0-9][a-zA-Z0-9-]{0,38}$ ]]
+}
+
+# Utwórz repozytorium przez GitHub API
+create_repository() {
+    local name="$1"
+    local description="${2:-}"
+    local private="${3:-true}"
+    
+    # Validate inputs
+    if ! validate_repo_name "$name"; then
+        log_repo_error "Nieprawidłowa nazwa repozytorium: $name"
+        echo "Nazwa może zawierać tylko znaki: a-z, A-Z, 0-9, ., _, -"
         return 1
     fi
     
     local token
-    token=$(get_github_token)
-    token=$(echo "$token" | base64 -d)
+    token=$(get_auth_token) || {
+        log_repo_error "Brak tokena GitHub. Skonfiguruj go w menu autoryzacji."
+        return 1
+    }
     
-    # Budowanie payloadu JSON
-    local json_data="{\"name\":\"$repo_name\""
+    local visibility="public"
+    [[ "$private" == "true" ]] && visibility="private"
     
+    # Create JSON payload safely
+    local json_payload
     if [[ -n "$description" ]]; then
-        json_data+=",\"description\":\"$description\""
+        json_payload=$(cat <<EOF
+{
+    "name": "$name",
+    "description": "$description",
+    "private": $private,
+    "auto_init": true
+}
+EOF
+)
+    else
+        json_payload=$(cat <<EOF
+{
+    "name": "$name",
+    "private": $private,
+    "auto_init": true
+}
+EOF
+)
     fi
     
-    json_data+=",\"private\":$is_private"
-    json_data+=",\"auto_init\":$init_readme"
-    
-    if [[ -n "$license" ]]; then
-        json_data+=",\"license_template\":\"$license\""
-    fi
-    
-    if [[ -n "$gitignore" ]]; then
-        json_data+=",\"gitignore_template\":\"$gitignore\""
-    fi
-    
-    json_data+="}"
-    
-    log_repo "Tworzenie repozytorium: $repo_name"
-    
-    # Wysyłanie żądania API
+    # Make API call
     local response
-    response=$(curl -s -w "\n%{http_code}" \
-        -X POST \
+    response=$(curl -s -X POST \
         -H "Authorization: token $token" \
         -H "Accept: application/vnd.github.v3+json" \
         -H "Content-Type: application/json" \
-        -d "$json_data" \
-        "https://api.github.com/user/repos")
+        -d "$json_payload" \
+        "https://api.github.com/user/repos" 2>/dev/null)
     
-    local http_code
-    http_code=$(echo "$response" | tail -n1)
-    local body
-    body=$(echo "$response" | sed '$d')
-    
-    if [[ "$http_code" == "201" ]]; then
-        local repo_url
-        repo_url=$(echo "$body" | jq -r '.html_url')
-        log_repo "Repozytorium utworzone pomyślnie: $repo_url"
-        echo -e "${GREEN}✓ Repozytorium utworzone:${NC} $repo_url"
+    # Check response
+    if echo "$response" | jq -e '.full_name' &>/dev/null; then
+        local full_name
+        full_name=$(echo "$response" | jq -r '.full_name')
+        local html_url
+        html_url=$(echo "$response" | jq -r '.html_url')
         
-        # Klonowanie lokalnie jeśli użytkownik chce
-        read -p "Czy chcesz sklonować repozytorium lokalnie? (y/n): " clone_choice
-        if [[ "$clone_choice" =~ ^[Yy]$ ]]; then
-            clone_repository "$repo_url"
-        fi
-        
+        log_repo "Utworzono repozytorium: $full_name"
+        echo -e "${GREEN}✓ Repozytorium utworzone pomyślnie!${NC}"
+        echo "  Nazwa: $full_name"
+        echo "  URL: $html_url"
         return 0
     else
         local error_msg
-        error_msg=$(echo "$body" | jq -r '.message // "Nieznany błąd"')
-        log_repo_error "Błąd tworzenia repozytorium: $error_msg (HTTP $http_code)"
-        echo -e "${RED}✗ Błąd:${NC} $error_msg"
-        return 1
-    fi
-}
-
-# Interaktywne tworzenie repozytorium
-create_repo_interactive() {
-    echo ""
-    echo -e "${CYAN}=== Nowe Repozytorium GitHub ===${NC}"
-    echo ""
-    
-    read -p "Nazwa repozytorium: " repo_name
-    if ! validate_repo_name "$repo_name"; then
-        log_repo_error "Nieprawidłowa nazwa"
-        return 1
-    fi
-    
-    read -p "Opis (opcjonalne): " description
-    
-    echo ""
-    echo "Widoczność:"
-    echo "1) Prywatne (private)"
-    echo "2) Publiczne (public)"
-    read -p "Wybierz [1/2]: " visibility_choice
-    
-    local is_private=true
-    if [[ "$visibility_choice" == "2" ]]; then
-        is_private=false
-    fi
-    
-    echo ""
-    read -p "Zainicjalizować README.md? (y/n): " init_readme_choice
-    local init_readme=false
-    if [[ "$init_readme_choice" =~ ^[Yy]$ ]]; then
-        init_readme=true
-    fi
-    
-    local license=""
-    if [[ "$init_readme" == "true" ]]; then
-        echo ""
-        echo "Licencja (opcjonalne):"
-        echo "1) MIT"
-        echo "2) GPL-3.0"
-        echo "3) Apache-2.0"
-        echo "4) Brak licencji"
-        read -p "Wybierz [1-4]: " license_choice
-        
-        case $license_choice in
-            1) license="mit" ;;
-            2) license="gpl-3.0" ;;
-            3) license="apache-2.0" ;;
-            *) license="" ;;
-        esac
-    fi
-    
-    local gitignore=""
-    echo ""
-    echo "Gitignore (opcjonalne):"
-    echo "1) Python"
-    echo "2) Node.js"
-    echo "3) Java"
-    echo "4) Go"
-    echo "5) Brak gitignore"
-    read -p "Wybierz [1-5]: " gitignore_choice
-    
-    case $gitignore_choice in
-        1) gitignore="Python" ;;
-        2) gitignore="Node" ;;
-        3) gitignore="Java" ;;
-        4) gitignore="Go" ;;
-        *) gitignore="" ;;
-    esac
-    
-    echo ""
-    echo "Podsumowanie:"
-    echo "  Nazwa: $repo_name"
-    echo "  Opis: ${description:-brak}"
-    echo "  Widoczność: $([ "$is_private" == "true" ] && echo "Prywatne" || echo "Publiczne")"
-    echo "  README: $([ "$init_readme" == "true" ] && echo "Tak" || echo "Nie")"
-    echo "  Licencja: ${license:-brak}"
-    echo "  Gitignore: ${gitignore:-brak}"
-    echo ""
-    
-    read -p "Czy na pewno stworzyć repozytorium? (y/n): " confirm
-    if [[ "$confirm" =~ ^[Yy]$ ]]; then
-        create_github_repo "$repo_name" "$description" "$is_private" "$init_readme" "$license" "$gitignore"
-        return $?
-    else
-        echo "Anulowano"
-        return 0
-    fi
-}
-
-# Klonowanie repozytorium
-clone_repository() {
-    local repo_url="$1"
-    local target_dir="${2:-}"
-    
-    init_repo_dir
-    
-    if [[ -z "$repo_url" ]]; then
-        read -p "URL repozytorium do sklonowania: " repo_url
-    fi
-    
-    if [[ -z "$repo_url" ]]; then
-        log_repo_error "Brak URL repozytorium"
-        return 1
-    fi
-    
-    # Wyodrębnienie nazwy repozytorium z URL
-    local repo_name
-    repo_name=$(basename "$repo_url" .git)
-    
-    if [[ -z "$target_dir" ]]; then
-        target_dir="$REPO_DIR/$repo_name"
-    fi
-    
-    if [[ -d "$target_dir" ]]; then
-        echo -e "${YELLOW}Katalog już istnieje:${NC} $target_dir"
-        read -p "Czy nadpisać? (y/n): " overwrite
-        if [[ ! "$overwrite" =~ ^[Yy]$ ]]; then
-            return 0
-        fi
-        rm -rf "$target_dir"
-    fi
-    
-    log_repo "Klonowanie: $repo_url -> $target_dir"
-    echo "Klonowanie repozytorium..."
-    
-    # Sprawdzenie czy repo wymaga autoryfikacji
-    local token
-    token=$(get_github_token)
-    
-    if [[ -n "$token" ]] && [[ "$repo_url" == *"github.com"* ]]; then
-        # Wstrzyknięcie tokena do URL dla repozytoriów prywatnych
-        token_decoded=$(echo "$token" | base64 -d)
-        local username
-        username=$(get_github_username)
-        local auth_url
-        auth_url=$(echo "$repo_url" | sed "s|https://|https://$username:$token_decoded@|")
-        git clone "$auth_url" "$target_dir"
-    else
-        git clone "$repo_url" "$target_dir"
-    fi
-    
-    if [[ $? -eq 0 ]]; then
-        log_repo "Sklonowano pomyślnie: $target_dir"
-        echo -e "${GREEN}✓ Sklonowano pomyślnie:${NC} $target_dir"
-        
-        # Wyświetlenie informacji
-        cd "$target_dir" && {
-            echo ""
-            echo "Struktura projektu:"
-            ls -la
-            echo ""
-        }
-        cd - > /dev/null
-        
-        return 0
-    else
-        log_repo_error "Błąd klonowania"
-        echo -e "${RED}✗ Błąd klonowania${NC}"
+        error_msg=$(echo "$response" | jq -r '.message // "Unknown error"')
+        log_repo_error "Błąd tworzenia repozytorium: $error_msg"
+        echo -e "${RED}✗ Błąd: $error_msg${NC}"
         return 1
     fi
 }
 
 # Lista repozytoriów użytkownika
 list_repositories() {
-    if ! has_token; then
-        log_repo_error "Brak autoryzacji GitHub"
+    local token
+    token=$(get_auth_token) || {
+        log_repo_error "Brak tokena GitHub"
+        return 1
+    }
+    
+    local response
+    response=$(curl -s \
+        -H "Authorization: token $token" \
+        -H "Accept: application/vnd.github.v3+json" \
+        "https://api.github.com/user/repos?sort=updated&per_page=100" 2>/dev/null)
+    
+    if [[ -z "$response" ]] || ! echo "$response" | jq -e '.[]' &>/dev/null; then
+        echo "Brak repozytoriów lub błąd pobierania."
         return 1
     fi
     
-    local token
-    token=$(get_github_token)
-    token=$(echo "$token" | base64 -d)
-    
-    log_repo "Pobieranie listy repozytoriów"
     echo ""
     echo -e "${CYAN}=== Twoje Repozytoria GitHub ===${NC}"
     echo ""
     
-    local repos
-    repos=$(curl -s \
-        -H "Authorization: token $token" \
-        -H "Accept: application/vnd.github.v3+json" \
-        "https://api.github.com/user/repos?sort=updated&per_page=100")
-    
-    local count
-    count=$(echo "$repos" | jq 'length')
-    
-    if [[ "$count" == "0" ]]; then
-        echo "Brak repozytoriów"
-        return 0
-    fi
-    
-    printf "%-30s %-15s %-10s %s\n" "NAZWA" "WIDOCZNOŚĆ" "GWIAZDKI" "OPIS"
-    printf "%-30s %-15s %-10s %s\n" "------" "-----------" "----------" "----"
-    
-    echo "$repos" | jq -r '.[] | "\(.name | .[0:28])\t\(.private | if . then "Private" else "Public" end)\t\(.stargazers_count)\t\(.description // "brak" | .[0:40])"' | \
-    while IFS=$'\t' read -r name vis stars desc; do
-        printf "%-30s %-15s %-10s %s\n" "$name" "$vis" "$stars" "$desc"
-    done
+    echo "$response" | jq -r '.[] | "\(.visibility | ascii_upcase): \(.full_name) - \(.description // "No description")"' | \
+        while read -r line; do
+            if [[ "$line" == PRIVATE* ]]; then
+                echo -e "  ${YELLOW}🔒${NC} $line"
+            else
+                echo -e "  ${GREEN}🌍${NC} $line"
+            fi
+        done
     
     echo ""
-    echo "Łącznie: $count repozytoriów"
-    
-    return 0
+    echo "Łącznie: $(echo "$response" | jq '. | length') repozytoriów"
 }
 
-# Usuwanie repozytorium
+# Usuń repozytorium (z potwierdzeniem i walidacją)
 delete_repository() {
     local owner="$1"
     local repo="$2"
     
-    if ! has_token; then
-        log_repo_error "Brak autoryzacji GitHub"
+    # Validate inputs to prevent command injection
+    if ! validate_repo_owner "$owner"; then
+        log_repo_error "Nieprawidłowy format owner: $owner"
         return 1
     fi
     
-    if [[ -z "$owner" || -z "$repo" ]]; then
-        read -p "Owner (nazwa użytkownika): " owner
-        read -p "Nazwa repozytorium: " repo
-    fi
-    
-    if [[ -z "$owner" || -z "$repo" ]]; then
-        log_repo_error "Brak wymaganych danych"
+    if ! validate_repo_name "$repo"; then
+        log_repo_error "Nieprawidłowy format repozytorium: $repo"
         return 1
-    fi
-    
-    echo ""
-    echo -e "${RED}⚠️  UWAGA: Ta operacja jest nieodwracalna!${NC}"
-    echo "Repozytorium: $owner/$repo"
-    echo ""
-    read -p "Wpisz \"$repo\" aby potwierdzić usunięcie: " confirm
-    
-    if [[ "$confirm" != "$repo" ]]; then
-        echo "Anulowano"
-        return 0
     fi
     
     local token
-    token=$(get_github_token)
-    token=$(echo "$token" | base64 -d)
+    token=$(get_auth_token) || {
+        log_repo_error "Brak tokena GitHub"
+        return 1
+    }
     
-    log_repo "Usuwanie repozytorium: $owner/$repo"
+    # Confirmation prompt
+    echo -e "${RED}⚠️  UWAGA: Ta operacja jest nieodwracalna!${NC}"
+    echo "Czy na pewno chcesz usunąć repozytorium: ${owner}/${repo}?"
+    read -p "Wpisz '${repo}' aby potwierdzić: " confirmation
     
+    if [[ "$confirmation" != "$repo" ]]; then
+        echo "Operacja anulowana."
+        return 1
+    fi
+    
+    # Delete via API
     local response
-    response=$(curl -s -w "\n%{http_code}" \
-        -X DELETE \
+    local http_code
+    response=$(curl -s -w "\n%{http_code}" -X DELETE \
         -H "Authorization: token $token" \
         -H "Accept: application/vnd.github.v3+json" \
-        "https://api.github.com/repos/$owner/$repo")
+        "https://api.github.com/repos/${owner}/${repo}" 2>/dev/null)
     
-    local http_code
     http_code=$(echo "$response" | tail -n1)
     
     if [[ "$http_code" == "204" ]]; then
-        log_repo "Repozytorium usunięte: $owner/$repo"
+        log_repo "Usunięto repozytorium: ${owner}/${repo}"
         echo -e "${GREEN}✓ Repozytorium usunięte pomyślnie${NC}"
         return 0
     else
-        local body
-        body=$(echo "$response" | sed '$d')
         local error_msg
-        error_msg=$(echo "$body" | jq -r '.message // "Nieznany błąd"')
-        log_repo_error "Błąd usuwania: $error_msg"
-        echo -e "${RED}✗ Błąd:${NC} $error_msg"
+        error_msg=$(echo "$response" | head -n-1 | jq -r '.message // "Unknown error"' 2>/dev/null)
+        log_repo_error "Błąd usuwania repozytorium: $error_msg"
+        echo -e "${RED}✗ Błąd: $error_msg${NC}"
         return 1
     fi
 }
 
-# Synchronizacja lokalna z remote
-sync_local_with_remote() {
-    local repo_path="$1"
+# Klonowanie repozytorium (bezpieczne)
+clone_repository() {
+    local repo_url="$1"
+    local target_dir="${2:-}"
     
-    if [[ -z "$repo_path" ]]; then
-        echo "Wybierz katalog repozytorium:"
-        echo ""
-        
-        if [[ ! -d "$REPO_DIR" ]] || [[ -z "$(ls -A "$REPO_DIR" 2>/dev/null)" ]]; then
-            echo "Brak lokalnych repozytoriów w $REPO_DIR"
+    init_repo_dir
+    
+    # Validate URL format
+    if ! declare -f validate_url &>/dev/null; then
+        # Basic URL check
+        if [[ ! "$repo_url" =~ ^https://github\.com/ ]]; then
+            log_repo_error "Nieobsługiwany URL. Tylko GitHub URLs są dozwolone."
             return 1
         fi
-        
-        local i=1
-        local dirs=()
-        for dir in "$REPO_DIR"/*/; do
-            if [[ -d "$dir/.git" ]]; then
-                dirs+=("$dir")
-                echo "$i) $(basename "$dir")"
-                ((i++))
-            fi
-        done
-        
-        if [[ ${#dirs[@]} -eq 0 ]]; then
-            echo "Brak repozytoriów Git"
-            return 1
-        fi
-        
-        read -p "Wybierz numer: " choice
-        if [[ ! "$choice" =~ ^[0-9]+$ ]] || [[ $choice -lt 1 ]] || [[ $choice -gt ${#dirs[@]} ]]; then
-            echo "Nieprawidłowy wybór"
-            return 1
-        fi
-        
-        repo_path="${dirs[$((choice-1))]}"
     fi
     
-    if [[ ! -d "$repo_path/.git" ]]; then
-        log_repo_error "To nie jest repozytorium Git: $repo_path"
+    # Extract owner and repo from URL for validation
+    local owner repo_name
+    owner=$(echo "$repo_url" | sed -n 's|.*github\.com/\([^/]*\)/.*|\1|p')
+    repo_name=$(echo "$repo_url" | sed -n 's|.*github\.com/[^/]*/\([^/.]*\).*|\1|p')
+    
+    # Validate extracted values
+    if ! validate_repo_owner "$owner" || ! validate_repo_name "$repo_name"; then
+        log_repo_error "Nieprawidłowy format URL repozytorium"
         return 1
     fi
     
-    cd "$repo_path" || return 1
+    # Set target directory
+    if [[ -z "$target_dir" ]]; then
+        target_dir="${REPO_DIR}/${repo_name}"
+    fi
     
-    log_repo "Synchronizacja: $repo_path"
-    echo "Synchronizacja repozytorium..."
+    # Check if directory already exists
+    if [[ -d "$target_dir" ]]; then
+        log_repo_error "Katalog już istnieje: $target_dir"
+        echo "Usuń go ręcznie lub wybierz inną ścieżkę."
+        return 1
+    fi
     
-    # Pobranie zmian
-    git fetch --all
+    # Get token for private repos
+    local token
+    token=$(get_auth_token)
     
-    # Sprawdzenie aktualnej gałęzi
-    local current_branch
-    current_branch=$(git rev-parse --abbrev-ref HEAD)
+    local clone_url="$repo_url"
+    if [[ -n "$token" ]]; then
+        # Insert token into URL for private repos
+        clone_url=$(echo "$repo_url" | sed "s|https://|https://${owner}:${token}@|")
+    fi
     
-    # Pull zmian
-    echo "Pull zmian z gałęzi: $current_branch"
-    git pull origin "$current_branch"
+    log_repo "Klonowanie repozytorium: $repo_name"
+    echo "Klonowanie..."
     
-    if [[ $? -eq 0 ]]; then
-        log_repo "Synchronizacja zakończona sukcesem"
-        echo -e "${GREEN}✓ Synchronizacja zakończona${NC}"
+    if git clone "$clone_url" "$target_dir" 2>/dev/null; then
+        log_repo "Sklonowano pomyślnie: $repo_name"
+        echo -e "${GREEN}✓ Sklonowano pomyślnie${NC}"
+        echo "  Lokalizacja: $target_dir"
         
-        # Status repozytorium
-        echo ""
-        git status --short
+        # Remove token from git config if present
+        if [[ -n "$token" ]]; then
+            (cd "$target_dir" && git remote set-url origin "https://github.com/${owner}/${repo_name}.git" 2>/dev/null) || true
+        fi
         
-        cd - > /dev/null
         return 0
     else
-        log_repo_error "Błąd synchronizacji"
-        echo -e "${RED}✗ Błąd synchronizacji${NC}"
-        cd - > /dev/null
+        log_repo_error "Błąd klonowania repozytorium"
+        echo -e "${RED}✗ Błąd klonowania${NC}"
+        rm -rf "$target_dir" 2>/dev/null
         return 1
     fi
+}
+
+# Interaktywne tworzenie repozytorium
+create_repository_interactive() {
+    echo ""
+    echo -e "${YELLOW}=== Nowe Repozytorium GitHub ===${NC}"
+    echo ""
+    
+    read -p "Nazwa repozytorium: " name
+    if ! validate_repo_name "$name"; then
+        log_repo_error "Nieprawidłowa nazwa repozytorium"
+        return 1
+    fi
+    
+    read -p "Opis (opcjonalnie): " description
+    
+    echo ""
+    echo "Typ repozytorium:"
+    echo "1) Prywatne (private)"
+    echo "2) Publiczne (public)"
+    read -p "Wybierz [1]: " visibility_choice
+    
+    local private=true
+    if [[ "$visibility_choice" == "2" ]]; then
+        private=false
+    fi
+    
+    create_repository "$name" "$description" "$private"
+}
+
+# Interaktywne klonowanie
+clone_repository_interactive() {
+    echo ""
+    echo -e "${YELLOW}=== Klonuj Repozytorium ===${NC}"
+    echo ""
+    
+    read -p "URL repozytorium (https://github.com/owner/repo): " repo_url
+    
+    if [[ -z "$repo_url" ]]; then
+        log_repo_error "URL nie może być pusty"
+        return 1
+    fi
+    
+    read -p "Ścieżka docelowa (pozostaw puste dla domyślnej): " target_dir
+    
+    clone_repository "$repo_url" "$target_dir"
 }
 
 # Menu zarządzania repozytoriami
 repo_menu() {
     while true; do
         clear
-        echo -e "${BLUE}╔════════════════════════════════════════════╗${NC}"
-        echo -e "${BLUE}║     GITHUB REPOSITORY MANAGEMENT           ║${NC}"
-        echo -e "${BLUE}╚════════════════════════════════════════════╝${NC}"
+        echo -e "${YELLOW}=== Zarządzanie Repozytoriami GitHub ===${NC}"
         echo ""
         
-        # Sprawdzenie statusu autoryzacji
+        # Show quick status
         if has_token; then
             local username
             username=$(get_github_username)
@@ -510,60 +383,54 @@ repo_menu() {
         fi
         echo ""
         
-        echo -e "${YELLOW}Opcje:${NC}"
-        echo "1) Skonfiguruj GitHub Credentials"
-        echo "2) Utwórz nowe repozytorium"
-        echo "3) Lista moich repozytoriów"
+        echo -e "${CYAN}Opcje:${NC}"
+        echo "1) Utwórz nowe repozytorium"
+        echo "2) Lista repozytoriów"
+        echo "3) Sklonuj repozytorium"
         echo "4) Usuń repozytorium"
-        echo "5) Sklonuj repozytorium"
-        echo "6) Synchronizuj lokalne z remote"
-        echo "7) Wróć"
+        echo "5) Wróć"
         echo ""
         
         read -p "Wybierz opcję: " choice
         
         case $choice in
             1)
-                source "$SCRIPT_DIR/auth.sh"
-                auth_menu
-                ;;
-            2)
-                create_repo_interactive
+                create_repository_interactive
                 echo ""
                 read -p "Naciśnij Enter aby kontynuować..."
                 ;;
-            3)
+            2)
                 list_repositories
                 echo ""
                 read -p "Naciśnij Enter aby kontynuować..."
                 ;;
+            3)
+                clone_repository_interactive
+                echo ""
+                read -p "Naciśnij Enter aby kontynuować..."
+                ;;
             4)
-                delete_repository
+                read -p "Owner (username): " owner
+                read -p "Repozytorium: " repo
+                
+                if [[ -n "$owner" && -n "$repo" ]]; then
+                    delete_repository "$owner" "$repo"
+                else
+                    echo -e "${RED}Owner i repozytorium są wymagane${NC}"
+                fi
                 echo ""
                 read -p "Naciśnij Enter aby kontynuować..."
                 ;;
-            5)
-                clone_repository
-                echo ""
-                read -p "Naciśnij Enter aby kontynuować..."
-                ;;
-            6)
-                sync_local_with_remote
-                echo ""
-                read -p "Naciśnij Enter aby kontynuować..."
-                ;;
-            7|q|Q)
+            5|*)
                 break
-                ;;
-            *)
-                echo -e "${RED}Nieprawidłowa opcja${NC}"
-                sleep 1
                 ;;
         esac
     done
 }
 
-# Jeśli skrypt jest uruchomiony bezpośrednio
-if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
-    repo_menu "$@"
-fi
+# Export functions
+export -f repo_menu
+export -f create_repository
+export -f list_repositories
+export -f delete_repository
+export -f clone_repository

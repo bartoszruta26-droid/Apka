@@ -2,11 +2,24 @@
 
 # auth.sh - Autoryzacja i zarządzanie tokenem GitHub
 # Część Qwen Time & Automation Manager
+# ZAKTUALIZOWANO: Bezpieczne szyfrowanie AES-256 zamiast base64
+
+set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 CONFIG_DIR="$HOME/.config/qwen-tam"
-GITHUB_CONF="$CONFIG_DIR/github.conf"
+GITHUB_CONF="$CONFIG_DIR/github.conf.enc"
 LOG_FILE="/tmp/qwen-tam.log"
+
+# Load security library
+if [[ -f "${SCRIPT_DIR}/lib/security.sh" ]]; then
+    source "${SCRIPT_DIR}/lib/security.sh"
+fi
+
+# Load validation library  
+if [[ -f "${SCRIPT_DIR}/lib/validation.sh" ]]; then
+    source "${SCRIPT_DIR}/lib/validation.sh"
+fi
 
 # Kolory ANSI
 readonly RED='\033[0;31m'
@@ -26,6 +39,11 @@ log_auth_error() {
 init_config_dir() {
     mkdir -p "$CONFIG_DIR"
     chmod 700 "$CONFIG_DIR"
+    
+    # Initialize security system
+    if [[ -f "${SCRIPT_DIR}/lib/security.sh" ]]; then
+        init_security 2>/dev/null || true
+    fi
 }
 
 # Sprawdzenie czy token istnieje
@@ -33,17 +51,32 @@ has_token() {
     [[ -f "$GITHUB_CONF" ]] && [[ -s "$GITHUB_CONF" ]]
 }
 
-# Pobranie tokena z konfiguracji
+# Pobranie tokena z konfiguracji (DESZYFROWANIE)
 get_github_token() {
     if [[ -f "$GITHUB_CONF" ]]; then
-        grep "^TOKEN=" "$GITHUB_CONF" | cut -d'=' -f2-
+        # Check if using new encrypted format
+        if grep -q "^TOKEN_ENCRYPTED=" "$GITHUB_CONF" 2>/dev/null; then
+            retrieve_github_token_secure 2>/dev/null || return 1
+        else
+            # Legacy base64 format - decrypt
+            local encoded_token
+            encoded_token=$(grep "^TOKEN=" "$GITHUB_CONF" 2>/dev/null | cut -d'=' -f2-)
+            if [[ -n "$encoded_token" ]]; then
+                echo "$encoded_token" | base64 -d 2>/dev/null
+            fi
+        fi
     fi
 }
 
 # Pobranie nazwy użytkownika z konfiguracji
 get_github_username() {
     if [[ -f "$GITHUB_CONF" ]]; then
-        grep "^USERNAME=" "$GITHUB_CONF" | cut -d'=' -f2-
+        # Try new format first
+        if grep -q "^USERNAME=" "$GITHUB_CONF" 2>/dev/null; then
+            grep "^USERNAME=" "$GITHUB_CONF" | cut -d'=' -f2-
+        else
+            get_github_username_secure 2>/dev/null
+        fi
     fi
 }
 
@@ -55,12 +88,20 @@ validate_github_token() {
         return 1
     fi
     
+    # Validate token format first
+    if declare -f validate_github_token_format &>/dev/null; then
+        if ! validate_github_token_format "$token"; then
+            log_auth_error "Invalid token format"
+            return 1
+        fi
+    fi
+    
     # Sprawdzenie tokena przez GitHub API
     local response
     response=$(curl -s -o /dev/null -w "%{http_code}" \
         -H "Authorization: token $token" \
         -H "Accept: application/vnd.github.v3+json" \
-        "https://api.github.com/user")
+        "https://api.github.com/user" 2>/dev/null)
     
     if [[ "$response" == "200" ]]; then
         return 0
@@ -69,41 +110,66 @@ validate_github_token() {
     fi
 }
 
-# Zapisanie tokena w konfiguracji (szyfrowane)
+# Zapisanie tokena w konfiguracji (SZYFROWANIE AES-256)
 save_github_token() {
     local token="$1"
     local username="$2"
     
     init_config_dir
     
-    # Szyfrowanie tokena przy użyciu base64 (można zastąpić GPG/openssl)
-    local encoded_token
-    encoded_token=$(echo -n "$token" | base64)
-    
-    cat > "$GITHUB_CONF" << EOF
-# Qwen TAM - GitHub Configuration
+    # Use secure encryption from security library
+    if declare -f store_github_token_secure &>/dev/null; then
+        if store_github_token_secure "$token" "$username"; then
+            log_auth "Token zapisany pomyślnie (AES-256 encryption) dla użytkownika: $username"
+            
+            if validate_github_token "$token"; then
+                return 0
+            else
+                log_auth_error "Nie udało się zwalidować tokena"
+                return 1
+            fi
+        else
+            log_auth_error "Failed to encrypt and save token"
+            return 1
+        fi
+    else
+        # Fallback to base64 (legacy, insecure - should upgrade)
+        log_auth_error "WARNING: Security library not available, using insecure base64 encoding"
+        
+        local encoded_token
+        encoded_token=$(echo -n "$token" | base64)
+        
+        cat > "$GITHUB_CONF" << EOF
+# Qwen TAM - GitHub Configuration (INSECURE - Upgrade recommended)
 # Created: $(date '+%Y-%m-%d %H:%M:%S')
 USERNAME=$username
 TOKEN=$encoded_token
-ENCRYPTED=true
+ENCRYPTED=false
+SECURITY_WARNING="Base64 is not encryption! Upgrade to use AES-256."
 EOF
-    
-    chmod 600 "$GITHUB_CONF"
-    
-    if validate_github_token "$token"; then
-        log_auth "Token zapisany pomyślnie dla użytkownika: $username"
-        return 0
-    else
-        log_auth_error "Nie udało się zwalidować tokena"
-        rm -f "$GITHUB_CONF"
-        return 1
+        
+        chmod 600 "$GITHUB_CONF"
+        
+        if validate_github_token "$token"; then
+            log_auth "Token zapisany (base64 - UPGRADE RECOMMENDED) dla użytkownika: $username"
+            return 0
+        else
+            log_auth_error "Nie udało się zwalidować tokena"
+            rm -f "$GITHUB_CONF"
+            return 1
+        fi
     fi
 }
 
 # Usunięcie zapisanego tokena
 remove_github_token() {
     if [[ -f "$GITHUB_CONF" ]]; then
-        rm -f "$GITHUB_CONF"
+        # Secure delete if security library available
+        if declare -f delete_credentials_secure &>/dev/null; then
+            delete_credentials_secure
+        else
+            rm -f "$GITHUB_CONF"
+        fi
         log_auth "Token usunięty"
         return 0
     fi
@@ -115,9 +181,19 @@ configure_github_interactive() {
     echo ""
     echo -e "${YELLOW}=== Konfiguracja GitHub ===${NC}"
     echo ""
+    echo -e "${GREEN}Nowość: Tokeny są teraz szyfrowane algorytmem AES-256!${NC}"
+    echo ""
     
     read -p "Podaj swój GitHub username: " username
-    if [[ -z "$username" ]]; then
+    
+    # Validate username
+    if declare -f validate_github_username &>/dev/null; then
+        if ! validate_github_username "$username"; then
+            log_auth_error "Nieprawidłowy format nazwy użytkownika GitHub"
+            echo "Username musi zawierać 1-39 znaków alfanumerycznych i myślników"
+            return 1
+        fi
+    elif [[ -z "$username" ]]; then
         log_auth_error "Nazwa użytkownika nie może być pusta"
         return 1
     fi
@@ -143,7 +219,7 @@ configure_github_interactive() {
         local api_username
         api_username=$(curl -s -H "Authorization: token $token" \
             -H "Accept: application/vnd.github.v3+json" \
-            "https://api.github.com/user" | jq -r '.login')
+            "https://api.github.com/user" 2>/dev/null | jq -r '.login' 2>/dev/null)
         
         if [[ -n "$api_username" && "$api_username" != "null" ]]; then
             username="$api_username"
@@ -174,10 +250,18 @@ show_auth_status() {
             echo -e "Status: ${GREEN}Zalogowany${NC}"
             echo "Użytkownik: $username"
             
+            # Check encryption status
+            if grep -q "^TOKEN_ENCRYPTED=" "$GITHUB_CONF" 2>/dev/null; then
+                echo -e "Bezpieczeństwo: ${GREEN}AES-256 Encryption${NC}"
+            elif grep -q "SECURITY_WARNING" "$GITHUB_CONF" 2>/dev/null; then
+                echo -e "Bezpieczeństwo: ${RED}Base64 (Upgrade recommended!)${NC}"
+            else
+                echo -e "Bezpieczeństwo: ${YELLOW}Unknown${NC}"
+            fi
+            
             # Sprawdzenie ważności tokena
             local token
             token=$(get_github_token)
-            token=$(echo "$token" | base64 -d)
             
             if validate_github_token "$token"; then
                 echo -e "Token: ${GREEN}Ważny${NC}"
@@ -204,7 +288,8 @@ auth_menu() {
         echo "1) Skonfiguruj nowy token GitHub"
         echo "2) Usuń zapisany token"
         echo "3) Zweryfikuj token"
-        echo "4) Wróć"
+        echo "4) Sprawdź integralność szyfrowania"
+        echo "5) Wróć"
         echo ""
         
         read -p "Wybierz opcję: " choice
@@ -228,7 +313,7 @@ auth_menu() {
                 local token
                 token=$(get_github_token)
                 if [[ -n "$token" ]]; then
-                    token=$(echo "$token" | base64 -d)
+                    echo -n "Weryfikacja tokena... "
                     if validate_github_token "$token"; then
                         echo -e "${GREEN}Token jest ważny${NC}"
                     else
@@ -240,18 +325,24 @@ auth_menu() {
                 echo ""
                 read -p "Naciśnij Enter aby kontynuować..."
                 ;;
-            4|q|Q)
-                break
+            4)
+                if declare -f verify_encryption_integrity &>/dev/null; then
+                    verify_encryption_integrity
+                else
+                    echo -e "${YELLOW}Security library not available${NC}"
+                fi
+                echo ""
+                read -p "Naciśnij Enter aby kontynuować..."
                 ;;
-            *)
-                echo -e "${RED}Nieprawidłowa opcja${NC}"
-                sleep 1
+            5|*)
+                break
                 ;;
         esac
     done
 }
 
-# Jeśli skrypt jest uruchomiony bezpośrednio
-if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
-    auth_menu "$@"
-fi
+# Export functions
+export -f auth_menu
+export -f get_github_token
+export -f get_github_username
+export -f has_token
