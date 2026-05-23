@@ -664,31 +664,182 @@ edit_existing_file() {
     wait_for_enter
 }
 
-execute_custom_command() {
+#-------------------------------------------------------------------------------
+# C/C++/C# Code with GUI Generation
+#-------------------------------------------------------------------------------
+
+generate_cpp_gui_code() {
     show_header
-    echo -e "${CYAN}Execute Custom Command via AI${NC}"
+    echo -e "${CYAN}Create/Update C/C++/C# Code with GUI${NC}"
     echo ""
     
-    read -rp "Describe what you want to accomplish: " task_desc
+    echo "Select language:"
+    echo "1) C with GTK"
+    echo "2) C++ with Qt"
+    echo "3) C# with WinForms/WPF"
+    read -rp "Choice [1-3]: " lang_choice
     
-    log_info "Generating command for: $task_desc"
+    local language=""
+    local framework=""
+    case $lang_choice in
+        1) language="c"; framework="GTK" ;;
+        2) language="cpp"; framework="Qt" ;;
+        3) language="csharp"; framework="WinForms" ;;
+        *) log_error "Invalid choice"; wait_for_enter; return 1 ;;
+    esac
     
-    local command
-    command=$(call_qwen_coder "Generate a single shell command to: $task_desc. Return ONLY the command, no explanation." "bash" "")
+    read -rp "Describe the GUI application functionality: " description
+    read -rp "Output filename (without extension): " base_name
+    base_name="${base_name:-app}"
+    
+    log_info "Generating $language code with $framework GUI..."
+    
+    local content
+    content=$(call_qwen_coder "Create a $language GUI application using $framework. $description" "$language" "")
+    
+    local ext=""
+    case $language in
+        c) ext=".c" ;;
+        cpp) ext=".cpp" ;;
+        csharp) ext=".cs" ;;
+    esac
+    
+    mkdir -p "$(dirname "$base_name")"
+    echo "$content" > "${base_name}${ext}"
+    
+    log_info "GUI code saved to: ${base_name}${ext}"
+    log_event "Generated $language GUI code: ${base_name}${ext}"
+    
+    wait_for_enter
+}
+
+#-------------------------------------------------------------------------------
+# WebUI Script Generation
+#-------------------------------------------------------------------------------
+
+generate_webui_scripts() {
+    show_header
+    echo -e "${CYAN}Create/Update WebUI Script${NC}"
+    echo ""
+    
+    echo "Select WebUI type:"
+    echo "1) React Component"
+    echo "2) Vue.js Component"
+    echo "3) Angular Component"
+    echo "4) Plain HTML/CSS/JS"
+    echo "5) Svelte Component"
+    read -rp "Choice [1-5]: " webui_choice
+    
+    local framework=""
+    case $webui_choice in
+        1) framework="React" ;;
+        2) framework="Vue.js" ;;
+        3) framework="Angular" ;;
+        4) framework="Plain" ;;
+        5) framework="Svelte" ;;
+        *) log_error "Invalid choice"; wait_for_enter; return 1 ;;
+    esac
+    
+    read -rp "Describe the WebUI component/page: " description
+    read -rp "Component name: " component_name
+    component_name="${component_name:-Component}"
+    
+    log_info "Generating $framework WebUI component..."
+    
+    local content
+    content=$(call_qwen_coder "Create a $framework WebUI component. $description" "javascript" "")
+    
+    local ext=".jsx"
+    [[ "$framework" == "Vue.js" ]] && ext=".vue"
+    [[ "$framework" == "Angular" ]] && ext=".ts"
+    [[ "$framework" == "Svelte" ]] && ext=".svelte"
+    [[ "$framework" == "Plain" ]] && ext=".html"
+    
+    mkdir -p "$(dirname "$component_name")"
+    echo "$content" > "${component_name}${ext}"
+    
+    log_info "WebUI component saved to: ${component_name}${ext}"
+    log_event "Generated $framework WebUI: ${component_name}${ext}"
+    
+    wait_for_enter
+}
+
+#-------------------------------------------------------------------------------
+# Android App Creation
+#-------------------------------------------------------------------------------
+
+create_android_app() {
+    show_header
+    echo -e "${CYAN}Create/Update Android App${NC}"
+    echo ""
+    
+    echo "Select project type:"
+    echo "1) Native Android (Kotlin)"
+    echo "2) Native Android (Java)"
+    echo "3) Flutter (Dart)"
+    echo "4) React Native"
+    read -rp "Choice [1-4]: " android_choice
+    
+    local platform=""
+    case $android_choice in
+        1) platform="Kotlin" ;;
+        2) platform="Java" ;;
+        3) platform="Flutter" ;;
+        4) platform="ReactNative" ;;
+        *) log_error "Invalid choice"; wait_for_enter; return 1 ;;
+    esac
+    
+    read -rp "App name: " app_name
+    app_name="${app_name:-MyApp}"
+    read -rp "Describe app functionality: " description
+    
+    local app_dir="${WORK_DIR}/${app_name}"
+    
+    log_info "Creating $platform Android app: $app_name"
+    
+    mkdir -p "$app_dir"
+    
+    # Generate basic structure based on platform
+    case $platform in
+        Kotlin|Java)
+            mkdir -p "$app_dir"/{app/src/main/{java/com/example/${app_name,,},res/{layout,values,drawable}},gradle/wrapper}
+            touch "$app_dir/app/build.gradle"
+            touch "$app_dir/build.gradle"
+            touch "$app_dir/settings.gradle"
+            touch "$app_dir/gradle.properties"
+            touch "$app_dir/README.md"
+            ;;
+        Flutter)
+            mkdir -p "$app_dir"/{lib,test,android,ios,pub}
+            touch "$app_dir/lib/main.dart"
+            touch "$app_dir/pubspec.yaml"
+            touch "$app_dir/README.md"
+            ;;
+        ReactNative)
+            mkdir -p "$app_dir"/{src,android,ios,__tests__}
+            touch "$app_dir/App.js"
+            touch "$app_dir/package.json"
+            touch "$app_dir/README.md"
+            ;;
+    esac
+    
+    # Generate main code file
+    local main_prompt="Create a basic $platform Android app structure for: $description"
+    local main_content
+    main_content=$(call_qwen_coder "$main_prompt" "$platform" "")
+    
+    case $platform in
+        Kotlin) echo "$main_content" > "$app_dir/app/src/main/java/com/example/${app_name,,}/MainActivity.kt" ;;
+        Java) echo "$main_content" > "$app_dir/app/src/main/java/com/example/${app_name,,}/MainActivity.java" ;;
+        Flutter) echo "$main_content" > "$app_dir/lib/main.dart" ;;
+        ReactNative) echo "$main_content" > "$app_dir/App.js" ;;
+    esac
+    
+    log_info "Android app created: $app_dir"
+    log_event "Created $platform Android app: $app_name"
     
     echo ""
-    echo -e "${YELLOW}Generated command:${NC}"
-    echo "$command"
-    echo ""
-    
-    read -rp "Execute this command? [y/N]: " confirm
-    if [[ "$confirm" =~ ^[Yy]$ ]]; then
-        log_info "Executing: $command"
-        eval "$command"
-        log_event "Executed AI-generated command: $command"
-    else
-        log_info "Command execution cancelled"
-    fi
+    echo -e "${GREEN}Project structure created at: $app_dir${NC}"
     
     wait_for_enter
 }
@@ -702,29 +853,25 @@ show_coder_menu() {
         clear_screen
         show_header
         echo -e "${YELLOW}Select option:${NC}"
-        echo "  1) 📝 Generate Markdown Documentation"
-        echo "  2) 💻 Generate Source Code"
-        echo "  3) 📜 Generate Shell Scripts"
-        echo "  4) 🐍 Generate Python Scripts"
-        echo "  5) 🌐 Generate Web Files (HTML/CSS/JS)"
-        echo "  6) 📁 Create Project Structure"
-        echo "  7) ✏️  Edit Existing File with AI"
-        echo "  8) 📤 Execute Custom Command"
-        echo "  9) ⬅️  Back to Main Menu"
+        echo "  1) 📁 Create/Update Project Structure"
+        echo "  2) 📜 Create/Update Shell Script"
+        echo "  3) 💻 Create/Update C/C#/C++ Code with GUI"
+        echo "  4) 🌐 Create/Update WebUI Script"
+        echo "  5) 📱 Create/Update Android App"
+        echo "  6) ✏️  Edit Existing File with AI"
+        echo "  7) ⬅️  Back to Main Menu"
         echo ""
         
-        read -rp "  Choice [1-9]: " choice
+        read -rp "  Choice [1-7]: " choice
         
         case $choice in
-            1) generate_markdown ;;
-            2) generate_source_code ;;
-            3) generate_shell_scripts ;;
-            4) generate_python_scripts ;;
-            5) generate_web_files ;;
-            6) create_project_structure ;;
-            7) edit_existing_file ;;
-            8) execute_custom_command ;;
-            9) break ;;
+            1) create_project_structure ;;
+            2) generate_shell_scripts ;;
+            3) generate_cpp_gui_code ;;
+            4) generate_webui_scripts ;;
+            5) create_android_app ;;
+            6) edit_existing_file ;;
+            7) break ;;
             *) echo -e "${RED}Invalid option!${NC}"; sleep 1 ;;
         esac
     done
@@ -737,19 +884,29 @@ show_coder_menu() {
 parse_arguments() {
     while [[ $# -gt 0 ]]; do
         case $1 in
-            --markdown)
-                shift
-                generate_markdown_cli "$@"
-                exit 0
-                ;;
-            --code)
-                shift
-                generate_code_cli "$@"
-                exit 0
-                ;;
             --project)
                 shift
                 create_project_cli "$@"
+                exit 0
+                ;;
+            --shell)
+                shift
+                generate_shell_cli "$@"
+                exit 0
+                ;;
+            --cpp-gui)
+                shift
+                generate_cpp_gui_cli "$@"
+                exit 0
+                ;;
+            --webui)
+                shift
+                generate_webui_cli "$@"
+                exit 0
+                ;;
+            --android)
+                shift
+                create_android_cli "$@"
                 exit 0
                 ;;
             --edit)
@@ -769,9 +926,11 @@ parse_arguments() {
                 echo "Usage: $0 [OPTIONS]"
                 echo ""
                 echo "Options:"
-                echo "  --markdown TITLE DESC   Generate Markdown documentation"
-                echo "  --code LANG DESC FILE   Generate source code"
                 echo "  --project NAME TYPE     Create project structure"
+                echo "  --shell DESC FILE       Generate shell script"
+                echo "  --cpp-gui LANG DESC     Generate C/C++/C# GUI code"
+                echo "  --webui TYPE DESC NAME  Generate WebUI component"
+                echo "  --android TYPE NAME DESC Create Android app"
                 echo "  --edit FILE CHANGES     Edit file with AI"
                 echo "  --debug                 Enable debug mode"
                 echo "  --verbose               Enable verbose output"
@@ -786,28 +945,101 @@ parse_arguments() {
     done
 }
 
-generate_markdown_cli() {
-    local title="$1"
-    local desc="$2"
-    local output="${3:-README.md}"
+generate_shell_cli() {
+    local desc="$1"
+    local file="${2:-script.sh}"
     
-    local prompt="Create a Markdown document titled '$title'. $desc"
-    local content=$(call_qwen_coder "$prompt" "markdown" "")
-    
-    echo "$content" > "$output"
-    log_info "Markdown generated: $output"
-}
-
-generate_code_cli() {
-    local lang="$1"
-    local desc="$2"
-    local file="$3"
-    
-    local content=$(call_qwen_coder "$desc" "$lang" "")
+    local content=$(call_qwen_coder "$desc" "bash" "")
     
     mkdir -p "$(dirname "$file")"
     echo "$content" > "$file"
-    log_info "Code generated: $file"
+    chmod +x "$file"
+    log_info "Shell script generated: $file"
+}
+
+generate_cpp_gui_cli() {
+    local lang="$1"
+    local desc="$2"
+    local file="${3:-app}"
+    
+    local framework=""
+    case "$lang" in
+        c) framework="GTK" ;;
+        cpp|c++) framework="Qt" ;;
+        csharp|cs) framework="WinForms" ;;
+        *) framework="Qt" ;;
+    esac
+    
+    local content=$(call_qwen_coder "Create a $lang GUI application using $framework. $desc" "$lang" "")
+    
+    local ext=""
+    case "$lang" in
+        c) ext=".c" ;;
+        cpp|c++) ext=".cpp" ;;
+        csharp|cs) ext=".cs" ;;
+        *) ext=".cpp" ;;
+    esac
+    
+    mkdir -p "$(dirname "$file")"
+    echo "$content" > "${file}${ext}"
+    log_info "GUI code generated: ${file}${ext}"
+}
+
+generate_webui_cli() {
+    local type="$1"
+    local desc="$2"
+    local name="${3:-Component}"
+    
+    local ext=".jsx"
+    case "$type" in
+        react|React) ext=".jsx" ;;
+        vue|Vue.js) ext=".vue" ;;
+        angular|Angular) ext=".ts" ;;
+        svelte|Svelte) ext=".svelte" ;;
+        plain|Plain) ext=".html" ;;
+    esac
+    
+    local content=$(call_qwen_coder "Create a $type WebUI component. $desc" "javascript" "")
+    
+    mkdir -p "$(dirname "$name")"
+    echo "$content" > "${name}${ext}"
+    log_info "WebUI component generated: ${name}${ext}"
+}
+
+create_android_cli() {
+    local type="$1"
+    local name="${2:-MyApp}"
+    local desc="${3:-Android app}"
+    
+    local app_dir="${WORK_DIR}/${name}"
+    mkdir -p "$app_dir"
+    
+    case "$type" in
+        kotlin|Kotlin)
+            mkdir -p "$app_dir"/{app/src/main/java,gradle/wrapper}
+            touch "$app_dir/app/build.gradle"
+            touch "$app_dir/README.md"
+            ;;
+        java|Java)
+            mkdir -p "$app_dir"/{app/src/main/java,gradle/wrapper}
+            touch "$app_dir/app/build.gradle"
+            touch "$app_dir/README.md"
+            ;;
+        flutter|Flutter)
+            mkdir -p "$app_dir"/{lib,test}
+            touch "$app_dir/lib/main.dart"
+            touch "$app_dir/pubspec.yaml"
+            touch "$app_dir/README.md"
+            ;;
+        reactnative|ReactNative)
+            mkdir -p "$app_dir"/{src,__tests__}
+            touch "$app_dir/App.js"
+            touch "$app_dir/package.json"
+            touch "$app_dir/README.md"
+            ;;
+    esac
+    
+    log_info "Android app project created: $app_dir"
 }
 
 create_project_cli() {
