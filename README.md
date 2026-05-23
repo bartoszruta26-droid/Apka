@@ -1243,49 +1243,54 @@ nats sub "qwen-tam.results.>" --queue workers
 > Wszystkie komponenty muszą być zaimplementowane w dozwolonych technologiach poniżej.
 
 ### 1. 🐍 Bash Shell Script (Linux)
-*   **Zastosowanie**: Skrypty systemowe, automatyzacja zadań administracyjnych, skrypty startowe dla kontenerów, narzędzia CLI.
+*   **Zastosowanie**: Skrypty systemowe, automatyzacja zadań administracyjnych, skrypty startowe dla kontenerów, narzędzia CLI, TUI (Text User Interface).
 *   **Środowisko**: Linux (Debian/Raspbian, Ubuntu, Alpine).
 *   **Przykłady użycia w projekcie**:
     *   `install.sh` - instalacja zależności i konfiguracja systemu.
     *   `update-cluster.sh` - zarządzanie aktualizacjami na klastrze Swarm.
     *   Entry-pointy dla kontenerów Docker.
     *   Skrypty TUI menu aplikacji.
+    *   Automatyzacja procesów z wykorzystaniem lokalnych modeli AI.
 *   **Standardy**: POSIX sh lub Bash 4.0+, rygorystyczne sprawdzanie błędów (`set -euo pipefail`).
 
 ### 2. 💻 C / C# / C++ (Cross-Platform GUI)
 *   **Zastosowanie**: Wydajne aplikacje desktopowe, moduły obliczeniowe, sterowniki sprzętowe, zaawansowane TUI/GUI.
 *   **Kompatybilność**: Linux, Windows, macOS.
 *   **Frameworki i Narzędzia**:
-    *   **C/C++**: Qt (GUI), ncurses/imlib2 (TUI), CMake (budowa).
-    *   **C#**: .NET MAUI lub Avalonia UI (cross-platform GUI), Entity Framework Core.
+    *   **C/C++**: Qt (GUI), ncurses/imlib2 (TUI), CMake (budowa), GTK.
+    *   **C#**: .NET MAUI lub Avalonia UI (cross-platform GUI), Entity Framework Core, WinForms/WPF (Windows native).
 *   **Przykłady użycia w projekcie**:
     *   Rdzeń silnika harmonogramowania (C++ dla wydajności).
     *   Zaawansowany klient desktopowy do wizualizacji danych.
     *   Moduły komunikacji niskopoziomowej.
     *   Aplikacje mobilne cross-platform (C#/.NET MAUI).
+    *   Native aplikacje na każdą platformę desktopową.
 
 ### 3. 🌐 WebUI (Apache2 + Linux)
-*   **Zastosowanie**: Interfejs użytkownika dostępny przez przeglądarkę, dashboardy, zdalne zarządzanie.
+*   **Zastosowanie**: Interfejs użytkownika dostępny przez przeglądarkę, dashboardy, zdalne zarządzanie, REST API.
 *   **Stack Technologiczny**:
-    *   **Serwer WWW**: Apache2 (mod_proxy, mod_ssl, mod_rewrite).
-    *   **Backend**: Go, Node.js, lub C# (.NET Core) działające jako usługa systemowa lub kontener.
-    *   **Frontend**: HTML5, CSS3, JavaScript (Vanilla lub lekkie frameworki jak Alpine.js/Vue.js).
+    *   **Serwer WWW**: Apache2 (mod_proxy, mod_ssl, mod_rewrite, mod_security).
+    *   **Backend**: Go, Node.js, C# (.NET Core), lub C++ (CGI/FastCGI) działające jako usługa systemowa lub kontener.
+    *   **Frontend**: HTML5, CSS3, JavaScript (Vanilla lub lekkie frameworki jak Alpine.js/Vue.js/React).
 *   **Architektura**: Reverse Proxy (Apache2) kierujący ruch do backendu API.
 *   **Przykłady użycia w projekcie**:
     *   Główny panel sterowania aplikacją.
     *   Widoki raportów i wykresów czasu pracy.
     *   Konfigurator reguł automatyzacji.
+    *   Dashboard monitoringu systemu.
 
 ### 4. 📱 Android App
-*   **Zastosowanie**: Mobilny dostęp do systemu, powiadomienia push, skanowanie kodów, praca terenowa.
+*   **Zastosowanie**: Mobilny dostęp do systemu, powiadomienia push, skanowanie kodów, praca terenowa, rejestracja czasu pracy.
 *   **Technologie**:
-    *   **Język**: Kotlin lub Java (Native).
+    *   **Język**: Kotlin lub Java (Native Android).
     *   **Alternatywa Cross-platform**: Flutter (Dart) lub .NET MAUI (C#) - zgodne z zakazem Pythona.
 *   **Komunikacja**: REST API / gRPC z backendem.
 *   **Przykłady użycia w projekcie**:
     *   Rejestracja czasu pracy w terenie.
     *   Odbieranie alertów z systemu monitoringu.
     *   Skaner kodów QR/ISBN do inwentaryzacji.
+    *   Powiadomienia o zdarzeniach systemowych.
+    *   Tryb offline z synchronizacją.
 
 ---
 
