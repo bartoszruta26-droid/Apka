@@ -859,10 +859,11 @@ show_coder_menu() {
         echo "  4) 🌐 Create/Update WebUI Script"
         echo "  5) 📱 Create/Update Android App"
         echo "  6) ✏️  Edit Existing File with AI"
-        echo "  7) ⬅️  Back to Main Menu"
+        echo "  7) 📂 Project Templates Manager"
+                echo "  8) ⬅️  Back to Main Menu"
         echo ""
         
-        read -rp "  Choice [1-7]: " choice
+        read -rp "  Choice [1-8]: " choice
         
         case $choice in
             1) create_project_structure ;;
@@ -871,6 +872,15 @@ show_coder_menu() {
             4) generate_webui_scripts ;;
             5) create_android_app ;;
             6) edit_existing_file ;;
+            8) 
+                # Launch Templates Manager
+                if [[ -f "${SCRIPT_DIR}/templates-manager.sh" ]]; then
+                    bash "${SCRIPT_DIR}/templates-manager.sh"
+                else
+                    echo -e "${RED}Templates manager not found!${NC}"
+                    sleep 2
+                fi
+                ;;
             7) break ;;
             *) echo -e "${RED}Invalid option!${NC}"; sleep 1 ;;
         esac
