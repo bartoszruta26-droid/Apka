@@ -182,7 +182,7 @@ show_submenu_verification() {
     echo -e "${CYAN}║                   CODE VERIFICATION                          ║${NC}"
     echo -e "${CYAN}╠══════════════════════════════════════════════════════════════╣${NC}"
     echo -e "${GREEN}║  [3.1] 🔍 Syntax Check (Shell)                               ║${NC}"
-    echo -e "${GREEN}║  [3.2] 🔍 Syntax Check (Python)                              ║${NC}"
+    echo -e "${GREEN}║  [3.2] 🔍 Syntax Check (C/C++)                               ║${NC}"
     echo -e "${GREEN}║  [3.3] 🛡️  Security Scan                                     ║${NC}"
     echo -e "${GREEN}║  [3.4] 📏 Code Style Check                                   ║${NC}"
     echo -e "${GREEN}║  [3.5] 🧪 Run Unit Tests                                     ║${NC}"
@@ -365,13 +365,66 @@ github_sync_local_remote() {
 # coder_edit_existing_file() { log_info "Edit Existing File with AI (stub)"; }
 # coder_execute_custom_command() { log_info "Execute Custom Command (stub)"; }
 
-# Code Verification
-verify_syntax_shell() { log_info "Syntax Check Shell (stub)"; }
-verify_syntax_python() { log_info "Syntax Check Python (stub)"; }
-verify_security_scan() { log_info "Security Scan (stub)"; }
-verify_code_style() { log_info "Code Style Check (stub)"; }
-verify_run_unit_tests() { log_info "Run Unit Tests (stub)"; }
-verify_generate_report() { log_info "Generate Verification Report (stub)"; }
+# Code Verification - delegowanie do podskryptu verify.sh
+verify_syntax_shell() {
+    log_event "Code Verification - Syntax Check Shell"
+    if [[ -f "${SCRIPT_DIR}/scripts/verify.sh" ]]; then
+        source "${SCRIPT_DIR}/scripts/verify.sh"
+        verify_syntax_shell
+    else
+        log_error "Podskrypt verify.sh nie znaleziony!"
+    fi
+}
+
+verify_syntax_cpp() {
+    log_event "Code Verification - Syntax Check C/C++"
+    if [[ -f "${SCRIPT_DIR}/scripts/verify.sh" ]]; then
+        source "${SCRIPT_DIR}/scripts/verify.sh"
+        verify_syntax_cpp
+    else
+        log_error "Podskrypt verify.sh nie znaleziony!"
+    fi
+}
+
+verify_security_scan() {
+    log_event "Code Verification - Security Scan"
+    if [[ -f "${SCRIPT_DIR}/scripts/verify.sh" ]]; then
+        source "${SCRIPT_DIR}/scripts/verify.sh"
+        verify_security_scan
+    else
+        log_error "Podskrypt verify.sh nie znaleziony!"
+    fi
+}
+
+verify_code_style() {
+    log_event "Code Verification - Code Style Check"
+    if [[ -f "${SCRIPT_DIR}/scripts/verify.sh" ]]; then
+        source "${SCRIPT_DIR}/scripts/verify.sh"
+        verify_code_style
+    else
+        log_error "Podskrypt verify.sh nie znaleziony!"
+    fi
+}
+
+verify_run_unit_tests() {
+    log_event "Code Verification - Run Unit Tests"
+    if [[ -f "${SCRIPT_DIR}/scripts/verify.sh" ]]; then
+        source "${SCRIPT_DIR}/scripts/verify.sh"
+        verify_run_unit_tests
+    else
+        log_error "Podskrypt verify.sh nie znaleziony!"
+    fi
+}
+
+verify_generate_report() {
+    log_event "Code Verification - Generate Report"
+    if [[ -f "${SCRIPT_DIR}/scripts/verify.sh" ]]; then
+        source "${SCRIPT_DIR}/scripts/verify.sh"
+        verify_generate_report
+    else
+        log_error "Podskrypt verify.sh nie znaleziony!"
+    fi
+}
 
 # Automation & AI Agent
 automation_start_discussion() { log_info "Start AI Discussion Session (stub)"; }
@@ -464,7 +517,7 @@ handle_verification_menu() {
         read -rp "  Enter choice [3.1-3.7]: " choice
         case $choice in
             3.1) verify_syntax_shell ;;
-            3.2) verify_syntax_python ;;
+            3.2) verify_syntax_cpp ;;
             3.3) verify_security_scan ;;
             3.4) verify_code_style ;;
             3.5) verify_run_unit_tests ;;
