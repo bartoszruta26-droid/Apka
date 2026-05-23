@@ -81,10 +81,18 @@ init_environment() {
     mkdir -p "$LOG_DIR"
     mkdir -p "${SCRIPT_DIR}/config"
     
+    # Set default FINISH_DIR before loading config
+    FINISH_DIR="${SCRIPT_DIR}/finish"
+    
     # Ładowanie konfiguracji
     if [[ -f "$CONFIG_FILE" ]]; then
         log_debug "Loading configuration from $CONFIG_FILE"
         source "$CONFIG_FILE"
+        # Override FINISH_DIR with user-configured EXPORT_FINISH_DIR if set
+        if [[ -n "${EXPORT_FINISH_DIR:-}" ]]; then
+            FINISH_DIR="$EXPORT_FINISH_DIR"
+            log_debug "Using configured finish directory: $FINISH_DIR"
+        fi
     else
         log_info "Configuration file not found. Will create on first use."
     fi
@@ -893,9 +901,11 @@ handle_update_menu() {
 #-------------------------------------------------------------------------------
 # Export Results Module - Moodle/Joomla/Nextcloud
 #-------------------------------------------------------------------------------
+# Konfiguracja eksportu - Export Configuration
+#-------------------------------------------------------------------------------
 
-# Stałe konfiguracyjne dla eksportu
-readonly FINISH_DIR="${SCRIPT_DIR}/finish"
+# Stałe konfiguracyjne dla eksportu - Export configuration constants
+# Note: FINISH_DIR will be set after loading config to allow user override
 readonly MOODLE_DEFAULT_FORMAT="book"
 readonly JOOMLA_DEFAULT_CATEGORY="1"
 readonly NEXTCLOUD_DEFAULT_PATH="/"
