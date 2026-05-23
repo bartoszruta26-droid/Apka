@@ -508,6 +508,74 @@ Informacje o wersji i historia zmian:
 
 ---
 
+### Podmenu 9: Exit
+
+```
+╔══════════════════════════════════════════════════════════════╗
+║                      EXIT APPLICATION                        ║
+╠══════════════════════════════════════════════════════════════╣
+║  [9.1] 💾 Save Session & Exit                                ║
+║  [9.2] 🚪 Quick Exit                                         ║
+║  [9.3] 🔄 Restart Application                                ║
+║  [9.4] 🧹 Clear Cache & Exit                                 ║
+║  [9.5] 📊 Generate Session Report Before Exit                ║
+║  [9.6] ↩️  Back to Main Menu                                 ║
+╚══════════════════════════════════════════════════════════════╝
+```
+
+**Opis funkcjonalności Podmenu 9 - Exit:**
+
+#### [9.1] Save Session & Exit
+- Zapisuje stan sesji przed zamknięciem aplikacji
+- Zapisuje otwarte pliki i ostatnie lokalizacje
+- Zapamiętuje historię komend z sesji
+- Tworzy snapshot konfiguracji roboczej
+- Bezpieczne zamykanie połączeń (GitHub API, Ollama)
+- Generowanie pliku sesji do przywrócenia później
+
+#### [9.2] Quick Exit
+- Natychmiastowe zamknięcie aplikacji
+- Czyszczenie zmiennych wrażliwych z pamięci (tokeny, hasła)
+- Zapis podstawowych logów zdarzeń
+- Przywrócenie domyślnych ustawień terminala
+- Komunikat pożegnalny z podsumowaniem sesji
+
+#### [9.3] Restart Application
+- Restart aplikacji bez zamykania terminala
+- Zachowanie kluczowych zmiennych środowiskowych
+- Reload konfiguracji z pliku
+- Czyści cache i tymczasowe pliki
+- Przydatne po zmianach w konfiguracji
+
+#### [9.4] Clear Cache & Exit
+- Usuwa pliki tymczasowe i cache
+- Czyszczenie katalogu staging (po aktualizacjach)
+- Usuwanie starych backupów (zachowuje najnowsze 5)
+- Czyszczenie logów starszych niż 30 dni
+- Opcja czyszczenia cache modeli AI (Ollama)
+- Bezpieczne zamknięcie aplikacji
+
+#### [9.5] Generate Session Report Before Exit
+- Generuje raport z obecnej sesji
+- Statystyki sesji:
+  - Czas trwania sesji
+  - Liczba wykonanych operacji
+  - Lista utworzonych/modyfikowanych plików
+  - Błędy i ostrzeżenia
+  - Zużycie zasobów (CPU/RAM średnie)
+- Eksport raportu do formats:
+  - Markdown (.md)
+  - JSON (.json)
+  - Plain text (.txt)
+- Opcja wysłania raportu mailem
+- Zapis do katalogu reports/
+
+#### [9.6] Back to Main Menu
+- Powrót do głównego menu bez wychodzenia
+- Anulowanie wyboru wyjścia
+
+---
+
 ## Tryby Pracy Aplikacji
 
 ### 1. Tryb Interaktywny (TUI)
