@@ -872,16 +872,16 @@ show_coder_menu() {
             4) generate_webui_scripts ;;
             5) create_android_app ;;
             6) edit_existing_file ;;
-            8) 
+            7) 
                 # Launch Templates Manager
-                if [[ -f "${SCRIPT_DIR}/templates-manager.sh" ]]; then
-                    bash "${SCRIPT_DIR}/templates-manager.sh"
+                if [[ -f "${SCRIPT_DIR}/../templates-manager.sh" ]]; then
+                    bash "${SCRIPT_DIR}/../templates-manager.sh"
                 else
                     echo -e "${RED}Templates manager not found!${NC}"
                     sleep 2
                 fi
                 ;;
-            7) break ;;
+            8) break ;;
             *) echo -e "${RED}Invalid option!${NC}"; sleep 1 ;;
         esac
     done
