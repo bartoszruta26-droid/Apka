@@ -548,15 +548,90 @@ automation_quick_custom() {
     fi
 }
 
-# Configuration & Settings
-config_manage_github_token() { log_info "Manage GitHub Token (stub)"; }
-config_configure_qwen_api() { log_info "Configure Qwen API Endpoint (stub)"; }
-config_set_working_directory() { log_info "Set Working Directory (stub)"; }
-config_theme_display() { log_info "Theme & Display Options (stub)"; }
-config_notification_settings() { log_info "Notification Settings (stub)"; }
-config_backup() { log_info "Backup Configuration (stub)"; }
-config_restore() { log_info "Restore Configuration (stub)"; }
-config_reset_defaults() { log_info "Reset to Defaults (stub)"; }
+#-------------------------------------------------------------------------------
+# Configuration & Settings - delegowanie do podskryptu config.sh
+#-------------------------------------------------------------------------------
+
+config_manage_github_token() {
+    log_event "Configuration: Manage GitHub Token"
+    if [[ -f "${SCRIPT_DIR}/scripts/config.sh" ]]; then
+        source "${SCRIPT_DIR}/scripts/config.sh"
+        menu_manage_github_token
+    else
+        log_error "Podskrypt config.sh nie znaleziony!"
+        echo "Uruchomienie trybu interaktywnego konfiguracji..."
+    fi
+}
+
+config_configure_qwen_api() {
+    log_event "Configuration: Configure Qwen API Endpoint"
+    if [[ -f "${SCRIPT_DIR}/scripts/config.sh" ]]; then
+        source "${SCRIPT_DIR}/scripts/config.sh"
+        menu_configure_qwen_api
+    else
+        log_error "Podskrypt config.sh nie znaleziony!"
+    fi
+}
+
+config_set_working_directory() {
+    log_event "Configuration: Set Working Directory"
+    if [[ -f "${SCRIPT_DIR}/scripts/config.sh" ]]; then
+        source "${SCRIPT_DIR}/scripts/config.sh"
+        menu_set_working_directory
+    else
+        log_error "Podskrypt config.sh nie znaleziony!"
+    fi
+}
+
+config_theme_display() {
+    log_event "Configuration: Theme & Display Options"
+    if [[ -f "${SCRIPT_DIR}/scripts/config.sh" ]]; then
+        source "${SCRIPT_DIR}/scripts/config.sh"
+        menu_theme_display
+    else
+        log_error "Podskrypt config.sh nie znaleziony!"
+    fi
+}
+
+config_notification_settings() {
+    log_event "Configuration: Notification Settings"
+    if [[ -f "${SCRIPT_DIR}/scripts/config.sh" ]]; then
+        source "${SCRIPT_DIR}/scripts/config.sh"
+        menu_notification_settings
+    else
+        log_error "Podskrypt config.sh nie znaleziony!"
+    fi
+}
+
+config_backup() {
+    log_event "Configuration: Backup Configuration"
+    if [[ -f "${SCRIPT_DIR}/scripts/config.sh" ]]; then
+        source "${SCRIPT_DIR}/scripts/config.sh"
+        menu_backup_configuration
+    else
+        log_error "Podskrypt config.sh nie znaleziony!"
+    fi
+}
+
+config_restore() {
+    log_event "Configuration: Restore Configuration"
+    if [[ -f "${SCRIPT_DIR}/scripts/config.sh" ]]; then
+        source "${SCRIPT_DIR}/scripts/config.sh"
+        menu_restore_configuration
+    else
+        log_error "Podskrypt config.sh nie znaleziony!"
+    fi
+}
+
+config_reset_defaults() {
+    log_event "Configuration: Reset to Defaults"
+    if [[ -f "${SCRIPT_DIR}/scripts/config.sh" ]]; then
+        source "${SCRIPT_DIR}/scripts/config.sh"
+        menu_reset_defaults
+    else
+        log_error "Podskrypt config.sh nie znaleziony!"
+    fi
+}
 
 # Logs & Monitoring
 logs_view_app() { log_info "View Application Log (stub)"; }
