@@ -449,7 +449,25 @@ config_backup() { log_info "Backup Configuration (stub)"; }
 config_restore() { log_info "Restore Configuration (stub)"; }
 config_reset_defaults() { log_info "Reset to Defaults (stub)"; }
 
-# Logs & Monitoring
+#-------------------------------------------------------------------------------
+# Integracja z podskryptami - Logs & Monitoring
+#-------------------------------------------------------------------------------
+
+# Logs & Monitoring - delegowanie do podskryptu logs.sh
+handle_logs_menu() {
+    log_event "Logs & Monitoring Menu"
+    if [[ -f "${SCRIPT_DIR}/scripts/logs.sh" ]]; then
+        source "${SCRIPT_DIR}/scripts/logs.sh"
+        logs_menu
+    else
+        log_error "Podskrypt logs.sh nie znaleziony!"
+        echo "Uruchomienie trybu interaktywnego Logs & Monitoring..."
+        echo "Wymagane pliki: scripts/logs.sh"
+        read -rp "Press Enter to continue..."
+    fi
+}
+
+# Pozostałe funkcje logs jako fallback (gdyby logs.sh nie był dostępny)
 logs_view_app() { log_info "View Application Log (stub)"; }
 logs_view_debug() { log_info "View Debug Log (stub)"; }
 logs_view_events() { log_info "View Events Log (stub)"; }
@@ -572,24 +590,7 @@ handle_config_menu() {
     done
 }
 
-handle_logs_menu() {
-    while true; do
-        show_submenu_logs
-        read -rp "  Enter choice [6.1-6.8]: " choice
-        case $choice in
-            6.1) logs_view_app ;;
-            6.2) logs_view_debug ;;
-            6.3) logs_view_events ;;
-            6.4) logs_search ;;
-            6.5) logs_clear_old ;;
-            6.6) logs_export ;;
-            6.7) logs_realtime_monitor ;;
-            6.8|68) break ;;
-            *) echo -e "${RED}Invalid option!${NC}"; sleep 1 ;;
-        esac
-        [[ $choice != "6.8" && $choice != "68" ]] && read -rp "Press Enter to continue..."
-    done
-}
+# Usunięto - handle_logs_menu jest teraz w scripts/logs.sh
 
 handle_system_menu() {
     while true; do
