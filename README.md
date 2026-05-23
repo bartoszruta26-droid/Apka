@@ -221,6 +221,64 @@ Główny punkt wejścia aplikacji, odpowiedzialny za:
 ╚══════════════════════════════════════════════════════════════╝
 ```
 
+**Opis funkcjonalności Podmenu 6 - Logs & Monitoring:**
+
+#### [6.1] View Application Log (app.log)
+- Wyświetlanie logów aplikacji z różnych opcjami przeglądania
+- Podgląd ostatnich 50, 100, 200 linii lub całego pliku
+- Wyszukiwanie wzorców w logach aplikacji
+- Informacje o pliku: liczba linii, rozmiar, data ostatniej modyfikacji
+- Obsługa nieistniejącego pliku logu z przyjaznym komunikatem
+
+#### [6.2] View Debug Log (debug.log)
+- Przeglądanie szczegółowych logów debugowych
+- Statystyki: liczba błędów, ostrzeżeń i komunikatów debug
+- Filtrowanie po typie wiadomości (tylko błędy)
+- Wyszukiwanie wzorców w logach debug
+- Dostępne tylko gdy DEBUG_MODE jest włączony
+
+#### [6.3] View Events Log (events.log)
+- Podgląd dziennika zdarzeń aplikacji
+- Statystyki zdarzeń według kategorii:
+  - Operacje GitHub
+  - Operacje Coder
+  - Operacje Agent
+  - Zmiany konfiguracji
+- Timeline view - grupowanie zdarzeń według godziny
+- Filtrowanie zdarzeń po kategoriach
+
+#### [6.4] Search Logs
+- Wyszukiwanie zaawansowane we wszystkich logach
+- Wsparcie dla wyrażeń regularnych (regex)
+- Możliwość wyszukiwania w pojedynczym pliku lub we wszystkich
+- Podgląd wyników z numerami linii
+- Opcja zapisu wyników wyszukiwania do pliku
+- Limit wyświetlanych wyników (pierwsze 50)
+
+#### [6.5] Clear Old Logs
+- Czyszczenie starych plików logów
+- Opcje czasowe: 7, 30, 90 dni
+- Truncation bieżących plików (zachowuje strukturę)
+- Nieodwracalne usuwanie WSZYSTKICH logów (z potwierdzeniem)
+- Bezpieczne usuwanie z podsumowaniem operacji
+
+#### [6.6] Export Logs
+- Eksport pojedynczych plików logów
+- Eksport wszystkich logów jako archiwum ZIP/TAR.GZ
+- Automatyczne generowanie nazw plików z timestampem
+- Zapis do katalogu exports/
+- Informacje o rozmiarze eksportowanych plików
+- Fallback na tar jeśli zip nie jest dostępny
+
+#### [6.7] Real-time Log Monitor
+- Monitorowanie logów w czasie rzeczywistym (tail -f)
+- Wybór monitorowanego pliku logu
+- Multiplexed monitoring - wszystkie logi jednocześnie
+- Kolorowe oznaczanie źródła wiadomości (APP/DBG/EVT)
+- Możliwość zatrzymania Ctrl+C
+
+---
+
 ### Podmenu 7: System Information
 
 ```
