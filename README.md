@@ -2,6 +2,43 @@
 
 Aplikacja bash shell script do zarządzania czasem i automatyzacji procesów z wykorzystaniem lokalnych modeli AI Qwen Agent i Qwen Coder.
 
+## Szybki Start
+
+### Instalacja
+
+```bash
+# Pobierz repozytorium
+git clone <URL_REPOZYTORIUM>
+cd qwen-tam
+
+# Uruchom skrypt instalacyjny (wymaga uprawnień root)
+sudo ./install.sh
+
+# Lub z opcjami:
+sudo ./install.sh --force      # Instalacja bez pytań
+sudo ./install.sh --check      # Tylko sprawdź wymagania
+sudo ./install.sh --uninstall  # Odinstaluj aplikację
+```
+
+### Pierwsze Uruchomienie
+
+```bash
+# Po instalacji uruchom aplikację poleceniem:
+qwen-tam
+
+# Lub bezpośrednio:
+/opt/qwen-tam/qwen-tam.sh
+```
+
+### Konfiguracja
+
+1. Uruchom aplikację: `qwen-tam`
+2. Przejdź do menu **[5] Configuration & Settings**
+3. Wybierz **[5.1] Manage GitHub Token** i wprowadź swój token
+4. Gotowe! Możesz zacząć korzystać z aplikacji.
+
+---
+
 ## Opis projektu
 
 Aplikacja działa jako TUI (Text User Interface) w terminalu i służy do:
@@ -59,6 +96,7 @@ Aplikacja składa się z następujących plików i katalogów:
 
 ```
 qwen-tam/
+├── install.sh            # Skrypt instalacyjny
 ├── qwen-tam.sh           # Główny skrypt inicjujący i menu TUI
 ├── scripts/
 │   ├── auth.sh           # Autoryzacja i zarządzanie tokenem GitHub
@@ -82,6 +120,27 @@ qwen-tam/
 ├── SECURITY_IMPROVEMENTS.md # Dokumentacja bezpieczeństwa
 └── README.md             # Ten plik
 ```
+
+### Skrypt Instalacyjny: `install.sh`
+
+Skrypt instalacyjny odpowiedzialny za:
+- Sprawdzenie wymagań systemowych (bash, curl, git, jq, wget)
+- Automatyczną instalację brakujących zależności
+- Tworzenie katalogów w `/opt/qwen-tam`
+- Kopiowanie plików aplikacji
+- Tworzenie linku symbolicznego w `/usr/local/bin/qwen-tam`
+- Konfigurację uprawnień
+- Utworzenie domyślnego pliku konfiguracyjnego `~/.qwen_tam_config`
+- Dodanie aliasu do powłoki użytkownika
+- Weryfikację poprawności instalacji
+- Obsługę odinstalowywania aplikacji
+
+**Opcje skryptu instalacyjnego:**
+- `-h, --help` - Pokaż pomoc
+- `-v, --verbose` - Tryb szczegółowy
+- `-f, --force` - Wymuś instalację bez pytań
+- `-u, --uninstall` - Odinstaluj aplikację
+- `-c, --check` - Tylko sprawdź wymagania
 
 ### Skrypt Główny: `qwen-tam.sh`
 
