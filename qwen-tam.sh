@@ -180,6 +180,7 @@ show_submenu_coder() {
     echo -e "${GREEN}║  [2.4] 🌐 Create/Update WebUI Script                         ║${NC}"
     echo -e "${GREEN}║  [2.5] 📱 Create/Update Android App                          ║${NC}"
     echo -e "${GREEN}║  [2.6] ✏️  Edit Existing File with AI                        ║${NC}"
+    echo -e "${GREEN}║  [2.8] 📂 Project Templates Manager                          ║${NC}"
     echo -e "${YELLOW}║  [2.7] ⬅️  Back to Main Menu                                 ║${NC}"
     echo -e "${CYAN}╚══════════════════════════════════════════════════════════════╝${NC}"
     echo ""
