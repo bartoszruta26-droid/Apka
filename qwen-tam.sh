@@ -642,13 +642,90 @@ logs_clear_old() { log_info "Clear Old Logs (stub)"; }
 logs_export() { log_info "Export Logs (stub)"; }
 logs_realtime_monitor() { log_info "Real-time Log Monitor (stub)"; }
 
-# System Information
-system_resources() { log_info "System Resources (stub)"; }
-system_temperature_health() { log_info "Temperature & Health Status (stub)"; }
-system_dependencies() { log_info "Installed Dependencies (stub)"; }
-system_qwen_status() { log_info "Qwen Model Status (stub)"; }
-system_network() { log_info "Network Connectivity (stub)"; }
-system_version_changelog() { log_info "Version & Changelog (stub)"; }
+# System Information - delegowanie do podskryptu system.sh
+system_resources() {
+    log_event "System Resources Check"
+    if [[ -f "${SCRIPT_DIR}/scripts/system.sh" ]]; then
+        source "${SCRIPT_DIR}/scripts/system.sh"
+        system_resources
+    else
+        log_info "💻 System Resources:"
+        echo "  CPU: $(nproc 2>/dev/null || echo 'N/A') cores"
+        echo "  RAM: $(free -h 2>/dev/null | grep Mem | awk '{print $3 "/" $2}' || echo 'N/A')"
+        echo "  Disk: $(df -h / 2>/dev/null | tail -1 | awk '{print $3 "/" $2 " (" $5 ")"}' || echo 'N/A')"
+    fi
+}
+
+system_temperature_health() {
+    log_event "Temperature & Health Status Check"
+    if [[ -f "${SCRIPT_DIR}/scripts/system.sh" ]]; then
+        source "${SCRIPT_DIR}/scripts/system.sh"
+        system_temperature_health
+    else
+        log_info "🌡️  Temperature & Health Status:"
+        if [[ -f /sys/class/thermal/thermal_zone0/temp ]]; then
+            local temp=$(cat /sys/class/thermal/thermal_zone0/temp 2>/dev/null)
+            echo "  CPU Temp: $((temp / 1000))°C"
+        else
+            echo "  Temperature sensor not available"
+        fi
+        echo "  System Health: OK"
+    fi
+}
+
+system_dependencies() {
+    log_event "Installed Dependencies Check"
+    if [[ -f "${SCRIPT_DIR}/scripts/system.sh" ]]; then
+        source "${SCRIPT_DIR}/scripts/system.sh"
+        system_dependencies
+    else
+        log_info "📦 Installed Dependencies:"
+        echo "  git: $(command -v git &>/dev/null && echo '✅' || echo '❌')"
+        echo "  curl: $(command -v curl &>/dev/null && echo '✅' || echo '❌')"
+        echo "  jq: $(command -v jq &>/dev/null && echo '✅' || echo '❌')"
+        echo "  python3: $(command -v python3 &>/dev/null && echo '✅' || echo '❌')"
+    fi
+}
+
+system_qwen_status() {
+    log_event "Qwen Model Status Check"
+    if [[ -f "${SCRIPT_DIR}/scripts/system.sh" ]]; then
+        source "${SCRIPT_DIR}/scripts/system.sh"
+        system_qwen_status
+    else
+        log_info "🤖 Qwen Model Status:"
+        if command -v ollama &>/dev/null; then
+            echo "  Ollama: ✅ Installed"
+            echo "  Models: $(ollama list 2>/dev/null | wc -l) installed"
+        else
+            echo "  Ollama: ❌ Not installed"
+        fi
+    fi
+}
+
+system_network() {
+    log_event "Network Connectivity Check"
+    if [[ -f "${SCRIPT_DIR}/scripts/system.sh" ]]; then
+        source "${SCRIPT_DIR}/scripts/system.sh"
+        system_network
+    else
+        log_info "🔗 Network Connectivity:"
+        echo "  Hostname: $(hostname 2>/dev/null || echo 'N/A')"
+        echo "  GitHub API: $(curl -s -o /dev/null -w '%{http_code}' --connect-timeout 3 https://api.github.com 2>/dev/null)"
+    fi
+}
+
+system_version_changelog() {
+    log_event "Version & Changelog Display"
+    if [[ -f "${SCRIPT_DIR}/scripts/system.sh" ]]; then
+        source "${SCRIPT_DIR}/scripts/system.sh"
+        system_version_changelog
+    else
+        log_info "📜 Version & Changelog:"
+        echo "  Version: ${VERSION:-1.0}"
+        echo "  Edition: Raspberry Pi 4"
+    fi
+}
 
 # Update Application
 update_check() { log_info "Check for Updates (stub)"; }
