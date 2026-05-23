@@ -357,15 +357,15 @@ github_sync_local_remote() {
     fi
 }
 
-# Qwen Coder
-coder_generate_markdown() { log_info "Generate Markdown Documentation (stub)"; }
-coder_generate_source_code() { log_info "Generate Source Code (stub)"; }
-coder_generate_shell_scripts() { log_info "Generate Shell Scripts (stub)"; }
-coder_generate_python_scripts() { log_info "Generate Python Scripts (stub)"; }
-coder_generate_web_files() { log_info "Generate Web Files (stub)"; }
-coder_create_project_structure() { log_info "Create Project Structure (stub)"; }
-coder_edit_existing_file() { log_info "Edit Existing File with AI (stub)"; }
-coder_execute_custom_command() { log_info "Execute Custom Command (stub)"; }
+# Qwen Coder - funkcje stub (nieużywane, gdy coder.sh jest dostępny)
+# coder_generate_markdown() { log_info "Generate Markdown Documentation (stub)"; }
+# coder_generate_source_code() { log_info "Generate Source Code (stub)"; }
+# coder_generate_shell_scripts() { log_info "Generate Shell Scripts (stub)"; }
+# coder_generate_python_scripts() { log_info "Generate Python Scripts (stub)"; }
+# coder_generate_web_files() { log_info "Generate Web Files (stub)"; }
+# coder_create_project_structure() { log_info "Create Project Structure (stub)"; }
+# coder_edit_existing_file() { log_info "Edit Existing File with AI (stub)"; }
+# coder_execute_custom_command() { log_info "Execute Custom Command (stub)"; }
 
 # Code Verification
 verify_syntax_shell() { log_info "Syntax Check Shell (stub)"; }
@@ -448,23 +448,16 @@ handle_github_menu() {
 }
 
 handle_coder_menu() {
-    while true; do
-        show_submenu_coder
-        read -rp "  Enter choice [2.1-2.9]: " choice
-        case $choice in
-            2.1) coder_generate_markdown ;;
-            2.2) coder_generate_source_code ;;
-            2.3) coder_generate_shell_scripts ;;
-            2.4) coder_generate_python_scripts ;;
-            2.5) coder_generate_web_files ;;
-            2.6) coder_create_project_structure ;;
-            2.7) coder_edit_existing_file ;;
-            2.8) coder_execute_custom_command ;;
-            2.9|29) break ;;
-            *) echo -e "${RED}Invalid option!${NC}"; sleep 1 ;;
-        esac
-        [[ $choice != "2.9" && $choice != "29" ]] && read -rp "Press Enter to continue..."
-    done
+    # Wywołanie zewnętrznego podskryptu coder.sh
+    if [[ -f "${SCRIPT_DIR}/scripts/coder.sh" ]]; then
+        log_debug "Loading coder module from scripts/coder.sh"
+        source "${SCRIPT_DIR}/scripts/coder.sh" --help > /dev/null 2>&1 || true
+        show_coder_menu
+    else
+        log_error "Coder module not found: ${SCRIPT_DIR}/scripts/coder.sh"
+        echo -e "${RED}Error: Coder module script not found!${NC}"
+        sleep 2
+    fi
 }
 
 handle_verification_menu() {
