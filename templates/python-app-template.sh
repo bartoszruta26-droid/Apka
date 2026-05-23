@@ -14,10 +14,10 @@ echo "🐍 Tworzenie projektu Python: $PROJECT_NAME"
 echo "Lokalizacja: $PROJECT_DIR"
 
 # Tworzenie struktury katalogów
-mkdir -p "$PROJECT_DIR"/{src,tests,data,docs,utils}
+mkdir -p "$PROJECT_DIR"/{src/my_python_app,tests,data,docs,utils}
 
-# src/__init__.py
-cat > "$PROJECT_DIR/src/__init__.py" << EOF
+# src/my_python_app/__init__.py
+cat > "$PROJECT_DIR/src/my_python_app/__init__.py" << EOF
 """
 $PROJECT_NAME - Main application package
 """
@@ -25,8 +25,8 @@ __version__ = "1.0.0"
 __author__ = "Your Name"
 EOF
 
-# src/main.py
-cat > "$PROJECT_DIR/src/main.py" << 'EOF'
+# src/my_python_app/main.py
+cat > "$PROJECT_DIR/src/my_python_app/main.py" << 'EOF'
 #!/usr/bin/env python3
 """
 Main entry point for the application
@@ -313,8 +313,9 @@ A modern Python application template with best practices.
 \`\`\`
 $PROJECT_NAME/
 ├── src/                    # Source code
-│   ├── __init__.py
-│   └── main.py             # Main entry point
+│   └── my_python_app/      # Main package
+│       ├── __init__.py
+│       └── main.py         # Main entry point
 ├── tests/                  # Unit tests
 │   ├── __init__.py
 │   └── test_main.py
@@ -346,19 +347,22 @@ pip install -e .
 
 \`\`\`bash
 # Run the application
-python src/main.py run
+python -m my_python_app.main run
 
 # Run with debug mode
-python src/main.py --debug run
+python -m my_python_app.main --debug run
+
+# Or use the console entry point (after pip install -e .)
+my-app run
 
 # Run tests
 pytest tests/
 
 # Code formatting
-black src/ tests/
+black src/my_python_app/ tests/
 
 # Linting
-flake8 src/ tests/
+flake8 src/my_python_app/ tests/
 \`\`\`
 
 ## Features
@@ -462,4 +466,5 @@ echo "  cd $PROJECT_DIR"
 echo "  python3 -m venv venv"
 echo "  source venv/bin/activate"
 echo "  pip install -r requirements.txt"
-echo "  python src/main.py --help"
+echo "  pip install -e ."
+echo "  my-app --help"
