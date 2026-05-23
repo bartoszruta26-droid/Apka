@@ -1,10 +1,9 @@
 ```gitignore
-# Compiled and build artifacts
+# Compiled and binary files
 *.pyc
 __pycache__/
 *.o
 *.obj
-*.class
 *.exe
 *.dll
 *.so
@@ -19,75 +18,27 @@ venv/
 .env.local
 *.env.*
 
-# Build directories
+# Build artifacts
 dist/
 build/
 target/
-*.jar
-*.war
-*.ear
-
-# Logs and temporary files
 *.log
-*.tmp
-*.swp
-*.swo
+coverage/
+htmlcov/
+.coverage
 
 # Editors and IDEs
 .vscode/
 .idea/
-*.iml
-*.ipr
-*.iws
+*.swp
+*.swo
+*.tmp
 
 # System files
 .DS_Store
 Thumbs.db
 
-# Coverage and testing
-.coverage
-coverage/
-htmlcov/
-
-# Python specific
-*.pyc
-__pycache__/
-*.pyo
-*.pyd
-.Python
-*.so
-.Python
-*.egg-info/
-.eggs/
-.mypy_cache/
-.pytest_cache/
-.tox/
-
-# Node.js specific
-node_modules/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# Java specific
-*.class
-*.jar
-*.war
-*.ear
-target/
-.gradle/
-build/
-
-# C/C++ specific
-*.o
-*.a
-*.so
-*.dll
-*.exe
-*.out
-*.obj
-
-# Compressed files
+# Compression and archives
 *.zip
 *.gz
 *.tar
@@ -110,4 +61,49 @@ build/
 *.tar.bz2
 *.tar.xz
 *.tar.zst
+
+# Python specific
+*.pyo
+*.pyd
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+
+# Java specific
+*.class
+*.jar
+.gradle/
+
+# JavaScript/Node specific
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Go specific
+*.out
+
+# C/C++ specific
+*.a
+*.lib
+*.obj
+*.o
+*.so
+*.dylib
+*.dll
+
+# Ruby specific
+*.gem
+*.rbc
+.bundle/
+vendor/bundle/
+
+# Rust specific
+*.rlib
+target/
+
+# Julia specific
+julia-*/
+
+# Zig specific
+zig*/
 ```
