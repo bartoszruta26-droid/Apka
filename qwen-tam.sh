@@ -219,7 +219,8 @@ show_submenu_automation() {
     echo -e "${GREEN}║      ├─ [4.8.2] Daily Backup                                 ║${NC}"
     echo -e "${GREEN}║      ├─ [4.8.3] Code Review Loop                             ║${NC}"
     echo -e "${GREEN}║      └─ [4.8.4] Custom Script Runner                         ║${NC}"
-    echo -e "${YELLOW}║  [4.9] ⬅️  Back to Main Menu                                 ║${NC}"
+    echo -e "${BLUE}║  [4.9] 🤖 Multi-Agent Workflows (Cluster RPi4)                ║${NC}"
+    echo -e "${YELLOW}║  [4.10] ⬅️  Back to Main Menu                                ║${NC}"
     echo -e "${CYAN}╚══════════════════════════════════════════════════════════════╝${NC}"
     echo ""
 }
@@ -821,7 +822,7 @@ handle_verification_menu() {
 handle_automation_menu() {
     while true; do
         show_submenu_automation
-        read -rp "  Enter choice [4.1-4.9, 4.8.1-4.8.4]: " choice
+        read -rp "  Enter choice [4.1-4.10, 4.8.1-4.8.4]: " choice
         case $choice in
             4.1) automation_start_discussion ;;
             4.2) automation_create_workflow ;;
@@ -834,10 +835,22 @@ handle_automation_menu() {
             4.8.2) automation_quick_backup ;;
             4.8.3) automation_quick_review ;;
             4.8.4) automation_quick_custom ;;
-            4.9|49) break ;;
+            4.9|49)
+                # Multi-Agent Workflows
+                log_event "Multi-Agent Workflows Menu"
+                if [[ -f "${SCRIPT_DIR}/scripts/multi_agent.sh" ]]; then
+                    source "${SCRIPT_DIR}/scripts/multi_agent.sh"
+                    multi_agent_menu
+                else
+                    log_error "Podskrypt multi_agent.sh nie znaleziony!"
+                    echo "Wymagane pliki: scripts/multi_agent.sh"
+                    read -rp "Press Enter to continue..."
+                fi
+                ;;
+            4.10|410) break ;;
             *) echo -e "${RED}Invalid option!${NC}"; sleep 1 ;;
         esac
-        [[ $choice != "4.9" && $choice != "49" ]] && read -rp "Press Enter to continue..."
+        [[ $choice != "4.10" && $choice != "410" ]] && read -rp "Press Enter to continue..."
     done
 }
 
