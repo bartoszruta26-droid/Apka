@@ -1,0 +1,657 @@
+#!/bin/bash
+
+#===============================================================================
+# QWEN TIME & AUTOMATION MANAGER v1.0
+# Raspberry Pi 4 Edition
+# Główny skrypt inicjujący i menu TUI
+#===============================================================================
+
+set -euo pipefail
+
+#-------------------------------------------------------------------------------
+# Konfiguracja i zmienne globalne
+#-------------------------------------------------------------------------------
+readonly VERSION="1.0"
+readonly SCRIPT_NAME="$(basename "$0")"
+readonly SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+readonly CONFIG_FILE="${HOME}/.qwen_tam_config"
+readonly LOG_DIR="${SCRIPT_DIR}/logs"
+readonly APP_LOG="${LOG_DIR}/app.log"
+readonly DEBUG_LOG="${LOG_DIR}/debug.log"
+readonly EVENTS_LOG="${LOG_DIR}/events.log"
+
+# Tryby pracy
+DEBUG_MODE=false
+VERBOSE_MODE=false
+DAEMON_MODE=false
+INTERACTIVE_MODE=true
+
+# Kolory ANSI
+readonly RED='\033[0;31m'
+readonly GREEN='\033[0;32m'
+readonly YELLOW='\033[1;33m'
+readonly BLUE='\033[0;34m'
+readonly CYAN='\033[0;36m'
+readonly NC='\033[0m' # No Color
+
+#-------------------------------------------------------------------------------
+# Funkcje pomocnicze (utils.sh)
+#-------------------------------------------------------------------------------
+
+log_info() {
+    local timestamp=$(date '+%Y-%m-%d %H:%M:%S')
+    echo -e "${GREEN}[INFO]${NC} $timestamp - $*"
+    [[ -d "$LOG_DIR" ]] && echo "[INFO] $timestamp - $*" >> "$APP_LOG"
+}
+
+log_debug() {
+    if [[ "$DEBUG_MODE" == true ]]; then
+        local timestamp=$(date '+%Y-%m-%d %H:%M:%S')
+        echo -e "${CYAN}[DEBUG]${NC} $timestamp - $*" >&2
+        [[ -d "$LOG_DIR" ]] && echo "[DEBUG] $timestamp - $*" >> "$DEBUG_LOG"
+    fi
+}
+
+log_error() {
+    local timestamp=$(date '+%Y-%m-%d %H:%M:%S')
+    echo -e "${RED}[ERROR]${NC} $timestamp - $*" >&2
+    [[ -d "$LOG_DIR" ]] && echo "[ERROR] $timestamp - $*" >> "$APP_LOG"
+}
+
+log_event() {
+    local timestamp=$(date '+%Y-%m-%d %H:%M:%S')
+    [[ -d "$LOG_DIR" ]] && echo "[EVENT] $timestamp - $*" >> "$EVENTS_LOG"
+}
+
+cleanup() {
+    log_debug "Cleaning up before exit..."
+    # Czyszczenie zmiennych wrażliwych
+    unset GITHUB_TOKEN 2>/dev/null || true
+    exit 0
+}
+
+#-------------------------------------------------------------------------------
+# Inicjalizacja środowiska
+#-------------------------------------------------------------------------------
+
+init_environment() {
+    log_debug "Initializing environment..."
+    
+    # Tworzenie katalogów
+    mkdir -p "$LOG_DIR"
+    mkdir -p "${SCRIPT_DIR}/config"
+    
+    # Ładowanie konfiguracji
+    if [[ -f "$CONFIG_FILE" ]]; then
+        log_debug "Loading configuration from $CONFIG_FILE"
+        source "$CONFIG_FILE"
+    else
+        log_info "Configuration file not found. Will create on first use."
+    fi
+    
+    log_event "Environment initialized"
+}
+
+#-------------------------------------------------------------------------------
+# Obsługa sygnałów systemowych
+#-------------------------------------------------------------------------------
+
+setup_signal_handlers() {
+    trap cleanup SIGINT SIGTERM
+}
+
+#-------------------------------------------------------------------------------
+# Funkcje wyświetlania TUI
+#-------------------------------------------------------------------------------
+
+clear_screen() {
+    clear
+}
+
+show_header() {
+    echo -e "${CYAN}"
+    echo "╔══════════════════════════════════════════════════════════════╗"
+    echo "║           QWEN TIME & AUTOMATION MANAGER v${VERSION}                ║"
+    echo "║                    Raspberry Pi 4 Edition                    ║"
+    echo "╠══════════════════════════════════════════════════════════════╣"
+    echo -e "${NC}"
+}
+
+show_main_menu() {
+    clear_screen
+    show_header
+    echo -e "${CYAN}║  MAIN MENU                                                   ║${NC}"
+    echo -e "${CYAN}╠══════════════════════════════════════════════════════════════╣${NC}"
+    echo -e "${GREEN}║  [1] 📁 GitHub Repository Management                         ║${NC}"
+    echo -e "${GREEN}║  [2] 🤖 Qwen Coder - Code Generation                         ║${NC}"
+    echo -e "${GREEN}║  [3] ✅ Code Verification                                    ║${NC}"
+    echo -e "${GREEN}║  [4] 🔄 Automation & AI Agent                                ║${NC}"
+    echo -e "${GREEN}║  [5] ⚙️  Configuration & Settings                            ║${NC}"
+    echo -e "${GREEN}║  [6] 📊 Logs & Monitoring                                    ║${NC}"
+    echo -e "${GREEN}║  [7] ℹ️  System Information                                  ║${NC}"
+    echo -e "${GREEN}║  [8] 🔄 Update Application                                   ║${NC}"
+    echo -e "${YELLOW}║  [9] 🚪 Exit                                                 ║${NC}"
+    echo -e "${CYAN}╠══════════════════════════════════════════════════════════════╣${NC}"
+    
+    local status_icon="●"
+    local mode_text="Interactive"
+    local debug_text="OFF"
+    [[ "$DEBUG_MODE" == true ]] && debug_text="ON"
+    
+    echo -e "${CYAN}║  Status: ${status_icon} Connected  |  Mode: ${mode_text}  |  Debug: ${debug_text}   ║${NC}"
+    echo -e "${CYAN}║  Press 'D' for Debug mode | 'V' for Verbose | 'Q' to quit   ║${NC}"
+    echo -e "${CYAN}╚══════════════════════════════════════════════════════════════╝${NC}"
+    echo ""
+}
+
+show_submenu_github() {
+    clear_screen
+    show_header
+    echo -e "${CYAN}║              GITHUB REPOSITORY MANAGEMENT                    ║${NC}"
+    echo -e "${CYAN}╠══════════════════════════════════════════════════════════════╣${NC}"
+    echo -e "${GREEN}║  [1.1] 🔐 Configure GitHub Credentials                       ║${NC}"
+    echo -e "${GREEN}║  [1.2] ➕ Create New Repository                              ║${NC}"
+    echo -e "${GREEN}║  [1.3] 📋 List My Repositories                               ║${NC}"
+    echo -e "${GREEN}║  [1.4] 🗑️  Delete Repository                                 ║${NC}"
+    echo -e "${GREEN}║  [1.5] 📥 Clone Repository                                   ║${NC}"
+    echo -e "${GREEN}║  [1.6] 🔄 Sync Local with Remote                             ║${NC}"
+    echo -e "${YELLOW}║  [1.7] ⬅️  Back to Main Menu                                 ║${NC}"
+    echo -e "${CYAN}╚══════════════════════════════════════════════════════════════╝${NC}"
+    echo ""
+}
+
+show_submenu_coder() {
+    clear_screen
+    show_header
+    echo -e "${CYAN}║                QWEN CODER - CODE GENERATION                  ║${NC}"
+    echo -e "${CYAN}╠══════════════════════════════════════════════════════════════╣${NC}"
+    echo -e "${GREEN}║  [2.1] 📝 Generate Markdown Documentation                    ║${NC}"
+    echo -e "${GREEN}║  [2.2] 💻 Generate Source Code                               ║${NC}"
+    echo -e "${GREEN}║  [2.3] 📜 Generate Shell Scripts                             ║${NC}"
+    echo -e "${GREEN}║  [2.4] 🐍 Generate Python Scripts                            ║${NC}"
+    echo -e "${GREEN}║  [2.5] 🌐 Generate Web Files (HTML/CSS/JS)                   ║${NC}"
+    echo -e "${GREEN}║  [2.6] 📁 Create Project Structure                           ║${NC}"
+    echo -e "${GREEN}║  [2.7] ✏️  Edit Existing File with AI                        ║${NC}"
+    echo -e "${GREEN}║  [2.8] 📤 Execute Custom Command                             ║${NC}"
+    echo -e "${YELLOW}║  [2.9] ⬅️  Back to Main Menu                                 ║${NC}"
+    echo -e "${CYAN}╚══════════════════════════════════════════════════════════════╝${NC}"
+    echo ""
+}
+
+show_submenu_verification() {
+    clear_screen
+    show_header
+    echo -e "${CYAN}║                   CODE VERIFICATION                          ║${NC}"
+    echo -e "${CYAN}╠══════════════════════════════════════════════════════════════╣${NC}"
+    echo -e "${GREEN}║  [3.1] 🔍 Syntax Check (Shell)                               ║${NC}"
+    echo -e "${GREEN}║  [3.2] 🔍 Syntax Check (Python)                              ║${NC}"
+    echo -e "${GREEN}║  [3.3] 🛡️  Security Scan                                     ║${NC}"
+    echo -e "${GREEN}║  [3.4] 📏 Code Style Check                                   ║${NC}"
+    echo -e "${GREEN}║  [3.5] 🧪 Run Unit Tests                                     ║${NC}"
+    echo -e "${GREEN}║  [3.6] 📊 Generate Verification Report                       ║${NC}"
+    echo -e "${YELLOW}║  [3.7] ⬅️  Back to Main Menu                                 ║${NC}"
+    echo -e "${CYAN}╚══════════════════════════════════════════════════════════════╝${NC}"
+    echo ""
+}
+
+show_submenu_automation() {
+    clear_screen
+    show_header
+    echo -e "${CYAN}║               AUTOMATION & AI AGENT                          ║${NC}"
+    echo -e "${CYAN}╠══════════════════════════════════════════════════════════════╣${NC}"
+    echo -e "${GREEN}║  [4.1] 💬 Start AI Discussion Session                        ║${NC}"
+    echo -e "${GREEN}║  [4.2] 📋 Create Automation Workflow                         ║${NC}"
+    echo -e "${GREEN}║  [4.3] ▶️  Run Automation Task                               ║${NC}"
+    echo -e "${GREEN}║  [4.4] ⏸️  Pause/Resume Background Tasks                     ║${NC}"
+    echo -e "${GREEN}║  [4.5] 🛑 Stop Running Tasks                                 ║${NC}"
+    echo -e "${GREEN}║  [4.6] 📅 Schedule Automated Task                            ║${NC}"
+    echo -e "${GREEN}║  [4.7] 📜 View Task History                                  ║${NC}"
+    echo -e "${GREEN}║  [4.8] ⚡ Quick Automations                                  ║${NC}"
+    echo -e "${GREEN}║      ├─ [4.8.1] Auto-commit & Push                           ║${NC}"
+    echo -e "${GREEN}║      ├─ [4.8.2] Daily Backup                                 ║${NC}"
+    echo -e "${GREEN}║      ├─ [4.8.3] Code Review Loop                             ║${NC}"
+    echo -e "${GREEN}║      └─ [4.8.4] Custom Script Runner                         ║${NC}"
+    echo -e "${YELLOW}║  [4.9] ⬅️  Back to Main Menu                                 ║${NC}"
+    echo -e "${CYAN}╚══════════════════════════════════════════════════════════════╝${NC}"
+    echo ""
+}
+
+show_submenu_config() {
+    clear_screen
+    show_header
+    echo -e "${CYAN}║               CONFIGURATION & SETTINGS                       ║${NC}"
+    echo -e "${CYAN}╠══════════════════════════════════════════════════════════════╣${NC}"
+    echo -e "${GREEN}║  [5.1] 🔑 Manage GitHub Token                                ║${NC}"
+    echo -e "${GREEN}║  [5.2] 🌐 Configure Qwen API Endpoint                        ║${NC}"
+    echo -e "${GREEN}║  [5.3] 📂 Set Working Directory                              ║${NC}"
+    echo -e "${GREEN}║  [5.4] 🎨 Theme & Display Options                            ║${NC}"
+    echo -e "${GREEN}║  [5.5] 🔔 Notification Settings                              ║${NC}"
+    echo -e "${GREEN}║  [5.6] 🗄️  Backup Configuration                              ║${NC}"
+    echo -e "${GREEN}║  [5.7] ♻️  Restore Configuration                             ║${NC}"
+    echo -e "${GREEN}║  [5.8] 🔄 Reset to Defaults                                  ║${NC}"
+    echo -e "${YELLOW}║  [5.9] ⬅️  Back to Main Menu                                 ║${NC}"
+    echo -e "${CYAN}╚══════════════════════════════════════════════════════════════╝${NC}"
+    echo ""
+}
+
+show_submenu_logs() {
+    clear_screen
+    show_header
+    echo -e "${CYAN}║                  LOGS & MONITORING                           ║${NC}"
+    echo -e "${CYAN}╠══════════════════════════════════════════════════════════════╣${NC}"
+    echo -e "${GREEN}║  [6.1] 📄 View Application Log (app.log)                     ║${NC}"
+    echo -e "${GREEN}║  [6.2] 🐛 View Debug Log (debug.log)                         ║${NC}"
+    echo -e "${GREEN}║  [6.3] 📊 View Events Log (events.log)                       ║${NC}"
+    echo -e "${GREEN}║  [6.4] 🔍 Search Logs                                        ║${NC}"
+    echo -e "${GREEN}║  [6.5] 🧹 Clear Old Logs                                     ║${NC}"
+    echo -e "${GREEN}║  [6.6] 📥 Export Logs                                        ║${NC}"
+    echo -e "${GREEN}║  [6.7] 📈 Real-time Log Monitor                              ║${NC}"
+    echo -e "${YELLOW}║  [6.8] ⬅️  Back to Main Menu                                 ║${NC}"
+    echo -e "${CYAN}╚══════════════════════════════════════════════════════════════╝${NC}"
+    echo ""
+}
+
+show_submenu_system() {
+    clear_screen
+    show_header
+    echo -e "${CYAN}║                 SYSTEM INFORMATION                           ║${NC}"
+    echo -e "${CYAN}╠══════════════════════════════════════════════════════════════╣${NC}"
+    echo -e "${GREEN}║  [7.1] 💻 System Resources (CPU/RAM/Disk)                    ║${NC}"
+    echo -e "${GREEN}║  [7.2] 🌡️  Temperature & Health Status                       ║${NC}"
+    echo -e "${GREEN}║  [7.3] 📦 Installed Dependencies                             ║${NC}"
+    echo -e "${GREEN}║  [7.4] 🤖 Qwen Model Status                                  ║${NC}"
+    echo -e "${GREEN}║  [7.5] 🔗 Network Connectivity                               ║${NC}"
+    echo -e "${GREEN}║  [7.6] 📜 Version & Changelog                                ║${NC}"
+    echo -e "${YELLOW}║  [7.7] ⬅️  Back to Main Menu                                 ║${NC}"
+    echo -e "${CYAN}╚══════════════════════════════════════════════════════════════╝${NC}"
+    echo ""
+}
+
+show_submenu_update() {
+    clear_screen
+    show_header
+    echo -e "${CYAN}║                  UPDATE APPLICATION                          ║${NC}"
+    echo -e "${CYAN}╠══════════════════════════════════════════════════════════════╣${NC}"
+    echo -e "${GREEN}║  [8.1] 🔄 Check for Updates                                  ║${NC}"
+    echo -e "${GREEN}║  [8.2] ⬇️  Download Latest Version                           ║${NC}"
+    echo -e "${GREEN}║  [8.3] 📦 Auto-Install Dependencies                          ║${NC}"
+    echo -e "${GREEN}║  [8.4] 🚀 Install Update (Rolling/Blue-Green)                ║${NC}"
+    echo -e "${GREEN}║  [8.5] 📋 View Changelog                                     ║${NC}"
+    echo -e "${GREEN}║  [8.6] ↩️  Rollback to Previous Version                      ║${NC}"
+    echo -e "${GREEN}║  [8.7] ⚙️  Configure Auto-Update Settings                    ║${NC}"
+    echo -e "${GREEN}║  [8.8] 📊 Update Cluster Nodes (Swarm)                       ║${NC}"
+    echo -e "${YELLOW}║  [8.9] ⬅️  Back to Main Menu                                 ║${NC}"
+    echo -e "${CYAN}╚══════════════════════════════════════════════════════════════╝${NC}"
+    echo ""
+}
+
+#-------------------------------------------------------------------------------
+# Stuby funkcji dla poszczególnych modułów
+#-------------------------------------------------------------------------------
+
+# GitHub Repository Management
+github_configure_credentials() { log_info "GitHub Configure Credentials (stub)"; }
+github_create_repository() { log_info "GitHub Create Repository (stub)"; }
+github_list_repositories() { log_info "GitHub List Repositories (stub)"; }
+github_delete_repository() { log_info "GitHub Delete Repository (stub)"; }
+github_clone_repository() { log_info "GitHub Clone Repository (stub)"; }
+github_sync_local_remote() { log_info "GitHub Sync Local with Remote (stub)"; }
+
+# Qwen Coder
+coder_generate_markdown() { log_info "Generate Markdown Documentation (stub)"; }
+coder_generate_source_code() { log_info "Generate Source Code (stub)"; }
+coder_generate_shell_scripts() { log_info "Generate Shell Scripts (stub)"; }
+coder_generate_python_scripts() { log_info "Generate Python Scripts (stub)"; }
+coder_generate_web_files() { log_info "Generate Web Files (stub)"; }
+coder_create_project_structure() { log_info "Create Project Structure (stub)"; }
+coder_edit_existing_file() { log_info "Edit Existing File with AI (stub)"; }
+coder_execute_custom_command() { log_info "Execute Custom Command (stub)"; }
+
+# Code Verification
+verify_syntax_shell() { log_info "Syntax Check Shell (stub)"; }
+verify_syntax_python() { log_info "Syntax Check Python (stub)"; }
+verify_security_scan() { log_info "Security Scan (stub)"; }
+verify_code_style() { log_info "Code Style Check (stub)"; }
+verify_run_unit_tests() { log_info "Run Unit Tests (stub)"; }
+verify_generate_report() { log_info "Generate Verification Report (stub)"; }
+
+# Automation & AI Agent
+automation_start_discussion() { log_info "Start AI Discussion Session (stub)"; }
+automation_create_workflow() { log_info "Create Automation Workflow (stub)"; }
+automation_run_task() { log_info "Run Automation Task (stub)"; }
+automation_pause_resume() { log_info "Pause/Resume Background Tasks (stub)"; }
+automation_stop_tasks() { log_info "Stop Running Tasks (stub)"; }
+automation_schedule_task() { log_info "Schedule Automated Task (stub)"; }
+automation_view_history() { log_info "View Task History (stub)"; }
+automation_quick_autocommit() { log_info "Auto-commit & Push (stub)"; }
+automation_quick_backup() { log_info "Daily Backup (stub)"; }
+automation_quick_review() { log_info "Code Review Loop (stub)"; }
+automation_quick_custom() { log_info "Custom Script Runner (stub)"; }
+
+# Configuration & Settings
+config_manage_github_token() { log_info "Manage GitHub Token (stub)"; }
+config_configure_qwen_api() { log_info "Configure Qwen API Endpoint (stub)"; }
+config_set_working_directory() { log_info "Set Working Directory (stub)"; }
+config_theme_display() { log_info "Theme & Display Options (stub)"; }
+config_notification_settings() { log_info "Notification Settings (stub)"; }
+config_backup() { log_info "Backup Configuration (stub)"; }
+config_restore() { log_info "Restore Configuration (stub)"; }
+config_reset_defaults() { log_info "Reset to Defaults (stub)"; }
+
+# Logs & Monitoring
+logs_view_app() { log_info "View Application Log (stub)"; }
+logs_view_debug() { log_info "View Debug Log (stub)"; }
+logs_view_events() { log_info "View Events Log (stub)"; }
+logs_search() { log_info "Search Logs (stub)"; }
+logs_clear_old() { log_info "Clear Old Logs (stub)"; }
+logs_export() { log_info "Export Logs (stub)"; }
+logs_realtime_monitor() { log_info "Real-time Log Monitor (stub)"; }
+
+# System Information
+system_resources() { log_info "System Resources (stub)"; }
+system_temperature_health() { log_info "Temperature & Health Status (stub)"; }
+system_dependencies() { log_info "Installed Dependencies (stub)"; }
+system_qwen_status() { log_info "Qwen Model Status (stub)"; }
+system_network() { log_info "Network Connectivity (stub)"; }
+system_version_changelog() { log_info "Version & Changelog (stub)"; }
+
+# Update Application
+update_check() { log_info "Check for Updates (stub)"; }
+update_download() { log_info "Download Latest Version (stub)"; }
+update_install_deps() { log_info "Auto-Install Dependencies (stub)"; }
+update_install() { log_info "Install Update (stub)"; }
+update_changelog() { log_info "View Changelog (stub)"; }
+update_rollback() { log_info "Rollback to Previous Version (stub)"; }
+update_configure_auto() { log_info "Configure Auto-Update Settings (stub)"; }
+update_cluster_nodes() { log_info "Update Cluster Nodes (stub)"; }
+
+#-------------------------------------------------------------------------------
+# Obsługa podmenu
+#-------------------------------------------------------------------------------
+
+handle_github_menu() {
+    while true; do
+        show_submenu_github
+        read -rp "  Enter choice [1.1-1.7]: " choice
+        case $choice in
+            1.1) github_configure_credentials ;;
+            1.2) github_create_repository ;;
+            1.3) github_list_repositories ;;
+            1.4) github_delete_repository ;;
+            1.5) github_clone_repository ;;
+            1.6) github_sync_local_remote ;;
+            1.7|17) break ;;
+            *) echo -e "${RED}Invalid option!${NC}"; sleep 1 ;;
+        esac
+        [[ $choice != "1.7" && $choice != "17" ]] && read -rp "Press Enter to continue..." 
+    done
+}
+
+handle_coder_menu() {
+    while true; do
+        show_submenu_coder
+        read -rp "  Enter choice [2.1-2.9]: " choice
+        case $choice in
+            2.1) coder_generate_markdown ;;
+            2.2) coder_generate_source_code ;;
+            2.3) coder_generate_shell_scripts ;;
+            2.4) coder_generate_python_scripts ;;
+            2.5) coder_generate_web_files ;;
+            2.6) coder_create_project_structure ;;
+            2.7) coder_edit_existing_file ;;
+            2.8) coder_execute_custom_command ;;
+            2.9|29) break ;;
+            *) echo -e "${RED}Invalid option!${NC}"; sleep 1 ;;
+        esac
+        [[ $choice != "2.9" && $choice != "29" ]] && read -rp "Press Enter to continue..."
+    done
+}
+
+handle_verification_menu() {
+    while true; do
+        show_submenu_verification
+        read -rp "  Enter choice [3.1-3.7]: " choice
+        case $choice in
+            3.1) verify_syntax_shell ;;
+            3.2) verify_syntax_python ;;
+            3.3) verify_security_scan ;;
+            3.4) verify_code_style ;;
+            3.5) verify_run_unit_tests ;;
+            3.6) verify_generate_report ;;
+            3.7|37) break ;;
+            *) echo -e "${RED}Invalid option!${NC}"; sleep 1 ;;
+        esac
+        [[ $choice != "3.7" && $choice != "37" ]] && read -rp "Press Enter to continue..."
+    done
+}
+
+handle_automation_menu() {
+    while true; do
+        show_submenu_automation
+        read -rp "  Enter choice [4.1-4.9, 4.8.1-4.8.4]: " choice
+        case $choice in
+            4.1) automation_start_discussion ;;
+            4.2) automation_create_workflow ;;
+            4.3) automation_run_task ;;
+            4.4) automation_pause_resume ;;
+            4.5) automation_stop_tasks ;;
+            4.6) automation_schedule_task ;;
+            4.7) automation_view_history ;;
+            4.8.1) automation_quick_autocommit ;;
+            4.8.2) automation_quick_backup ;;
+            4.8.3) automation_quick_review ;;
+            4.8.4) automation_quick_custom ;;
+            4.9|49) break ;;
+            *) echo -e "${RED}Invalid option!${NC}"; sleep 1 ;;
+        esac
+        [[ $choice != "4.9" && $choice != "49" ]] && read -rp "Press Enter to continue..."
+    done
+}
+
+handle_config_menu() {
+    while true; do
+        show_submenu_config
+        read -rp "  Enter choice [5.1-5.9]: " choice
+        case $choice in
+            5.1) config_manage_github_token ;;
+            5.2) config_configure_qwen_api ;;
+            5.3) config_set_working_directory ;;
+            5.4) config_theme_display ;;
+            5.5) config_notification_settings ;;
+            5.6) config_backup ;;
+            5.7) config_restore ;;
+            5.8) config_reset_defaults ;;
+            5.9|59) break ;;
+            *) echo -e "${RED}Invalid option!${NC}"; sleep 1 ;;
+        esac
+        [[ $choice != "5.9" && $choice != "59" ]] && read -rp "Press Enter to continue..."
+    done
+}
+
+handle_logs_menu() {
+    while true; do
+        show_submenu_logs
+        read -rp "  Enter choice [6.1-6.8]: " choice
+        case $choice in
+            6.1) logs_view_app ;;
+            6.2) logs_view_debug ;;
+            6.3) logs_view_events ;;
+            6.4) logs_search ;;
+            6.5) logs_clear_old ;;
+            6.6) logs_export ;;
+            6.7) logs_realtime_monitor ;;
+            6.8|68) break ;;
+            *) echo -e "${RED}Invalid option!${NC}"; sleep 1 ;;
+        esac
+        [[ $choice != "6.8" && $choice != "68" ]] && read -rp "Press Enter to continue..."
+    done
+}
+
+handle_system_menu() {
+    while true; do
+        show_submenu_system
+        read -rp "  Enter choice [7.1-7.7]: " choice
+        case $choice in
+            7.1) system_resources ;;
+            7.2) system_temperature_health ;;
+            7.3) system_dependencies ;;
+            7.4) system_qwen_status ;;
+            7.5) system_network ;;
+            7.6) system_version_changelog ;;
+            7.7|77) break ;;
+            *) echo -e "${RED}Invalid option!${NC}"; sleep 1 ;;
+        esac
+        [[ $choice != "7.7" && $choice != "77" ]] && read -rp "Press Enter to continue..."
+    done
+}
+
+handle_update_menu() {
+    while true; do
+        show_submenu_update
+        read -rp "  Enter choice [8.1-8.9]: " choice
+        case $choice in
+            8.1) update_check ;;
+            8.2) update_download ;;
+            8.3) update_install_deps ;;
+            8.4) update_install ;;
+            8.5) update_changelog ;;
+            8.6) update_rollback ;;
+            8.7) update_configure_auto ;;
+            8.8) update_cluster_nodes ;;
+            8.9|89) break ;;
+            *) echo -e "${RED}Invalid option!${NC}"; sleep 1 ;;
+        esac
+        [[ $choice != "8.9" && $choice != "89" ]] && read -rp "Press Enter to continue..."
+    done
+}
+
+#-------------------------------------------------------------------------------
+# Główne menu TUI
+#-------------------------------------------------------------------------------
+
+main_menu_loop() {
+    while true; do
+        show_main_menu
+        read -rp "  Enter choice [1-9]: " choice
+        
+        case $choice in
+            1) handle_github_menu ;;
+            2) handle_coder_menu ;;
+            3) handle_verification_menu ;;
+            4) handle_automation_menu ;;
+            5) handle_config_menu ;;
+            6) handle_logs_menu ;;
+            7) handle_system_menu ;;
+            8) handle_update_menu ;;
+            9) 
+                log_info "Exiting Qwen Time & Automation Manager"
+                log_event "Application exited by user"
+                clear_screen
+                exit 0
+                ;;
+            D|d) 
+                DEBUG_MODE=!$DEBUG_MODE
+                log_info "Debug mode toggled: $DEBUG_MODE"
+                ;;
+            V|v) 
+                VERBOSE_MODE=!$VERBOSE_MODE
+                log_info "Verbose mode toggled: $VERBOSE_MODE"
+                ;;
+            Q|q) 
+                log_info "Quitting application"
+                clear_screen
+                exit 0
+                ;;
+            *) 
+                echo -e "${RED}Invalid option!${NC}"
+                sleep 1
+                ;;
+        esac
+    done
+}
+
+#-------------------------------------------------------------------------------
+# Parsowanie argumentów wiersza poleceń
+#-------------------------------------------------------------------------------
+
+parse_arguments() {
+    while [[ $# -gt 0 ]]; do
+        case $1 in
+            --daemon)
+                DAEMON_MODE=true
+                INTERACTIVE_MODE=false
+                shift
+                ;;
+            --debug)
+                DEBUG_MODE=true
+                shift
+                ;;
+            --verbose)
+                VERBOSE_MODE=true
+                shift
+                ;;
+            --config=*)
+                CONFIG_FILE="${1#*=}"
+                shift
+                ;;
+            --create-repo)
+                log_info "CLI mode: Create repository $2 (stub)"
+                exit 0
+                ;;
+            --generate-code)
+                log_info "CLI mode: Generate code (stub)"
+                exit 0
+                ;;
+            --verify)
+                log_info "CLI mode: Verify $2 (stub)"
+                exit 0
+                ;;
+            --automate)
+                log_info "CLI mode: Automate $2 (stub)"
+                exit 0
+                ;;
+            --help|-h)
+                echo "Usage: $SCRIPT_NAME [OPTIONS]"
+                echo ""
+                echo "Options:"
+                echo "  --daemon              Run in background mode"
+                echo "  --debug               Enable debug mode"
+                echo "  --verbose             Enable verbose output"
+                echo "  --config=FILE         Use custom config file"
+                echo "  --create-repo NAME    Create GitHub repository"
+                echo "  --generate-code ...   Generate code with AI"
+                echo "  --verify FILE         Verify code file"
+                echo "  --automate TASK       Run automation task"
+                echo "  --help, -h            Show this help message"
+                exit 0
+                ;;
+            *)
+                log_error "Unknown option: $1"
+                exit 1
+                ;;
+        esac
+    done
+}
+
+#-------------------------------------------------------------------------------
+# Punkt wejścia
+#-------------------------------------------------------------------------------
+
+main() {
+    parse_arguments "$@"
+    init_environment
+    setup_signal_handlers
+    
+    if [[ "$DAEMON_MODE" == true ]]; then
+        log_info "Starting daemon mode..."
+        # Implementacja trybu daemon
+        log_event "Daemon mode started"
+    elif [[ "$INTERACTIVE_MODE" == true ]]; then
+        log_info "Starting interactive mode..."
+        log_event "Interactive mode started"
+        main_menu_loop
+    fi
+}
+
+# Uruchomienie aplikacji
+main "$@"
