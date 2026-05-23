@@ -871,24 +871,22 @@ handle_system_menu() {
     done
 }
 
+#-------------------------------------------------------------------------------
+# Integracja z podskryptami - Update Application
+#-------------------------------------------------------------------------------
+
+# Update Application - delegowanie do podskryptu update.sh
 handle_update_menu() {
-    while true; do
-        show_submenu_update
-        read -rp "  Enter choice [8.1-8.9]: " choice
-        case $choice in
-            8.1) update_check ;;
-            8.2) update_download ;;
-            8.3) update_install_deps ;;
-            8.4) update_install ;;
-            8.5) update_changelog ;;
-            8.6) update_rollback ;;
-            8.7) update_configure_auto ;;
-            8.8) update_cluster_nodes ;;
-            8.9|89) break ;;
-            *) echo -e "${RED}Invalid option!${NC}"; sleep 1 ;;
-        esac
-        [[ $choice != "8.9" && $choice != "89" ]] && read -rp "Press Enter to continue..."
-    done
+    log_event "Update Application Menu"
+    if [[ -f "${SCRIPT_DIR}/scripts/update.sh" ]]; then
+        source "${SCRIPT_DIR}/scripts/update.sh"
+        updates_menu
+    else
+        log_error "Podskrypt update.sh nie znaleziony!"
+        echo "Uruchomienie trybu interaktywnego Update..."
+        echo "Wymagane pliki: scripts/update.sh"
+        read -rp "Press Enter to continue..."
+    fi
 }
 
 #-------------------------------------------------------------------------------

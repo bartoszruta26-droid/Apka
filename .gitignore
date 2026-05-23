@@ -1,8 +1,17 @@
-```
-# Logs
-*.log
-logs/
+```bash
+# Environment
+.env
+.env.local
+.env.*
 
-# Compressed archives
-*.tar.gz
+# Logs and temp files
+*.log
+*.tmp
+
+# Editors
+.vscode/
+
+# OS generated files
+.DS_Store
+Thumbs.db
 ```
