@@ -1,1 +1,24 @@
-Nothing should be ignored in this case, as the changes only include template files which appear to be source code files (.sh files), and there are no build artifacts, dependencies, or temporary files in the provided list.
+```
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Logs and temp files
+*.log
+*.tmp
+
+# Environment
+.env
+.env.local
+*.env.*
+
+# Editors
+.vscode/
+.idea/
+
+# System
+.DS_Store
+Thumbs.db
+```
