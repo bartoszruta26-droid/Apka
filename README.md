@@ -55,28 +55,32 @@ Aplikacja działa jako TUI (Text User Interface) w terminalu i służy do:
 
 ## Struktura Aplikacji
 
-Aplikacja składa się z następujących skryptów:
+Aplikacja składa się z następujących plików i katalogów:
 
 ```
 qwen-tam/
 ├── qwen-tam.sh           # Główny skrypt inicjujący i menu TUI
-├── config/
-│   ├── config.sh         # Konfiguracja i zmienne globalne
-│   └── github.conf       # Dane logowania GitHub (szyfrowane)
 ├── scripts/
 │   ├── auth.sh           # Autoryzacja i zarządzanie tokenem GitHub
-│   ├── repo.sh           # Tworzenie i zarządzanie repozytoriami
-│   ├── coder.sh          # Integracja z Qwen Coder
-│   ├── agent.sh          # Integracja z Qwen Agent
-│   ├── verify.sh         # Weryfikacja kodu
-│   ├── automation.sh     # Automatyzacja procesów
-│   ├── background.sh     # Obsługa trybu daemon/background
-│   └── utils.sh          # Funkcje pomocnicze (logowanie, error handling)
-├── logs/
+│   ├── repo.sh           # Tworzenie i zarządzanie repozytoriami GitHub
+│   ├── coder.sh          # Integracja z Qwen Coder - generowanie kodu
+│   ├── verify.sh         # Weryfikacja kodu (syntax check, security scan)
+│   ├── automation.sh     # Automatyzacja procesów z Qwen Agent
+│   ├── config.sh         # Konfiguracja i zmienne globalne
+│   ├── logs.sh           # Zarządzanie logami i monitoring
+│   ├── system.sh         # Informacje systemowe i diagnostyka
+│   ├── update.sh         # Aktualizacja aplikacji
+│   └── lib/
+│       ├── filelock.sh   # Mechanizm blokad plików
+│       ├── security.sh   # Funkcje bezpieczeństwa
+│       └── validation.sh # Walidacja danych wejściowych
+├── logs/                 # Katalog logów (tworzony dynamicznie)
 │   ├── app.log           # Logi aplikacji
 │   ├── debug.log         # Logi debugowe
 │   └── events.log        # Logi zdarzeń
-└── README.md
+├── LICENSE               # Licencja projektu
+├── SECURITY_IMPROVEMENTS.md # Dokumentacja bezpieczeństwa
+└── README.md             # Ten plik
 ```
 
 ### Skrypt Główny: `qwen-tam.sh`
@@ -508,81 +512,39 @@ Informacje o wersji i historia zmian:
 
 ---
 
-### Podmenu 9: Exit
+### Podmenu 9: Wyjście (Exit)
+
+Opcja [9] w głównym menu powoduje natychmiastowe wyjście z aplikacji z zapisem logów i czyszczeniem zasobów.
 
 ```
 ╔══════════════════════════════════════════════════════════════╗
 ║                      EXIT APPLICATION                        ║
 ╠══════════════════════════════════════════════════════════════╣
-║  [9.1] 💾 Save Session & Exit                                ║
-║  [9.2] 🚪 Quick Exit                                         ║
-║  [9.3] 🔄 Restart Application                                ║
-║  [9.4] 🧹 Clear Cache & Exit                                 ║
-║  [9.5] 📊 Generate Session Report Before Exit                ║
-║  [9.6] ↩️  Back to Main Menu                                 ║
+║  Wyjście z aplikacji z zapisem stanu i czyszczeniem         ║
+║  zasobów. Naciśnij [9] lub [Q] aby wyjść.                   ║
 ╚══════════════════════════════════════════════════════════════╝
 ```
 
-**Opis funkcjonalności Podmenu 9 - Exit:**
+**Funkcjonalność opcji Exit:**
 
-#### [9.1] Save Session & Exit
-- Zapisuje stan sesji przed zamknięciem aplikacji
-- Zapisuje otwarte pliki i ostatnie lokalizacje
-- Zapamiętuje historię komend z sesji
-- Tworzy snapshot konfiguracji roboczej
-- Bezpieczne zamykanie połączeń (GitHub API, Ollama)
-- Generowanie pliku sesji do przywrócenia później
-
-#### [9.2] Quick Exit
-- Natychmiastowe zamknięcie aplikacji
-- Czyszczenie zmiennych wrażliwych z pamięci (tokeny, hasła)
-- Zapis podstawowych logów zdarzeń
+- Zapis wszystkich logów do plików (`app.log`, `debug.log`, `events.log`)
+- Czyszczenie zmiennych wrażliwych z pamięci (tokeny GitHub, hasła)
 - Przywrócenie domyślnych ustawień terminala
 - Komunikat pożegnalny z podsumowaniem sesji
-
-#### [9.3] Restart Application
-- Restart aplikacji bez zamykania terminala
-- Zachowanie kluczowych zmiennych środowiskowych
-- Reload konfiguracji z pliku
-- Czyści cache i tymczasowe pliki
-- Przydatne po zmianach w konfiguracji
-
-#### [9.4] Clear Cache & Exit
-- Usuwa pliki tymczasowe i cache
-- Czyszczenie katalogu staging (po aktualizacjach)
-- Usuwanie starych backupów (zachowuje najnowsze 5)
-- Czyszczenie logów starszych niż 30 dni
-- Opcja czyszczenia cache modeli AI (Ollama)
-- Bezpieczne zamknięcie aplikacji
-
-#### [9.5] Generate Session Report Before Exit
-- Generuje raport z obecnej sesji
-- Statystyki sesji:
-  - Czas trwania sesji
-  - Liczba wykonanych operacji
-  - Lista utworzonych/modyfikowanych plików
-  - Błędy i ostrzeżenia
-  - Zużycie zasobów (CPU/RAM średnie)
-- Eksport raportu do formats:
-  - Markdown (.md)
-  - JSON (.json)
-  - Plain text (.txt)
-- Opcja wysłania raportu mailem
-- Zapis do katalogu reports/
-
-#### [9.6] Back to Main Menu
-- Powrót do głównego menu bez wychodzenia
-- Anulowanie wyboru wyjścia
+- Możliwość szybkiego wyjścia klawiszem [Q] z dowolnego miejsca
 
 ---
 
 ## Tryby Pracy Aplikacji
 
-### 1. Tryb Interaktywny (TUI)
-- Domyślny tryb pracy
+### 1. Tryb Interaktywny (TUI) - Domyślny
+```bash
+./qwen-tam.sh
+```
 - Pełne menu tekstowe z nawigacją klawiszową
 - Interakcja z użytkownikiem w czasie rzeczywistym
 - Kolorowy interfejs z elementami graficznymi (ASCII art, boxy)
+- Obsługa wszystkich funkcjonalności aplikacji
 
 ### 2. Tryb Daemon (Background)
 ```bash
@@ -617,7 +579,19 @@ Informacje o wersji i historia zmian:
 ./qwen-tam.sh --generate-code "python" "script.py" "Write a hello world"
 ./qwen-tam.sh --verify "script.sh"
 ./qwen-tam.sh --automate "daily-backup"
+./qwen-tam.sh --help
 ```
+
+**Dostępne opcje CLI:**
+- `--daemon` - Uruchom w trybie background
+- `--debug` - Włącz tryb debugowania
+- `--verbose` - Włącz rozszerzone wyjście
+- `--config=FILE` - Użyj niestandardowego pliku konfiguracyjnego
+- `--create-repo NAME` - Utwórz repozytorium GitHub
+- `--generate-code ...` - Generuj kod z AI
+- `--verify FILE` - Zweryfikuj plik kodu
+- `--automate TASK` - Uruchom zadanie automatyzacji
+- `--help`, `-h` - Wyświetl pomoc
 
 ---
 
