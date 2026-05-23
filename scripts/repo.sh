@@ -59,10 +59,12 @@ get_auth_token() {
 validate_repo_name() {
     local name="$1"
 
-    # Use validation library if available
-    if declare -f validate_repo_name &>/dev/null; then
-        validate_repo_name "$name"
-        return $?
+    # Use validation library if available (call the library function directly)
+    # Check for library's validate_repo_name by checking if we're not in the wrapper itself
+    if [[ -n "${VALIDATION_LIB_VERSION:-}" ]]; then
+        # Library is loaded, use its validate_repo_name directly
+        # But we need to avoid calling ourselves - use a subshell trick or direct call
+        builtin validate_repo_name "$name" 2>/dev/null && return 0
     fi
     
     # Fallback validation
