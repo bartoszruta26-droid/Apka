@@ -1153,8 +1153,6 @@ EXPORT_MOODLE_URL="${moodle_url_default}"
 EXPORT_JOOMLA_URL="${joomla_url_default}"
 EXPORT_NEXTCLOUD_URL="${nextcloud_url_default}"
 EXPORT_FINISH_DIR="${finish_dir}"
-JOOMLA_DEFAULT_CATEGORY="${JOOMLA_DEFAULT_CATEGORY}"
-NEXTCLOUD_DEFAULT_PATH="${NEXTCLOUD_DEFAULT_PATH}"
 EOF
     
     echo ""
