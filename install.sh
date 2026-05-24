@@ -166,6 +166,15 @@ check_requirements() {
         log_debug "wget: $(wget --version | head -1)"
     fi
     
+    # Sprawdzenie Node.js (wymagane dla Puter AI)
+    if ! command -v node &>/dev/null; then
+        missing_deps+=("nodejs")
+        missing_deps+=("npm")
+    else
+        log_debug "node: $(node --version)"
+        log_debug "npm: $(npm --version)"
+    fi
+    
     # Opcjonalne: sprawdzenie ollama
     if command -v ollama &>/dev/null; then
         log_success "Ollama wykryte (opcjonalne AI)"
@@ -191,8 +200,11 @@ check_requirements() {
             install_missing_deps "${missing_deps[@]}"
         fi
     else
-        log_success "Wszystkie wymagane zależności są zainstalowane"
+        log_success "Wszystkie wymagane zależności systemowe są zainstalowane"
     fi
+    
+    # Sprawdzenie i instalacja puter.js
+    check_puter_js
 }
 
 #-------------------------------------------------------------------------------
@@ -207,7 +219,7 @@ install_missing_deps() {
     case $OS_ID in
         ubuntu|debian|raspbian)
             apt-get update -qq
-            apt-get install -y -qq "${deps[@]}"
+            DEBIAN_FRONTEND=noninteractive apt-get install -y -qq "${deps[@]}"
             ;;
         fedora|centos|rhel)
             dnf install -y "${deps[@]}" 2>/dev/null || yum install -y "${deps[@]}"
@@ -222,6 +234,79 @@ install_missing_deps() {
     esac
     
     log_success "Zainstalowano wszystkie brakujące pakiety"
+}
+
+#-------------------------------------------------------------------------------
+# Sprawdzenie i instalacja puter.js
+#-------------------------------------------------------------------------------
+
+check_puter_js() {
+    log_info "Sprawdzanie biblioteki puter.js..."
+    
+    # Sprawdź czy Node.js jest zainstalowane
+    if ! command -v node &>/dev/null; then
+        log_error "Node.js nie jest zainstalowane. puter.js wymaga Node.js"
+        return 1
+    fi
+    
+    # Sprawdź czy puter.js jest już zainstalowane globalnie
+    if npm list -g @heyputer/puter.js &>/dev/null; then
+        log_success "puter.js jest już zainstalowane globalnie"
+        return 0
+    fi
+    
+    # Sprawdź lokalną instalację w katalogu użytkownika
+    local local_puter_dir="${HOME}/.npm-global/lib/node_modules/@heyputer/puter.js"
+    if [[ -d "$local_puter_dir" ]]; then
+        log_success "puter.js jest już zainstalowane lokalnie"
+        return 0
+    fi
+    
+    log_info "Instalowanie puter.js..."
+    
+    # Skonfiguruj globalny katalog npm w katalogu użytkownika (bez uprawnień root)
+    local npm_global_dir="${HOME}/.npm-global"
+    mkdir -p "$npm_global_dir"
+    npm config set prefix "$npm_global_dir"
+    
+    # Dodaj do PATH jeśli nie ma
+    if [[ ":$PATH:" != *":$npm_global_dir/bin:"* ]]; then
+        log_warning "Dodanie $npm_global_dir/bin do PATH"
+        log_info "Dodaj do ~/.bashrc lub ~/.zshrc:"
+        log_info '  export PATH="$HOME/.npm-global/bin:$PATH"'
+        
+        # Automatycznie dodaj do .bashrc jeśli istnieje
+        if [[ -f "${HOME}/.bashrc" ]]; then
+            if ! grep -q "npm-global/bin" "${HOME}/.bashrc"; then
+                echo "" >> "${HOME}/.bashrc"
+                echo "# Puter.js - Global npm packages" >> "${HOME}/.bashrc"
+                echo 'export PATH="$HOME/.npm-global/bin:$PATH"' >> "${HOME}/.bashrc"
+                log_success "Dodano PATH do ~/.bashrc"
+            fi
+        fi
+        
+        # Eksportuj dla bieżącej sesji
+        export PATH="$npm_global_dir/bin:$PATH"
+    fi
+    
+    # Zainstaluj puter.js globalnie
+    if npm install -g @heyputer/puter.js --silent 2>&1 | tee /tmp/puter-install.log; then
+        log_success "puter.js zostało pomyślnie zainstalowane"
+        
+        # Weryfikacja instalacji
+        if command -v puter &>/dev/null || npm list -g @heyputer/puter.js &>/dev/null; then
+            log_success "Weryfikacja puter.js zakończona sukcesem"
+            return 0
+        else
+            log_warning "puter.js zainstalowane, ale komenda może być niedostępna"
+            log_info "Może być wymagane ponowne zalogowanie lub: source ~/.bashrc"
+            return 0
+        fi
+    else
+        log_error "Nie udało się zainstalować puter.js"
+        cat /tmp/puter-install.log >&2
+        return 1
+    fi
 }
 
 #-------------------------------------------------------------------------------
