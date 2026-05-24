@@ -1,1 +1,1 @@
-(empty)
+Nothing should be ignored based on the provided file changes. The only modified file 'qwen-tam.sh' appears to be a shell script source file, which should not be added to .gitignore.
