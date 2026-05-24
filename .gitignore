@@ -1,75 +1,8 @@
 ```bash
-# Environment files
-.env
-.env.local
-*.env.*
-
-# Logs and temporary files
-*.log
-*.tmp
-*.swp
-
-# Editor/IDE files
-.vscode/
-.idea/
-
-# Python specific
-__pycache__/
-*.pyc
-*.pyo
-*.pyd
-.Python
-*.so
-.coverage
-htmlcov/
-.coverage.*
-.noserc
-.tox/
-.cover/
-
-# Build artifacts
-dist/
-build/
-*.egg-info/
-.eggs/
-
-# Virtual environments
-venv/
-.venv/
-env/
-ENV/
-
-# Node.js
-node_modules/
-
-# Dependencies cache
-.mypy_cache/
-.pytest_cache/
-.cache/
-
-# System files
-.DS_Store
-Thumbs.db
-```
-
-Wait, I need to reconsider this. Looking at the modified files, they are all shell scripts (.sh files), not Python files. Let me correct the .gitignore:
-
-```bash
-# Environment files
-.env
-.env.local
-*.env.*
-
-# Logs and temporary files
-*.log
-*.tmp
-*.swp
-
-# Editor/IDE files
-.vscode/
-.idea/
-
-# System files
-.DS_Store
-Thumbs.db
+# Scripts backup and temporary files
+scripts/*.bak
+scripts/*.tmp
+scripts/*.log
+*.sh.swp
+*.sh.swo
 ```
