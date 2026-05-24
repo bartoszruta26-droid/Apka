@@ -13,9 +13,9 @@ set -euo pipefail
 readonly VERSION="1.0"
 readonly SCRIPT_NAME="$(basename "$0")"
 readonly SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-readonly INSTALL_DIR="${HOME}/qwen-tam"
-readonly CONFIG_FILE="${HOME}/.qwen_tam_config"
-readonly LOG_FILE="/tmp/qwen-tam-install.log"
+readonly INSTALL_DIR="${HOME}/Apka"
+readonly CONFIG_FILE="${HOME}/.apka_config"
+readonly LOG_FILE="/tmp/apka-install.log"
 
 # Kolory ANSI
 readonly RED=$'\033[0;31m'
@@ -341,6 +341,10 @@ create_directories() {
     mkdir -p "$INSTALL_DIR/backups"
     log_debug "Utworzono: $INSTALL_DIR/backups"
     
+    # Katalog na templates
+    mkdir -p "$INSTALL_DIR/templates"
+    log_debug "Utworzono: $INSTALL_DIR/templates"
+    
     log_success "Wszystkie katalogi utworzone"
 }
 
@@ -370,6 +374,15 @@ copy_files() {
         log_warning "Katalog scripts/ nie istnieje"
     fi
     
+    # Kopiowanie templates
+    if [[ -d "${SCRIPT_DIR}/templates" ]]; then
+        cp -r "${SCRIPT_DIR}/templates/"* "$INSTALL_DIR/templates/"
+        chmod +x "$INSTALL_DIR/templates/"*.sh 2>/dev/null || true
+        log_debug "Skopiowano: templates/*"
+    else
+        log_warning "Katalog templates/ nie istnieje"
+    fi
+    
     # Kopiowanie dokumentacji
     for doc_file in README.md LICENSE SECURITY_IMPROVEMENTS.md instrukcja.md; do
         if [[ -f "${SCRIPT_DIR}/${doc_file}" ]]; then
@@ -389,7 +402,7 @@ create_symlink() {
     log_info "Tworzenie linku symbolicznego w ~/bin..."
     
     local user_bin_dir="${HOME}/bin"
-    local symlink_path="${user_bin_dir}/qwen-tam"
+    local symlink_path="${user_bin_dir}/apka"
     
     # Utwórz katalog ~/bin jeśli nie istnieje
     if [[ ! -d "$user_bin_dir" ]]; then
@@ -461,7 +474,7 @@ setup_permissions() {
 create_config() {
     log_info "Tworzenie domyślnej konfiguracji..."
     
-    local user_config="${HOME}/.qwen_tam_config"
+    local user_config="${HOME}/.apka_config"
     
     if [[ -f "$user_config" ]]; then
         log_warning "Plik konfiguracyjny już istnieje: $user_config"
@@ -471,11 +484,11 @@ create_config() {
     
     # Tworzenie nowej konfiguracji
     cat > "$user_config" << EOF
-# Qwen Time & Automation Manager - Konfiguracja
+# Apka - Konfiguracja
 # Wygenerowano: $(date '+%Y-%m-%d %H:%M:%S')
 
 # Ścieżka do katalogu roboczego
-WORK_DIR="${HOME}/qwen-projects"
+WORK_DIR="${HOME}/apka-projects"
 
 # Konfiguracja GitHub (token należy uzupełnić ręcznie!)
 GITHUB_TOKEN=""
@@ -512,7 +525,7 @@ EOF
 #-------------------------------------------------------------------------------
 
 create_work_dir() {
-    local work_dir="${HOME}/qwen-projects"
+    local work_dir="${HOME}/apka-projects"
     
     if [[ ! -d "$work_dir" ]]; then
         log_info "Tworzenie katalogu roboczego: $work_dir"
@@ -530,7 +543,7 @@ create_work_dir() {
 add_shell_alias() {
     log_info "Dodawanie aliasu do powłoki..."
     
-    local alias_line='alias qwen-tam="qwen-tam"'
+    local alias_line='alias apka="apka"'
     local shell_rc=""
     
     # Wykryj powłokę użytkownika
@@ -546,11 +559,11 @@ add_shell_alias() {
     fi
     
     # Sprawdź czy alias już istnieje
-    if grep -q "qwen-tam" "$shell_rc" 2>/dev/null; then
+    if grep -q "apka" "$shell_rc" 2>/dev/null; then
         log_debug "Alias już istnieje w $shell_rc"
     else
         echo "" >> "$shell_rc"
-        echo "# Qwen Time & Automation Manager" >> "$shell_rc"
+        echo "# Apka" >> "$shell_rc"
         echo "$alias_line" >> "$shell_rc"
         log_debug "Dodano alias do $shell_rc"
     fi
@@ -580,7 +593,7 @@ verify_installation() {
     fi
     
     # Sprawdź link symboliczny w ~/bin
-    local user_bin_path="${HOME}/bin/qwen-tam"
+    local user_bin_path="${HOME}/bin/apka"
     if [[ ! -L "$user_bin_path" ]]; then
         log_error "Link symboliczny nie został utworzony: $user_bin_path"
         ((errors++))
@@ -636,7 +649,7 @@ add_bin_to_path() {
         log_debug "~/bin jest już w PATH w pliku $shell_rc"
     else
         echo "" >> "$shell_rc"
-        echo "# Qwen Time & Automation Manager - dodanie ~/bin do PATH" >> "$shell_rc"
+        echo "# Apka - dodanie ~/bin do PATH" >> "$shell_rc"
         echo "$path_line" >> "$shell_rc"
         log_debug "Dodano ~/bin do PATH w pliku $shell_rc"
     fi
@@ -661,11 +674,11 @@ show_post_install_info() {
     echo -e "${CYAN}╚══════════════════════════════════════════════════════════════╝${NC}"
     echo ""
     echo -e "${GREEN}Lokalizacja instalacji:${NC} $INSTALL_DIR"
-    echo -e "${GREEN}Plik konfiguracyjny:${NC} ${HOME}/.qwen_tam_config"
-    echo -e "${GREEN}Katalog roboczy:${NC} ${HOME}/qwen-projects"
+    echo -e "${GREEN}Plik konfiguracyjny:${NC} ${HOME}/.apka_config"
+    echo -e "${GREEN}Katalog roboczy:${NC} ${HOME}/apka-projects"
     echo ""
     echo -e "${BLUE}Jak uruchomić aplikację:${NC}"
-    echo "  Uruchom polecenie: ${CYAN}qwen-tam${NC}"
+    echo "  Uruchom polecenie: ${CYAN}apka${NC}"
     echo "  Lub bezpośrednio: ${CYAN}$INSTALL_DIR/qwen-tam.sh${NC}"
     echo ""
     echo -e "${GREEN}Konfiguracja środowiska:${NC}"
@@ -674,7 +687,7 @@ show_post_install_info() {
     echo "  ✓ Jeśli to nowa sesja terminala, uruchom: ${CYAN}source ~/.bashrc${NC} (lub ~/.zshrc)"
     echo ""
     echo -e "${YELLOW}Następne kroki:${NC}"
-    echo "  1. Uruchom aplikację: ${CYAN}qwen-tam${NC}"
+    echo "  1. Uruchom aplikację: ${CYAN}apka${NC}"
     echo "  2. Skonfiguruj token GitHub w menu [5.1]"
     echo "  3. Sprawdź status systemu w menu [7]"
     echo "  4. Zacznij tworzyć projekty!"
@@ -698,14 +711,14 @@ uninstall_app() {
     fi
     
     echo ""
-    read -rp "Czy na pewno chcesz odinstalować Qwen TAM? [y/N]: " confirm
+    read -rp "Czy na pewno chcesz odinstalować Apka? [y/N]: " confirm
     if [[ ! "$confirm" =~ ^[Yy]$ ]]; then
         log_info "Odinstalowywanie anulowane"
         exit 0
     fi
     
     # Usuń link symboliczny z ~/bin
-    rm -f "${HOME}/bin/qwen-tam"
+    rm -f "${HOME}/bin/apka"
     log_debug "Usunięto link symboliczny"
     
     # Usuń katalog instalacyjny
@@ -713,7 +726,7 @@ uninstall_app() {
     log_debug "Usunięto katalog instalacyjny"
     
     # Nie usuwaj konfiguracji użytkownika (może chcieć zachować)
-    log_info "Plik konfiguracyjny ${HOME}/.qwen_tam_config został zachowany"
+    log_info "Plik konfiguracyjny ${HOME}/.apka_config został zachowany"
     
     log_success "Aplikacja odinstalowana"
     exit 0
@@ -724,7 +737,7 @@ uninstall_app() {
 #-------------------------------------------------------------------------------
 
 show_help() {
-    echo "Qwen Time & Automation Manager - Skrypt Instalacyjny v${VERSION}"
+    echo "Apka - Skrypt Instalacyjny v${VERSION}"
     echo ""
     echo "Użycie: $SCRIPT_NAME [OPCJE]"
     echo ""
