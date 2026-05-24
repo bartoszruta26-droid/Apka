@@ -18,12 +18,12 @@ readonly CONFIG_FILE="${HOME}/.apka_config"
 readonly LOG_FILE="/tmp/apka-install.log"
 
 # Kolory ANSI
-readonly RED=$'\033[0;31m'
-readonly GREEN=$'\033[0;32m'
-readonly YELLOW=$'\033[1;33m'
-readonly BLUE=$'\033[0;34m'
-readonly CYAN=$'\033[0;36m'
-readonly NC=$'\033[0m' # No Color
+[[ -z "${RED:-}" ]] && readonly RED=$'\033[0;31m'
+[[ -z "${GREEN:-}" ]] && readonly GREEN=$'\033[0;32m'
+[[ -z "${YELLOW:-}" ]] && readonly YELLOW=$'\033[1;33m'
+[[ -z "${BLUE:-}" ]] && readonly BLUE=$'\033[0;34m'
+[[ -z "${CYAN:-}" ]] && readonly CYAN=$'\033[0;36m'
+[[ -z "${NC:-}" ]] && readonly NC=$'\033[0m' # No Color
 
 # Tryby pracy
 VERBOSE_MODE=false
