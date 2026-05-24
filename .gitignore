@@ -1,1 +1,1 @@
-Nothing should be ignored based on the provided file changes. The only added file is a shell script (`templates/svg-generator.sh`) which appears to be source code and should not be ignored.
+Nothing should be ignored based on the provided file changes. The only modified file is `install.sh`, which is a shell script and should not be added to .gitignore.

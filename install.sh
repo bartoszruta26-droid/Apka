@@ -13,7 +13,7 @@ set -euo pipefail
 readonly VERSION="1.0"
 readonly SCRIPT_NAME="$(basename "$0")"
 readonly SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-readonly INSTALL_DIR="/opt/qwen-tam"
+readonly INSTALL_DIR="${HOME}/qwen-tam"
 readonly CONFIG_FILE="${HOME}/.qwen_tam_config"
 readonly LOG_FILE="/tmp/qwen-tam-install.log"
 
@@ -67,15 +67,15 @@ log_success() {
 }
 
 #-------------------------------------------------------------------------------
-# Sprawdzenie uprawnień root
+# Sprawdzenie uprawnień administratora (sudo)
 #-------------------------------------------------------------------------------
 
 check_root() {
     if [[ $EUID -ne 0 ]]; then
-        log_error "Ten skrypt musi być uruchomiony jako root (użyj sudo)"
+        log_error "Ten skrypt musi być uruchomiony z uprawnieniami administratora (użyj sudo)"
         exit 1
     fi
-    log_debug "Root privileges confirmed"
+    log_debug "Administrator privileges confirmed"
 }
 
 #-------------------------------------------------------------------------------
@@ -287,13 +287,20 @@ copy_files() {
 }
 
 #-------------------------------------------------------------------------------
-# Tworzenie linku symbolicznego
+# Tworzenie linku symbolicznego w katalogu bin użytkownika
 #-------------------------------------------------------------------------------
 
 create_symlink() {
-    log_info "Tworzenie linku symbolicznego w /usr/local/bin..."
+    log_info "Tworzenie linku symbolicznego w ~/bin..."
     
-    local symlink_path="/usr/local/bin/qwen-tam"
+    local user_bin_dir="${HOME}/bin"
+    local symlink_path="${user_bin_dir}/qwen-tam"
+    
+    # Utwórz katalog ~/bin jeśli nie istnieje
+    if [[ ! -d "$user_bin_dir" ]]; then
+        mkdir -p "$user_bin_dir"
+        log_debug "Utworzono katalog: $user_bin_dir"
+    fi
     
     # Usuń istniejący link jeśli istnieje
     if [[ -L "$symlink_path" ]]; then
@@ -303,7 +310,15 @@ create_symlink() {
     
     # Utwórz nowy link
     ln -s "$INSTALL_DIR/qwen-tam.sh" "$symlink_path"
+    chmod +x "$symlink_path"
     log_debug "Utworzono link: $symlink_path -> $INSTALL_DIR/qwen-tam.sh"
+    
+    # Sprawdź czy ~/bin jest w PATH
+    if [[ ":$PATH:" != *":$user_bin_dir:"* ]]; then
+        log_warning "Katalog ~/bin nie znajduje się w PATH"
+        log_info "Dodanie ~/bin do PATH w pliku .bashrc lub .zshrc:"
+        log_info '  export PATH="$HOME/bin:$PATH"'
+    fi
     
     log_success "Link symboliczny utworzony"
 }
@@ -315,11 +330,25 @@ create_symlink() {
 setup_permissions() {
     log_info "Konfiguracja uprawnień..."
     
-    # Właściciel katalogu instalacyjnego
-    chown -R root:root "$INSTALL_DIR"
+    # Właściciel katalogu instalacyjnego - bieżący użytkownik (z zachowaniem grupy)
+    local current_user="${SUDO_USER:-$(whoami)}"
+    local current_group
+    
+    # Sprawdź czy użytkownik istnieje w systemie
+    if id "$current_user" &>/dev/null; then
+        current_group="$(id -gn "$current_user" 2>/dev/null || echo "$current_user")"
+        chown -R "${current_user}:${current_group}" "$INSTALL_DIR"
+        log_debug "Ustawiono właściciela: ${current_user}:${current_group}"
+    else
+        # Jeśli użytkownik nie istnieje, użyj obecnego użytkownika
+        current_user="$(whoami)"
+        current_group="$(id -gn "$current_user" 2>/dev/null || echo "$current_user")"
+        chown -R "${current_user}:${current_group}" "$INSTALL_DIR"
+        log_debug "Ustawiono właściciela: ${current_user}:${current_group} (użytkownik SUDO_USER nie istnieje)"
+    fi
     
     # Uprawnienia dla katalogu logów (wszyscy mogą zapisywać)
-    chmod 777 "$INSTALL_DIR/logs"
+    chmod 755 "$INSTALL_DIR/logs"
     
     # Uprawnienia dla skryptów wykonywalnych
     find "$INSTALL_DIR" -name "*.sh" -exec chmod +x {} \;
@@ -455,9 +484,10 @@ verify_installation() {
         ((errors++))
     fi
     
-    # Sprawdź link symboliczny
-    if [[ ! -L "/usr/local/bin/qwen-tam" ]]; then
-        log_error "Link symboliczny nie został utworzony"
+    # Sprawdź link symboliczny w ~/bin
+    local user_bin_path="${HOME}/bin/qwen-tam"
+    if [[ ! -L "$user_bin_path" ]]; then
+        log_error "Link symboliczny nie został utworzony: $user_bin_path"
         ((errors++))
     fi
     
@@ -497,8 +527,14 @@ show_post_install_info() {
     echo -e "${GREEN}Katalog roboczy:${NC} ${HOME}/qwen-projects"
     echo ""
     echo -e "${BLUE}Jak uruchomić aplikację:${NC}"
-    echo "  1. Uruchom polecenie: ${CYAN}qwen-tam${NC}"
-    echo "  2. Lub bezpośrednio: ${CYAN}$INSTALL_DIR/qwen-tam.sh${NC}"
+    echo "  1. Upewnij się, że katalog ~/bin jest w PATH"
+    echo "  2. Uruchom polecenie: ${CYAN}qwen-tam${NC}"
+    echo "  3. Lub bezpośrednio: ${CYAN}$INSTALL_DIR/qwen-tam.sh${NC}"
+    echo ""
+    echo -e "${YELLOW}Dodanie ~/bin do PATH (jeśli jeszcze nie dodane):${NC}"
+    echo "  Dodaj do ~/.bashrc lub ~/.zshrc:"
+    echo "  ${CYAN}export PATH=\"\$HOME/bin:\$PATH\"${NC}"
+    echo "  Następnie uruchom ponownie terminal lub: ${CYAN}source ~/.bashrc${NC}"
     echo ""
     echo -e "${YELLOW}Następne kroki:${NC}"
     echo "  1. Uruchom aplikację: ${CYAN}qwen-tam${NC}"
@@ -531,8 +567,8 @@ uninstall_app() {
         exit 0
     fi
     
-    # Usuń link symboliczny
-    rm -f /usr/local/bin/qwen-tam
+    # Usuń link symboliczny z ~/bin
+    rm -f "${HOME}/bin/qwen-tam"
     log_debug "Usunięto link symboliczny"
     
     # Usuń katalog instalacyjny
