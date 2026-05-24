@@ -71,22 +71,27 @@ generate_qwen_text() {
         return 1
     fi
     
-    # Skrypt Node.js do wywołania Puter.js
+    # Bezpieczne przekazanie danych przez zmienne środowiskowe
     local result
-    result=$(node -e "
-const { puter } = require('@heyputer/puter.js');
+    result=$(PROMPT_INPUT="$prompt" MODEL_INPUT="$model" TEMPERATURE_INPUT="$temperature" MAX_TOKENS_INPUT="$max_tokens" node -e '
+const { puter } = require("@heyputer/puter.js");
 
-puter.ai.chat(\"$prompt\", { 
-    model: '$model',
-    temperature: $temperature,
-    max_tokens: $max_tokens
+const prompt = process.env.PROMPT_INPUT;
+const model = process.env.MODEL_INPUT;
+const temperature = parseFloat(process.env.TEMPERATURE_INPUT);
+const max_tokens = parseInt(process.env.MAX_TOKENS_INPUT, 10);
+
+puter.ai.chat(prompt, { 
+    model: model,
+    temperature: temperature,
+    max_tokens: max_tokens
 }).then(response => {
-    console.log(response);
+    console.log(response.message.content);
 }).catch(error => {
-    console.error('Error:', error.message);
+    console.error("Error:", error.message);
     process.exit(1);
 });
-" 2>&1) || {
+' 2>&1) || {
         log_puter_error "Failed to generate text: $result"
         return 1
     }
@@ -109,22 +114,27 @@ generate_openai_text() {
         return 1
     fi
     
-    # Skrypt Node.js do wywołania Puter.js
+    # Bezpieczne przekazanie danych przez zmienne środowiskowe
     local result
-    result=$(node -e "
-const { puter } = require('@heyputer/puter.js');
+    result=$(PROMPT_INPUT="$prompt" MODEL_INPUT="$model" TEMPERATURE_INPUT="$temperature" MAX_TOKENS_INPUT="$max_tokens" node -e '
+const { puter } = require("@heyputer/puter.js");
 
-puter.ai.chat(\"$prompt\", { 
-    model: '$model',
-    temperature: $temperature,
-    max_tokens: $max_tokens
+const prompt = process.env.PROMPT_INPUT;
+const model = process.env.MODEL_INPUT;
+const temperature = parseFloat(process.env.TEMPERATURE_INPUT);
+const max_tokens = parseInt(process.env.MAX_TOKENS_INPUT, 10);
+
+puter.ai.chat(prompt, { 
+    model: model,
+    temperature: temperature,
+    max_tokens: max_tokens
 }).then(response => {
-    console.log(response);
+    console.log(response.message.content);
 }).catch(error => {
-    console.error('Error:', error.message);
+    console.error("Error:", error.message);
     process.exit(1);
 });
-" 2>&1) || {
+' 2>&1) || {
         log_puter_error "Failed to generate text: $result"
         return 1
     }
@@ -171,20 +181,25 @@ generate_qwen_image() {
         return 1
     fi
     
-    node -e "
-const { puter } = require('@heyputer/puter.js');
-const fs = require('fs');
+    # Bezpieczne przekazanie danych przez zmienne środowiskowe
+    PROMPT_INPUT="$prompt" OUTPUT_FILE_INPUT="$output_file" MODEL_INPUT="$model" node -e '
+const { puter } = require("@heyputer/puter.js");
+const fs = require("fs");
 
-puter.ai.txt2img('$prompt', { model: '$model' }).then(response => {
+const prompt = process.env.PROMPT_INPUT;
+const outputFile = process.env.OUTPUT_FILE_INPUT;
+const model = process.env.MODEL_INPUT;
+
+puter.ai.txt2img(prompt, { model: model }).then(response => {
     // Zapisz obraz do pliku
-    const buffer = Buffer.from(response.base64, 'base64');
-    fs.writeFileSync('$output_file', buffer);
-    console.log('Image saved to: $output_file');
+    const buffer = Buffer.from(response.base64, "base64");
+    fs.writeFileSync(outputFile, buffer);
+    console.log("Image saved to: " + outputFile);
 }).catch(error => {
-    console.error('Error:', error.message);
+    console.error("Error:", error.message);
     process.exit(1);
 });
-" 2>&1
+' 2>&1
 }
 
 # Generowanie obrazu za pomocą GPT Image / DALL-E
@@ -200,19 +215,24 @@ generate_openai_image() {
         return 1
     fi
     
-    node -e "
-const { puter } = require('@heyputer/puter.js');
-const fs = require('fs');
+    # Bezpieczne przekazanie danych przez zmienne środowiskowe
+    PROMPT_INPUT="$prompt" OUTPUT_FILE_INPUT="$output_file" MODEL_INPUT="$model" node -e '
+const { puter } = require("@heyputer/puter.js");
+const fs = require("fs");
 
-puter.ai.txt2img('$prompt', { model: '$model' }).then(response => {
-    const buffer = Buffer.from(response.base64, 'base64');
-    fs.writeFileSync('$output_file', buffer);
-    console.log('Image saved to: $output_file');
+const prompt = process.env.PROMPT_INPUT;
+const outputFile = process.env.OUTPUT_FILE_INPUT;
+const model = process.env.MODEL_INPUT;
+
+puter.ai.txt2img(prompt, { model: model }).then(response => {
+    const buffer = Buffer.from(response.base64, "base64");
+    fs.writeFileSync(outputFile, buffer);
+    console.log("Image saved to: " + outputFile);
 }).catch(error => {
-    console.error('Error:', error.message);
+    console.error("Error:", error.message);
     process.exit(1);
 });
-" 2>&1
+' 2>&1
 }
 
 # Generowanie mowy (text-to-speech)
@@ -228,19 +248,24 @@ generate_speech() {
         return 1
     fi
     
-    node -e "
-const { puter } = require('@heyputer/puter.js');
-const fs = require('fs');
+    # Bezpieczne przekazanie danych przez zmienne środowiskowe
+    TEXT_INPUT="$text" OUTPUT_FILE_INPUT="$output_file" MODEL_INPUT="$model" node -e '
+const { puter } = require("@heyputer/puter.js");
+const fs = require("fs");
 
-puter.ai.txt2speech('$text', { model: '$model' }).then(response => {
-    const buffer = Buffer.from(response.base64, 'base64');
-    fs.writeFileSync('$output_file', buffer);
-    console.log('Audio saved to: $output_file');
+const text = process.env.TEXT_INPUT;
+const outputFile = process.env.OUTPUT_FILE_INPUT;
+const model = process.env.MODEL_INPUT;
+
+puter.ai.txt2speech(text, { model: model }).then(response => {
+    const buffer = Buffer.from(response.base64, "base64");
+    fs.writeFileSync(outputFile, buffer);
+    console.log("Audio saved to: " + outputFile);
 }).catch(error => {
-    console.error('Error:', error.message);
+    console.error("Error:", error.message);
     process.exit(1);
 });
-" 2>&1
+' 2>&1
 }
 
 #-------------------------------------------------------------------------------
