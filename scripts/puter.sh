@@ -12,7 +12,10 @@ set -euo pipefail
 # Konfiguracja i zmienne globalne
 #-------------------------------------------------------------------------------
 readonly PUTER_MODULE_VERSION="1.0"
-readonly PUTER_SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# Get script directory (only if not already set by parent script)
+if [[ -z "${PUTER_SCRIPT_DIR:-}" ]]; then
+    readonly PUTER_SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+fi
 LOG_DIR="${PUTER_SCRIPT_DIR}/../logs"
 
 # Domyślne modele

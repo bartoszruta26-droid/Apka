@@ -6,7 +6,10 @@
 
 set -euo pipefail
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# Get script directory (only if not already set by parent script)
+if [[ -z "${SCRIPT_DIR:-}" ]]; then
+    SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+fi
 # Use consistent config directory with security library
 CONFIG_DIR="${QWEN_TAM_CONFIG_DIR:-$HOME/.qwen_tam}"
 GITHUB_CONF="$CONFIG_DIR/github.conf.enc"

@@ -11,7 +11,10 @@ set -euo pipefail
 # Konfiguracja i zmienne globalne
 #-------------------------------------------------------------------------------
 readonly AGENT_VERSION="1.0"
-readonly AUTOMATION_SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# Get script directory (only if not already set by parent script)
+if [[ -z "${AUTOMATION_SCRIPT_DIR:-}" ]]; then
+    readonly AUTOMATION_SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+fi
 WORKFLOW_DIR="${AUTOMATION_SCRIPT_DIR}/workflows"
 TASKS_DIR="${AUTOMATION_SCRIPT_DIR}/tasks"
 HISTORY_FILE="${AUTOMATION_SCRIPT_DIR}/logs/task_history.log"

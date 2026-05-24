@@ -12,7 +12,10 @@ set -euo pipefail
 #-------------------------------------------------------------------------------
 readonly VERSION="1.0"
 readonly SCRIPT_NAME="$(basename "$0")"
-readonly SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# Get script directory (only if not already set by parent script)
+if [[ -z "${SCRIPT_DIR:-}" ]]; then
+    readonly SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+fi
 readonly INSTALL_DIR="${HOME}/Apka"
 readonly CONFIG_FILE="${HOME}/.apka_config"
 readonly LOG_FILE="/tmp/apka-install.log"

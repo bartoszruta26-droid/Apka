@@ -11,7 +11,10 @@ set -euo pipefail
 # Konfiguracja i zmienne
 #-------------------------------------------------------------------------------
 readonly CODER_VERSION="1.0"
-readonly CODER_SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# Get script directory (only if not already set by parent script)
+if [[ -z "${CODER_SCRIPT_DIR:-}" ]]; then
+    readonly CODER_SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+fi
 CONFIG_FILE="${HOME}/.qwen_tam_config"
 LOG_DIR="${CODER_SCRIPT_DIR}/../logs"
 WORK_DIR="${CODER_SCRIPT_DIR}/../projects"
