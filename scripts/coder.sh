@@ -11,10 +11,10 @@ set -euo pipefail
 # Konfiguracja i zmienne
 #-------------------------------------------------------------------------------
 readonly CODER_VERSION="1.0"
-readonly SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+readonly CODER_SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 readonly CONFIG_FILE="${HOME}/.qwen_tam_config"
-readonly LOG_DIR="${SCRIPT_DIR}/../logs"
-readonly WORK_DIR="${SCRIPT_DIR}/../projects"
+readonly LOG_DIR="${CODER_SCRIPT_DIR}/../logs"
+readonly WORK_DIR="${CODER_SCRIPT_DIR}/../projects"
 readonly QWEN_API_ENDPOINT="${QWEN_API_ENDPOINT:-http://localhost:11434/api/generate}"
 readonly QWEN_MODEL="${QWEN_MODEL:-qwen-coder:latest}"
 
@@ -874,8 +874,8 @@ show_coder_menu() {
             6) edit_existing_file ;;
             7) 
                 # Launch Templates Manager
-                if [[ -f "${SCRIPT_DIR}/../templates-manager.sh" ]]; then
-                    bash "${SCRIPT_DIR}/../templates-manager.sh"
+                if [[ -f "${CODER_SCRIPT_DIR}/../templates-manager.sh" ]]; then
+                    bash "${CODER_SCRIPT_DIR}/../templates-manager.sh"
                 else
                     echo -e "${RED}Templates manager not found!${NC}"
                     sleep 2

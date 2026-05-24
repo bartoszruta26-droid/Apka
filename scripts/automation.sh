@@ -11,11 +11,11 @@ set -euo pipefail
 # Konfiguracja i zmienne globalne
 #-------------------------------------------------------------------------------
 readonly AGENT_VERSION="1.0"
-readonly SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-readonly WORKFLOW_DIR="${SCRIPT_DIR}/workflows"
-readonly TASKS_DIR="${SCRIPT_DIR}/tasks"
-readonly HISTORY_FILE="${SCRIPT_DIR}/logs/task_history.log"
-readonly AGENT_LOG="${SCRIPT_DIR}/logs/agent.log"
+readonly AUTOMATION_SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+readonly WORKFLOW_DIR="${AUTOMATION_SCRIPT_DIR}/workflows"
+readonly TASKS_DIR="${AUTOMATION_SCRIPT_DIR}/tasks"
+readonly HISTORY_FILE="${AUTOMATION_SCRIPT_DIR}/logs/task_history.log"
+readonly AGENT_LOG="${AUTOMATION_SCRIPT_DIR}/logs/agent.log"
 
 # Kolory ANSI
 RED='\033[0;31m'
@@ -542,7 +542,7 @@ pause_resume_tasks() {
     echo ""
     
     # Sprawdzenie PID file
-    local pid_dir="${SCRIPT_DIR}/pids"
+    local pid_dir="${AUTOMATION_SCRIPT_DIR}/pids"
     mkdir -p "$pid_dir"
     
     local running_tasks=()
@@ -643,7 +643,7 @@ stop_running_tasks() {
     echo -e "${YELLOW}═══════════════════════════════════════════════════════════════${NC}"
     echo ""
     
-    local pid_dir="${SCRIPT_DIR}/pids"
+    local pid_dir="${AUTOMATION_SCRIPT_DIR}/pids"
     mkdir -p "$pid_dir"
     
     local running_tasks=()
@@ -802,8 +802,8 @@ schedule_automated_task() {
     esac
     
     # Dodanie do crontab
-    local script_path="${SCRIPT_DIR}/../qwen-tam.sh"
-    local cron_job="$cron_expr $script_path --run-workflow $wf_name >> ${SCRIPT_DIR}/logs/cron.log 2>&1"
+    local script_path="${AUTOMATION_SCRIPT_DIR}/../qwen-tam.sh"
+    local cron_job="$cron_expr $script_path --run-workflow $wf_name >> ${AUTOMATION_SCRIPT_DIR}/logs/cron.log 2>&1"
     
     echo ""
     echo -e "${YELLOW}Planowany wpis crontab:${NC}"
@@ -897,7 +897,7 @@ view_task_history() {
             fi
             ;;
         6)
-            local export_file="${SCRIPT_DIR}/logs/task_history_export_$(date +%Y%m%d_%H%M%S).txt"
+            local export_file="${AUTOMATION_SCRIPT_DIR}/logs/task_history_export_$(date +%Y%m%d_%H%M%S).txt"
             cp "$HISTORY_FILE" "$export_file"
             echo -e "${GREEN}✓ Wyeksportowano do: $export_file${NC}"
             ;;
@@ -1014,7 +1014,7 @@ quick_daily_backup() {
     echo -e "${YELLOW}═══════════════════════════════════════════════════════════════${NC}"
     echo ""
     
-    local backup_dir="${SCRIPT_DIR}/backups"
+    local backup_dir="${AUTOMATION_SCRIPT_DIR}/backups"
     mkdir -p "$backup_dir"
     
     local timestamp=$(date +%Y%m%d_%H%M%S)
@@ -1022,7 +1022,7 @@ quick_daily_backup() {
     local backup_path="${backup_dir}/${backup_name}"
     
     echo -e "${CYAN}Parametry kopii:${NC}"
-    echo "  Katalog źródłowy: $SCRIPT_DIR"
+    echo "  Katalog źródłowy: $AUTOMATION_SCRIPT_DIR"
     echo "  Katalog backupu: $backup_dir"
     echo "  Nazwa pliku: $backup_name"
     echo ""
@@ -1043,7 +1043,7 @@ quick_daily_backup() {
     # Wykluczenia
     local excludes="--exclude=logs/* --exclude=backups/* --exclude=.git/* --exclude=tmp/*"
     
-    tar $excludes -czf "$backup_path" -C "$(dirname "$SCRIPT_DIR")" "$(basename "$SCRIPT_DIR")" 2>/dev/null
+    tar $excludes -czf "$backup_path" -C "$(dirname "$AUTOMATION_SCRIPT_DIR")" "$(basename "$AUTOMATION_SCRIPT_DIR")" 2>/dev/null
     
     if [[ $? -eq 0 ]]; then
         local size=$(du -h "$backup_path" | cut -f1)
