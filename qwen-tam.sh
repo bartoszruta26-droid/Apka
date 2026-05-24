@@ -921,29 +921,6 @@ handle_update_menu() {
 }
 
 #-------------------------------------------------------------------------------
-# Logs & Monitoring menu handler
-#-------------------------------------------------------------------------------
-
-handle_logs_menu() {
-    while true; do
-        show_submenu_logs
-        read -rp "  Enter choice [1-8]: " choice
-        case $choice in
-            1) logs_view_app ;;
-            2) logs_view_debug ;;
-            3) logs_view_events ;;
-            4) logs_search ;;
-            5) logs_clear_old ;;
-            6) logs_export ;;
-            7) logs_realtime_monitor ;;
-            8) break ;;
-            *) echo -e "${RED}Invalid option!${NC}"; sleep 1 ;;
-        esac
-        [[ $choice != "8" ]] && read -rp "Press Enter to continue..."
-    done
-}
-
-#-------------------------------------------------------------------------------
 # Export Results Module - Moodle/Joomla/Nextcloud
 #-------------------------------------------------------------------------------
 # Konfiguracja eksportu - Export Configuration
