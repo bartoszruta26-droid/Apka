@@ -18,13 +18,13 @@ HISTORY_FILE="${AUTOMATION_SCRIPT_DIR}/logs/task_history.log"
 AGENT_LOG="${AUTOMATION_SCRIPT_DIR}/logs/agent.log"
 
 # Kolory ANSI
-[[ -z "${RED:-}" ]] && readonly RED='\033[0;31m'
-[[ -z "${GREEN:-}" ]] && readonly GREEN='\033[0;32m'
-[[ -z "${YELLOW:-}" ]] && readonly YELLOW='\033[1;33m'
-[[ -z "${BLUE:-}" ]] && readonly BLUE='\033[0;34m'
-[[ -z "${CYAN:-}" ]] && readonly CYAN='\033[0;36m'
-[[ -z "${MAGENTA:-}" ]] && readonly MAGENTA='\033[0;35m'
-[[ -z "${NC:-}" ]] && readonly NC='\033[0m' # No Color
+[[ -z "${RED:-}" ]] && RED='\033[0;31m'
+[[ -z "${GREEN:-}" ]] && GREEN='\033[0;32m'
+[[ -z "${YELLOW:-}" ]] && YELLOW='\033[1;33m'
+[[ -z "${BLUE:-}" ]] && BLUE='\033[0;34m'
+[[ -z "${CYAN:-}" ]] && CYAN='\033[0;36m'
+[[ -z "${MAGENTA:-}" ]] && MAGENTA='\033[0;35m'
+[[ -z "${NC:-}" ]] && NC='\033[0m' # No Color
 
 #-------------------------------------------------------------------------------
 # Funkcje pomocnicze

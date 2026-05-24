@@ -23,10 +23,10 @@ if [[ -f "${SCRIPT_DIR}/lib/validation.sh" ]]; then
 fi
 
 # Kolory ANSI
-[[ -z "${RED:-}" ]] && readonly RED='\033[0;31m'
-[[ -z "${GREEN:-}" ]] && readonly GREEN='\033[0;32m'
-[[ -z "${YELLOW:-}" ]] && readonly YELLOW='\033[1;33m'
-[[ -z "${NC:-}" ]] && readonly NC='\033[0m'
+[[ -z "${RED:-}" ]] && RED='\033[0;31m'
+[[ -z "${GREEN:-}" ]] && GREEN='\033[0;32m'
+[[ -z "${YELLOW:-}" ]] && YELLOW='\033[1;33m'
+[[ -z "${NC:-}" ]] && NC='\033[0m'
 
 log_auth() {
     echo -e "${GREEN}[AUTH]${NC} $(date '+%Y-%m-%d %H:%M:%S') - $*" | tee -a "$LOG_FILE"

@@ -10,10 +10,10 @@ set -euo pipefail
 #-------------------------------------------------------------------------------
 # Konfiguracja i zmienne globalne
 #-------------------------------------------------------------------------------
-readonly CONFIG_VERSION="1.0"
-readonly CONFIG_MODULE_NAME="config"
-readonly CONFIG_SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-readonly MAIN_SCRIPT_DIR="$(dirname "$CONFIG_SCRIPT_DIR")"
+CONFIG_VERSION="1.0"
+CONFIG_MODULE_NAME="config"
+CONFIG_SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+MAIN_SCRIPT_DIR="$(dirname "$CONFIG_SCRIPT_DIR")"
 CONFIG_FILE="${HOME}/.qwen_tam_config"
 CONFIG_BACKUP_DIR="${HOME}/.qwen_tam_backups"
 LOG_DIR="${MAIN_SCRIPT_DIR}/logs"
@@ -31,13 +31,13 @@ DEFAULT_UPDATE_CHANNEL="stable"
 DEFAULT_MAINTENANCE_WINDOW="02:00-04:00"
 
 # Kolory ANSI
-[[ -z "${RED:-}" ]] && readonly RED='\033[0;31m'
-[[ -z "${GREEN:-}" ]] && readonly GREEN='\033[0;32m'
-[[ -z "${YELLOW:-}" ]] && readonly YELLOW='\033[1;33m'
-[[ -z "${BLUE:-}" ]] && readonly BLUE='\033[0;34m'
-[[ -z "${CYAN:-}" ]] && readonly CYAN='\033[0;36m'
-[[ -z "${MAGENTA:-}" ]] && readonly MAGENTA='\033[0;35m'
-[[ -z "${NC:-}" ]] && readonly NC='\033[0m' # No Color
+[[ -z "${RED:-}" ]] && RED='\033[0;31m'
+[[ -z "${GREEN:-}" ]] && GREEN='\033[0;32m'
+[[ -z "${YELLOW:-}" ]] && YELLOW='\033[1;33m'
+[[ -z "${BLUE:-}" ]] && BLUE='\033[0;34m'
+[[ -z "${CYAN:-}" ]] && CYAN='\033[0;36m'
+[[ -z "${MAGENTA:-}" ]] && MAGENTA='\033[0;35m'
+[[ -z "${NC:-}" ]] && NC='\033[0m' # No Color
 
 #-------------------------------------------------------------------------------
 # Funkcje pomocnicze
