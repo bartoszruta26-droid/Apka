@@ -185,14 +185,15 @@ show_submenu_coder() {
     show_header
     echo -e "${CYAN}║                QWEN CODER - CODE GENERATION                  ║${NC}"
     echo -e "${CYAN}╠══════════════════════════════════════════════════════════════╣${NC}"
-    echo -e "${GREEN}║  [1] 📁 Create/Update Project Structure                    ║${NC}"
+    echo -e "${GREEN}║  [1] 📁 Create New Project (with AI setup)                 ║${NC}"
     echo -e "${GREEN}║  [2] 📜 Create/Update Shell Script                         ║${NC}"
     echo -e "${GREEN}║  [3] 💻 Create/Update C/C#/C++ Code with GUI               ║${NC}"
     echo -e "${GREEN}║  [4] 🌐 Create/Update WebUI Script                         ║${NC}"
     echo -e "${GREEN}║  [5] 📱 Create/Update Android App                          ║${NC}"
     echo -e "${GREEN}║  [6] ✏️  Edit Existing File with AI                        ║${NC}"
     echo -e "${GREEN}║  [7] 📂 Project Templates Manager                          ║${NC}"
-    echo -e "${YELLOW}║  [8] ⬅️  Back to Main Menu                                 ║${NC}"
+    echo -e "${GREEN}║  [8] ⚙️  Daemon/Service Generator                          ║${NC}"
+    echo -e "${YELLOW}║  [9] ⬅️  Back to Main Menu                                 ║${NC}"
     echo -e "${CYAN}╚══════════════════════════════════════════════════════════════╝${NC}"
     echo ""
 }
