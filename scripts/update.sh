@@ -14,10 +14,10 @@ set -euo pipefail
 readonly UPDATE_VERSION="1.0"
 readonly GITHUB_REPO="qwen-tam"
 readonly GITHUB_OWNER="qwen-tam"
-readonly VERSION_FILE="${SCRIPT_DIR}/VERSION"
-readonly BACKUP_DIR="${SCRIPT_DIR}/backups"
+VERSION_FILE="${SCRIPT_DIR}/VERSION"
+BACKUP_DIR="${SCRIPT_DIR}/backups"
 readonly STAGING_DIR="/tmp/qwen-tam-staging"
-readonly CHECKSUM_FILE="${STAGING_DIR}/SHA256SUMS"
+CHECKSUM_FILE="${STAGING_DIR}/SHA256SUMS"
 
 # Kolory ANSI
 RED='\033[0;31m'

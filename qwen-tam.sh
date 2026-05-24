@@ -14,11 +14,11 @@ set -euo pipefail
 readonly VERSION="1.0"
 readonly SCRIPT_NAME="$(basename "$0")"
 readonly SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-readonly CONFIG_FILE="${HOME}/.qwen_tam_config"
-readonly LOG_DIR="${SCRIPT_DIR}/logs"
-readonly APP_LOG="${LOG_DIR}/app.log"
-readonly DEBUG_LOG="${LOG_DIR}/debug.log"
-readonly EVENTS_LOG="${LOG_DIR}/events.log"
+CONFIG_FILE="${HOME}/.qwen_tam_config"
+LOG_DIR="${SCRIPT_DIR}/logs"
+APP_LOG="${LOG_DIR}/app.log"
+DEBUG_LOG="${LOG_DIR}/debug.log"
+EVENTS_LOG="${LOG_DIR}/events.log"
 
 # Ścieżki do podskryptów - najpierw sprawdzaj katalog użytkownika, potem lokalny
 USER_SCRIPTS_DIR="${HOME}/Apka/scripts"

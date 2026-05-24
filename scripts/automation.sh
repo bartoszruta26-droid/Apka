@@ -12,10 +12,10 @@ set -euo pipefail
 #-------------------------------------------------------------------------------
 readonly AGENT_VERSION="1.0"
 readonly AUTOMATION_SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-readonly WORKFLOW_DIR="${AUTOMATION_SCRIPT_DIR}/workflows"
-readonly TASKS_DIR="${AUTOMATION_SCRIPT_DIR}/tasks"
-readonly HISTORY_FILE="${AUTOMATION_SCRIPT_DIR}/logs/task_history.log"
-readonly AGENT_LOG="${AUTOMATION_SCRIPT_DIR}/logs/agent.log"
+WORKFLOW_DIR="${AUTOMATION_SCRIPT_DIR}/workflows"
+TASKS_DIR="${AUTOMATION_SCRIPT_DIR}/tasks"
+HISTORY_FILE="${AUTOMATION_SCRIPT_DIR}/logs/task_history.log"
+AGENT_LOG="${AUTOMATION_SCRIPT_DIR}/logs/agent.log"
 
 # Kolory ANSI
 RED='\033[0;31m'
