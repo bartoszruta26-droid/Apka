@@ -19,13 +19,13 @@ readonly QWEN_API_ENDPOINT="${QWEN_API_ENDPOINT:-http://localhost:11434/api/gene
 readonly QWEN_MODEL="${QWEN_MODEL:-qwen-coder:latest}"
 
 # Kolory ANSI
-[[ -z "${RED:-}" ]] && readonly RED='\033[0;31m'
-[[ -z "${GREEN:-}" ]] && readonly GREEN='\033[0;32m'
-[[ -z "${YELLOW:-}" ]] && readonly YELLOW='\033[1;33m'
-[[ -z "${BLUE:-}" ]] && readonly BLUE='\033[0;34m'
-[[ -z "${CYAN:-}" ]] && readonly CYAN='\033[0;36m'
-[[ -z "${PURPLE:-}" ]] && readonly PURPLE='\033[0;35m'
-[[ -z "${NC:-}" ]] && readonly NC='\033[0m' # No Color
+[[ -z "${RED:-}" ]] && RED='\033[0;31m'
+[[ -z "${GREEN:-}" ]] && GREEN='\033[0;32m'
+[[ -z "${YELLOW:-}" ]] && YELLOW='\033[1;33m'
+[[ -z "${BLUE:-}" ]] && BLUE='\033[0;34m'
+[[ -z "${CYAN:-}" ]] && CYAN='\033[0;36m'
+[[ -z "${PURPLE:-}" ]] && PURPLE='\033[0;35m'
+[[ -z "${NC:-}" ]] && NC='\033[0m' # No Color
 
 # Zmienne sesji
 DEBUG_MODE=false
