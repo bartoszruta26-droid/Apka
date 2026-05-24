@@ -14,9 +14,9 @@ readonly CONFIG_VERSION="1.0"
 readonly CONFIG_MODULE_NAME="config"
 readonly CONFIG_SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 readonly MAIN_SCRIPT_DIR="$(dirname "$CONFIG_SCRIPT_DIR")"
-readonly CONFIG_FILE="${HOME}/.qwen_tam_config"
-readonly CONFIG_BACKUP_DIR="${HOME}/.qwen_tam_backups"
-readonly LOG_DIR="${MAIN_SCRIPT_DIR}/logs"
+CONFIG_FILE="${HOME}/.qwen_tam_config"
+CONFIG_BACKUP_DIR="${HOME}/.qwen_tam_backups"
+LOG_DIR="${MAIN_SCRIPT_DIR}/logs"
 
 # Domyślne wartości konfiguracji
 DEFAULT_QWEN_API_ENDPOINT="http://localhost:11434"

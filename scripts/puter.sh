@@ -13,7 +13,7 @@ set -euo pipefail
 #-------------------------------------------------------------------------------
 readonly PUTER_MODULE_VERSION="1.0"
 readonly PUTER_SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-readonly LOG_DIR="${PUTER_SCRIPT_DIR}/../logs"
+LOG_DIR="${PUTER_SCRIPT_DIR}/../logs"
 
 # Domyślne modele
 DEFAULT_QWEN_MODEL="qwen/qwen3.6-plus"

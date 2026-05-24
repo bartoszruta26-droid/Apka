@@ -12,9 +12,9 @@ set -euo pipefail
 #-------------------------------------------------------------------------------
 readonly CODER_VERSION="1.0"
 readonly CODER_SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-readonly CONFIG_FILE="${HOME}/.qwen_tam_config"
-readonly LOG_DIR="${CODER_SCRIPT_DIR}/../logs"
-readonly WORK_DIR="${CODER_SCRIPT_DIR}/../projects"
+CONFIG_FILE="${HOME}/.qwen_tam_config"
+LOG_DIR="${CODER_SCRIPT_DIR}/../logs"
+WORK_DIR="${CODER_SCRIPT_DIR}/../projects"
 readonly QWEN_API_ENDPOINT="${QWEN_API_ENDPOINT:-http://localhost:11434/api/generate}"
 readonly QWEN_MODEL="${QWEN_MODEL:-qwen-coder:latest}"
 

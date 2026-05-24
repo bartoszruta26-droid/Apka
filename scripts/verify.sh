@@ -12,9 +12,9 @@ set -euo pipefail
 # Konfiguracja modułu verify
 #-------------------------------------------------------------------------------
 readonly VERIFY_VERSION="1.0"
-readonly VERIFY_LOG_DIR="${SCRIPT_DIR:-$(dirname "$(dirname "${BASH_SOURCE[0]}")")}/logs"
-readonly VERIFY_LOG="${VERIFY_LOG_DIR}/verify.log"
-readonly REPORTS_DIR="${VERIFY_LOG_DIR}/reports"
+VERIFY_LOG_DIR="${SCRIPT_DIR:-$(dirname "$(dirname "${BASH_SOURCE[0]}")")}/logs"
+VERIFY_LOG="${VERIFY_LOG_DIR}/verify.log"
+REPORTS_DIR="${VERIFY_LOG_DIR}/reports"
 
 # Narzędzia do weryfikacji
 SHELL_CHECK_AVAILABLE=false

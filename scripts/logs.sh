@@ -10,11 +10,11 @@ set -euo pipefail
 #-------------------------------------------------------------------------------
 # Konfiguracja modułu logs
 #-------------------------------------------------------------------------------
-readonly LOG_DIR="${SCRIPT_DIR:-$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)}/logs"
-readonly APP_LOG="${LOG_DIR}/app.log"
-readonly DEBUG_LOG="${LOG_DIR}/debug.log"
-readonly EVENTS_LOG="${LOG_DIR}/events.log"
-readonly EXPORT_DIR="${LOG_DIR}/exports"
+LOG_DIR="${SCRIPT_DIR:-$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)}/logs"
+APP_LOG="${LOG_DIR}/app.log"
+DEBUG_LOG="${LOG_DIR}/debug.log"
+EVENTS_LOG="${LOG_DIR}/events.log"
+EXPORT_DIR="${LOG_DIR}/exports"
 readonly MAX_LOG_AGE_DAYS=30
 readonly MAX_LOG_SIZE_MB=50
 
