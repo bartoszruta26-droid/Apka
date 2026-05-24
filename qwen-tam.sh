@@ -20,6 +20,14 @@ readonly APP_LOG="${LOG_DIR}/app.log"
 readonly DEBUG_LOG="${LOG_DIR}/debug.log"
 readonly EVENTS_LOG="${LOG_DIR}/events.log"
 
+# Ścieżki do podskryptów - najpierw sprawdzaj katalog użytkownika, potem lokalny
+USER_SCRIPTS_DIR="${HOME}/Apka/scripts"
+if [[ -d "$USER_SCRIPTS_DIR" ]]; then
+    SCRIPTS_DIR="$USER_SCRIPTS_DIR"
+else
+    SCRIPTS_DIR="${SCRIPT_DIR}/scripts"
+fi
+
 # Tryby pracy
 DEBUG_MODE=false
 VERBOSE_MODE=false
@@ -138,8 +146,8 @@ show_main_menu() {
     echo -e "${GREEN}║  [6] 📊 Logs & Monitoring                                    ║${NC}"
     echo -e "${GREEN}║  [7] ℹ️  System Information                                  ║${NC}"
     echo -e "${GREEN}║  [8] 🔄 Update Application                                   ║${NC}"
-    echo -e "${GREEN}║  [10] 📤 Export Results (Moodle/Joomla/Nextcloud)            ║${NC}"
-    echo -e "${YELLOW}║  [9] 🚪 Exit                                                 ║${NC}"
+    echo -e "${GREEN}║  [9] 📤 Export Results (Moodle/Joomla/Nextcloud)            ║${NC}"
+    echo -e "${YELLOW}║  [10] 🚪 Exit                                                 ║${NC}"
     echo -e "${CYAN}╠══════════════════════════════════════════════════════════════╣${NC}"
     
     local status_icon="●"
@@ -158,13 +166,13 @@ show_submenu_github() {
     show_header
     echo -e "${CYAN}║              GITHUB REPOSITORY MANAGEMENT                    ║${NC}"
     echo -e "${CYAN}╠══════════════════════════════════════════════════════════════╣${NC}"
-    echo -e "${GREEN}║  [1.1] 🔐 Configure GitHub Credentials                       ║${NC}"
-    echo -e "${GREEN}║  [1.2] ➕ Create New Repository                              ║${NC}"
-    echo -e "${GREEN}║  [1.3] 📋 List My Repositories                               ║${NC}"
-    echo -e "${GREEN}║  [1.4] 🗑️  Delete Repository                                 ║${NC}"
-    echo -e "${GREEN}║  [1.5] 📥 Clone Repository                                   ║${NC}"
-    echo -e "${GREEN}║  [1.6] 🔄 Sync Local with Remote                             ║${NC}"
-    echo -e "${YELLOW}║  [1.7] ⬅️  Back to Main Menu                                 ║${NC}"
+    echo -e "${GREEN}║  [1] 🔐 Configure GitHub Credentials                       ║${NC}"
+    echo -e "${GREEN}║  [2] ➕ Create New Repository                              ║${NC}"
+    echo -e "${GREEN}║  [3] 📋 List My Repositories                               ║${NC}"
+    echo -e "${GREEN}║  [4] 🗑️  Delete Repository                                 ║${NC}"
+    echo -e "${GREEN}║  [5] 📥 Clone Repository                                   ║${NC}"
+    echo -e "${GREEN}║  [6] 🔄 Sync Local with Remote                             ║${NC}"
+    echo -e "${YELLOW}║  [7] ⬅️  Back to Main Menu                                 ║${NC}"
     echo -e "${CYAN}╚══════════════════════════════════════════════════════════════╝${NC}"
     echo ""
 }
@@ -174,14 +182,14 @@ show_submenu_coder() {
     show_header
     echo -e "${CYAN}║                QWEN CODER - CODE GENERATION                  ║${NC}"
     echo -e "${CYAN}╠══════════════════════════════════════════════════════════════╣${NC}"
-    echo -e "${GREEN}║  [2.1] 📁 Create/Update Project Structure                    ║${NC}"
-    echo -e "${GREEN}║  [2.2] 📜 Create/Update Shell Script                         ║${NC}"
-    echo -e "${GREEN}║  [2.3] 💻 Create/Update C/C#/C++ Code with GUI               ║${NC}"
-    echo -e "${GREEN}║  [2.4] 🌐 Create/Update WebUI Script                         ║${NC}"
-    echo -e "${GREEN}║  [2.5] 📱 Create/Update Android App                          ║${NC}"
-    echo -e "${GREEN}║  [2.6] ✏️  Edit Existing File with AI                        ║${NC}"
-    echo -e "${GREEN}║  [2.8] 📂 Project Templates Manager                          ║${NC}"
-    echo -e "${YELLOW}║  [2.7] ⬅️  Back to Main Menu                                 ║${NC}"
+    echo -e "${GREEN}║  [1] 📁 Create/Update Project Structure                    ║${NC}"
+    echo -e "${GREEN}║  [2] 📜 Create/Update Shell Script                         ║${NC}"
+    echo -e "${GREEN}║  [3] 💻 Create/Update C/C#/C++ Code with GUI               ║${NC}"
+    echo -e "${GREEN}║  [4] 🌐 Create/Update WebUI Script                         ║${NC}"
+    echo -e "${GREEN}║  [5] 📱 Create/Update Android App                          ║${NC}"
+    echo -e "${GREEN}║  [6] ✏️  Edit Existing File with AI                        ║${NC}"
+    echo -e "${GREEN}║  [7] 📂 Project Templates Manager                          ║${NC}"
+    echo -e "${YELLOW}║  [8] ⬅️  Back to Main Menu                                 ║${NC}"
     echo -e "${CYAN}╚══════════════════════════════════════════════════════════════╝${NC}"
     echo ""
 }
@@ -191,13 +199,13 @@ show_submenu_verification() {
     show_header
     echo -e "${CYAN}║                   CODE VERIFICATION                          ║${NC}"
     echo -e "${CYAN}╠══════════════════════════════════════════════════════════════╣${NC}"
-    echo -e "${GREEN}║  [3.1] 🔍 Syntax Check (Shell)                               ║${NC}"
-    echo -e "${GREEN}║  [3.2] 🔍 Syntax Check (C/C++)                               ║${NC}"
-    echo -e "${GREEN}║  [3.3] 🛡️  Security Scan                                     ║${NC}"
-    echo -e "${GREEN}║  [3.4] 📏 Code Style Check                                   ║${NC}"
-    echo -e "${GREEN}║  [3.5] 🧪 Run Unit Tests                                     ║${NC}"
-    echo -e "${GREEN}║  [3.6] 📊 Generate Verification Report                       ║${NC}"
-    echo -e "${YELLOW}║  [3.7] ⬅️  Back to Main Menu                                 ║${NC}"
+    echo -e "${GREEN}║  [1] 🔍 Syntax Check (Shell)                               ║${NC}"
+    echo -e "${GREEN}║  [2] 🔍 Syntax Check (C/C++)                               ║${NC}"
+    echo -e "${GREEN}║  [3] 🛡️  Security Scan                                     ║${NC}"
+    echo -e "${GREEN}║  [4] 📏 Code Style Check                                   ║${NC}"
+    echo -e "${GREEN}║  [5] 🧪 Run Unit Tests                                     ║${NC}"
+    echo -e "${GREEN}║  [6] 📊 Generate Verification Report                       ║${NC}"
+    echo -e "${YELLOW}║  [7] ⬅️  Back to Main Menu                                 ║${NC}"
     echo -e "${CYAN}╚══════════════════════════════════════════════════════════════╝${NC}"
     echo ""
 }
@@ -207,20 +215,20 @@ show_submenu_automation() {
     show_header
     echo -e "${CYAN}║               AUTOMATION & AI AGENT                          ║${NC}"
     echo -e "${CYAN}╠══════════════════════════════════════════════════════════════╣${NC}"
-    echo -e "${GREEN}║  [4.1] 💬 Start AI Discussion Session                        ║${NC}"
-    echo -e "${GREEN}║  [4.2] 📋 Create Automation Workflow                         ║${NC}"
-    echo -e "${GREEN}║  [4.3] ▶️  Run Automation Task                               ║${NC}"
-    echo -e "${GREEN}║  [4.4] ⏸️  Pause/Resume Background Tasks                     ║${NC}"
-    echo -e "${GREEN}║  [4.5] 🛑 Stop Running Tasks                                 ║${NC}"
-    echo -e "${GREEN}║  [4.6] 📅 Schedule Automated Task                            ║${NC}"
-    echo -e "${GREEN}║  [4.7] 📜 View Task History                                  ║${NC}"
-    echo -e "${GREEN}║  [4.8] ⚡ Quick Automations                                  ║${NC}"
-    echo -e "${GREEN}║      ├─ [4.8.1] Auto-commit & Push                           ║${NC}"
-    echo -e "${GREEN}║      ├─ [4.8.2] Daily Backup                                 ║${NC}"
-    echo -e "${GREEN}║      ├─ [4.8.3] Code Review Loop                             ║${NC}"
-    echo -e "${GREEN}║      └─ [4.8.4] Custom Script Runner                         ║${NC}"
-    echo -e "${BLUE}║  [4.9] 🤖 Multi-Agent Workflows (Cluster RPi4)                ║${NC}"
-    echo -e "${YELLOW}║  [4.10] ⬅️  Back to Main Menu                                ║${NC}"
+    echo -e "${GREEN}║  [1] 💬 Start AI Discussion Session                        ║${NC}"
+    echo -e "${GREEN}║  [2] 📋 Create Automation Workflow                         ║${NC}"
+    echo -e "${GREEN}║  [3] ▶️  Run Automation Task                               ║${NC}"
+    echo -e "${GREEN}║  [4] ⏸️  Pause/Resume Background Tasks                     ║${NC}"
+    echo -e "${GREEN}║  [5] 🛑 Stop Running Tasks                                 ║${NC}"
+    echo -e "${GREEN}║  [6] 📅 Schedule Automated Task                            ║${NC}"
+    echo -e "${GREEN}║  [7] 📜 View Task History                                  ║${NC}"
+    echo -e "${GREEN}║  [8] ⚡ Quick Automations                                  ║${NC}"
+    echo -e "${GREEN}║      ├─ [1] Auto-commit & Push                           ║${NC}"
+    echo -e "${GREEN}║      ├─ [2] Daily Backup                                 ║${NC}"
+    echo -e "${GREEN}║      ├─ [3] Code Review Loop                             ║${NC}"
+    echo -e "${GREEN}║      └─ [4] Custom Script Runner                         ║${NC}"
+    echo -e "${BLUE}║  [9] 🤖 Multi-Agent Workflows (Cluster RPi4)                ║${NC}"
+    echo -e "${YELLOW}║  [10] ⬅️  Back to Main Menu                                ║${NC}"
     echo -e "${CYAN}╚══════════════════════════════════════════════════════════════╝${NC}"
     echo ""
 }
@@ -230,15 +238,15 @@ show_submenu_config() {
     show_header
     echo -e "${CYAN}║               CONFIGURATION & SETTINGS                       ║${NC}"
     echo -e "${CYAN}╠══════════════════════════════════════════════════════════════╣${NC}"
-    echo -e "${GREEN}║  [5.1] 🔑 Manage GitHub Token                                ║${NC}"
-    echo -e "${GREEN}║  [5.2] 🌐 Configure Qwen API Endpoint                        ║${NC}"
-    echo -e "${GREEN}║  [5.3] 📂 Set Working Directory                              ║${NC}"
-    echo -e "${GREEN}║  [5.4] 🎨 Theme & Display Options                            ║${NC}"
-    echo -e "${GREEN}║  [5.5] 🔔 Notification Settings                              ║${NC}"
-    echo -e "${GREEN}║  [5.6] 🗄️  Backup Configuration                              ║${NC}"
-    echo -e "${GREEN}║  [5.7] ♻️  Restore Configuration                             ║${NC}"
-    echo -e "${GREEN}║  [5.8] 🔄 Reset to Defaults                                  ║${NC}"
-    echo -e "${YELLOW}║  [5.9] ⬅️  Back to Main Menu                                 ║${NC}"
+    echo -e "${GREEN}║  [1] 🔑 Manage GitHub Token                                ║${NC}"
+    echo -e "${GREEN}║  [2] 🌐 Configure Qwen API Endpoint                        ║${NC}"
+    echo -e "${GREEN}║  [3] 📂 Set Working Directory                              ║${NC}"
+    echo -e "${GREEN}║  [4] 🎨 Theme & Display Options                            ║${NC}"
+    echo -e "${GREEN}║  [5] 🔔 Notification Settings                              ║${NC}"
+    echo -e "${GREEN}║  [6] 🗄️  Backup Configuration                              ║${NC}"
+    echo -e "${GREEN}║  [7] ♻️  Restore Configuration                             ║${NC}"
+    echo -e "${GREEN}║  [8] 🔄 Reset to Defaults                                  ║${NC}"
+    echo -e "${YELLOW}║  [9] ⬅️  Back to Main Menu                                 ║${NC}"
     echo -e "${CYAN}╚══════════════════════════════════════════════════════════════╝${NC}"
     echo ""
 }
@@ -248,14 +256,14 @@ show_submenu_logs() {
     show_header
     echo -e "${CYAN}║                  LOGS & MONITORING                           ║${NC}"
     echo -e "${CYAN}╠══════════════════════════════════════════════════════════════╣${NC}"
-    echo -e "${GREEN}║  [6.1] 📄 View Application Log (app.log)                     ║${NC}"
-    echo -e "${GREEN}║  [6.2] 🐛 View Debug Log (debug.log)                         ║${NC}"
-    echo -e "${GREEN}║  [6.3] 📊 View Events Log (events.log)                       ║${NC}"
-    echo -e "${GREEN}║  [6.4] 🔍 Search Logs                                        ║${NC}"
-    echo -e "${GREEN}║  [6.5] 🧹 Clear Old Logs                                     ║${NC}"
-    echo -e "${GREEN}║  [6.6] 📥 Export Logs                                        ║${NC}"
-    echo -e "${GREEN}║  [6.7] 📈 Real-time Log Monitor                              ║${NC}"
-    echo -e "${YELLOW}║  [6.8] ⬅️  Back to Main Menu                                 ║${NC}"
+    echo -e "${GREEN}║  [1] 📄 View Application Log (app.log)                     ║${NC}"
+    echo -e "${GREEN}║  [2] 🐛 View Debug Log (debug.log)                         ║${NC}"
+    echo -e "${GREEN}║  [3] 📊 View Events Log (events.log)                       ║${NC}"
+    echo -e "${GREEN}║  [4] 🔍 Search Logs                                        ║${NC}"
+    echo -e "${GREEN}║  [5] 🧹 Clear Old Logs                                     ║${NC}"
+    echo -e "${GREEN}║  [6] 📥 Export Logs                                        ║${NC}"
+    echo -e "${GREEN}║  [7] 📈 Real-time Log Monitor                              ║${NC}"
+    echo -e "${YELLOW}║  [8] ⬅️  Back to Main Menu                                 ║${NC}"
     echo -e "${CYAN}╚══════════════════════════════════════════════════════════════╝${NC}"
     echo ""
 }
@@ -265,13 +273,13 @@ show_submenu_system() {
     show_header
     echo -e "${CYAN}║                 SYSTEM INFORMATION                           ║${NC}"
     echo -e "${CYAN}╠══════════════════════════════════════════════════════════════╣${NC}"
-    echo -e "${GREEN}║  [7.1] 💻 System Resources (CPU/RAM/Disk)                    ║${NC}"
-    echo -e "${GREEN}║  [7.2] 🌡️  Temperature & Health Status                       ║${NC}"
-    echo -e "${GREEN}║  [7.3] 📦 Installed Dependencies                             ║${NC}"
-    echo -e "${GREEN}║  [7.4] 🤖 Qwen Model Status                                  ║${NC}"
-    echo -e "${GREEN}║  [7.5] 🔗 Network Connectivity                               ║${NC}"
-    echo -e "${GREEN}║  [7.6] 📜 Version & Changelog                                ║${NC}"
-    echo -e "${YELLOW}║  [7.7] ⬅️  Back to Main Menu                                 ║${NC}"
+    echo -e "${GREEN}║  [1] 💻 System Resources (CPU/RAM/Disk)                    ║${NC}"
+    echo -e "${GREEN}║  [2] 🌡️  Temperature & Health Status                       ║${NC}"
+    echo -e "${GREEN}║  [3] 📦 Installed Dependencies                             ║${NC}"
+    echo -e "${GREEN}║  [4] 🤖 Qwen Model Status                                  ║${NC}"
+    echo -e "${GREEN}║  [5] 🔗 Network Connectivity                               ║${NC}"
+    echo -e "${GREEN}║  [6] 📜 Version & Changelog                                ║${NC}"
+    echo -e "${YELLOW}║  [7] ⬅️  Back to Main Menu                                 ║${NC}"
     echo -e "${CYAN}╚══════════════════════════════════════════════════════════════╝${NC}"
     echo ""
 }
@@ -281,15 +289,15 @@ show_submenu_update() {
     show_header
     echo -e "${CYAN}║                  UPDATE APPLICATION                          ║${NC}"
     echo -e "${CYAN}╠══════════════════════════════════════════════════════════════╣${NC}"
-    echo -e "${GREEN}║  [8.1] 🔄 Check for Updates                                  ║${NC}"
-    echo -e "${GREEN}║  [8.2] ⬇️  Download Latest Version                           ║${NC}"
-    echo -e "${GREEN}║  [8.3] 📦 Auto-Install Dependencies                          ║${NC}"
-    echo -e "${GREEN}║  [8.4] 🚀 Install Update (Rolling/Blue-Green)                ║${NC}"
-    echo -e "${GREEN}║  [8.5] 📋 View Changelog                                     ║${NC}"
-    echo -e "${GREEN}║  [8.6] ↩️  Rollback to Previous Version                      ║${NC}"
-    echo -e "${GREEN}║  [8.7] ⚙️  Configure Auto-Update Settings                    ║${NC}"
-    echo -e "${GREEN}║  [8.8] 📊 Update Cluster Nodes (Swarm)                       ║${NC}"
-    echo -e "${YELLOW}║  [8.9] ⬅️  Back to Main Menu                                 ║${NC}"
+    echo -e "${GREEN}║  [1] 🔄 Check for Updates                                  ║${NC}"
+    echo -e "${GREEN}║  [2] ⬇️  Download Latest Version                           ║${NC}"
+    echo -e "${GREEN}║  [3] 📦 Auto-Install Dependencies                          ║${NC}"
+    echo -e "${GREEN}║  [4] 🚀 Install Update (Rolling/Blue-Green)                ║${NC}"
+    echo -e "${GREEN}║  [5] 📋 View Changelog                                     ║${NC}"
+    echo -e "${GREEN}║  [6] ↩️  Rollback to Previous Version                      ║${NC}"
+    echo -e "${GREEN}║  [7] ⚙️  Configure Auto-Update Settings                    ║${NC}"
+    echo -e "${GREEN}║  [8] 📊 Update Cluster Nodes (Swarm)                       ║${NC}"
+    echo -e "${YELLOW}║  [9] ⬅️  Back to Main Menu                                 ║${NC}"
     echo -e "${CYAN}╚══════════════════════════════════════════════════════════════╝${NC}"
     echo ""
 }
@@ -301,8 +309,8 @@ show_submenu_update() {
 # GitHub Repository Management - delegowanie do podskryptów
 github_configure_credentials() {
     log_event "GitHub Configure Credentials"
-    if [[ -f "${SCRIPT_DIR}/scripts/auth.sh" ]]; then
-        source "${SCRIPT_DIR}/scripts/auth.sh"
+    if [[ -f "${SCRIPTS_DIR}/auth.sh" ]]; then
+        source "${SCRIPTS_DIR}/auth.sh"
         auth_menu
     else
         log_error "Podskrypt auth.sh nie znaleziony!"
@@ -313,8 +321,8 @@ github_configure_credentials() {
 
 github_create_repository() {
     log_event "GitHub Create Repository"
-    if [[ -f "${SCRIPT_DIR}/scripts/repo.sh" ]]; then
-        source "${SCRIPT_DIR}/scripts/repo.sh"
+    if [[ -f "${SCRIPTS_DIR}/repo.sh" ]]; then
+        source "${SCRIPTS_DIR}/repo.sh"
         create_repo_interactive
     else
         log_error "Podskrypt repo.sh nie znaleziony!"
@@ -324,8 +332,8 @@ github_create_repository() {
 
 github_list_repositories() {
     log_event "GitHub List Repositories"
-    if [[ -f "${SCRIPT_DIR}/scripts/repo.sh" ]]; then
-        source "${SCRIPT_DIR}/scripts/repo.sh"
+    if [[ -f "${SCRIPTS_DIR}/repo.sh" ]]; then
+        source "${SCRIPTS_DIR}/repo.sh"
         list_repositories
         read -rp "Press Enter to continue..."
     else
@@ -335,8 +343,8 @@ github_list_repositories() {
 
 github_delete_repository() {
     log_event "GitHub Delete Repository"
-    if [[ -f "${SCRIPT_DIR}/scripts/repo.sh" ]]; then
-        source "${SCRIPT_DIR}/scripts/repo.sh"
+    if [[ -f "${SCRIPTS_DIR}/repo.sh" ]]; then
+        source "${SCRIPTS_DIR}/repo.sh"
         delete_repository
         read -rp "Press Enter to continue..."
     else
@@ -346,8 +354,8 @@ github_delete_repository() {
 
 github_clone_repository() {
     log_event "GitHub Clone Repository"
-    if [[ -f "${SCRIPT_DIR}/scripts/repo.sh" ]]; then
-        source "${SCRIPT_DIR}/scripts/repo.sh"
+    if [[ -f "${SCRIPTS_DIR}/repo.sh" ]]; then
+        source "${SCRIPTS_DIR}/repo.sh"
         clone_repository
         read -rp "Press Enter to continue..."
     else
@@ -357,8 +365,8 @@ github_clone_repository() {
 
 github_sync_local_remote() {
     log_event "GitHub Sync Local with Remote"
-    if [[ -f "${SCRIPT_DIR}/scripts/repo.sh" ]]; then
-        source "${SCRIPT_DIR}/scripts/repo.sh"
+    if [[ -f "${SCRIPTS_DIR}/repo.sh" ]]; then
+        source "${SCRIPTS_DIR}/repo.sh"
         sync_local_with_remote
         read -rp "Press Enter to continue..."
     else
@@ -379,8 +387,8 @@ github_sync_local_remote() {
 # Code Verification - delegowanie do podskryptu verify.sh
 verify_syntax_shell() {
     log_event "Code Verification - Syntax Check Shell"
-    if [[ -f "${SCRIPT_DIR}/scripts/verify.sh" ]]; then
-        source "${SCRIPT_DIR}/scripts/verify.sh"
+    if [[ -f "${SCRIPTS_DIR}/verify.sh" ]]; then
+        source "${SCRIPTS_DIR}/verify.sh"
         verify_syntax_shell
     else
         log_error "Podskrypt verify.sh nie znaleziony!"
@@ -389,8 +397,8 @@ verify_syntax_shell() {
 
 verify_syntax_cpp() {
     log_event "Code Verification - Syntax Check C/C++"
-    if [[ -f "${SCRIPT_DIR}/scripts/verify.sh" ]]; then
-        source "${SCRIPT_DIR}/scripts/verify.sh"
+    if [[ -f "${SCRIPTS_DIR}/verify.sh" ]]; then
+        source "${SCRIPTS_DIR}/verify.sh"
         verify_syntax_cpp
     else
         log_error "Podskrypt verify.sh nie znaleziony!"
@@ -399,8 +407,8 @@ verify_syntax_cpp() {
 
 verify_security_scan() {
     log_event "Code Verification - Security Scan"
-    if [[ -f "${SCRIPT_DIR}/scripts/verify.sh" ]]; then
-        source "${SCRIPT_DIR}/scripts/verify.sh"
+    if [[ -f "${SCRIPTS_DIR}/verify.sh" ]]; then
+        source "${SCRIPTS_DIR}/verify.sh"
         verify_security_scan
     else
         log_error "Podskrypt verify.sh nie znaleziony!"
@@ -409,8 +417,8 @@ verify_security_scan() {
 
 verify_code_style() {
     log_event "Code Verification - Code Style Check"
-    if [[ -f "${SCRIPT_DIR}/scripts/verify.sh" ]]; then
-        source "${SCRIPT_DIR}/scripts/verify.sh"
+    if [[ -f "${SCRIPTS_DIR}/verify.sh" ]]; then
+        source "${SCRIPTS_DIR}/verify.sh"
         verify_code_style
     else
         log_error "Podskrypt verify.sh nie znaleziony!"
@@ -419,8 +427,8 @@ verify_code_style() {
 
 verify_run_unit_tests() {
     log_event "Code Verification - Run Unit Tests"
-    if [[ -f "${SCRIPT_DIR}/scripts/verify.sh" ]]; then
-        source "${SCRIPT_DIR}/scripts/verify.sh"
+    if [[ -f "${SCRIPTS_DIR}/verify.sh" ]]; then
+        source "${SCRIPTS_DIR}/verify.sh"
         verify_run_unit_tests
     else
         log_error "Podskrypt verify.sh nie znaleziony!"
@@ -429,8 +437,8 @@ verify_run_unit_tests() {
 
 verify_generate_report() {
     log_event "Code Verification - Generate Report"
-    if [[ -f "${SCRIPT_DIR}/scripts/verify.sh" ]]; then
-        source "${SCRIPT_DIR}/scripts/verify.sh"
+    if [[ -f "${SCRIPTS_DIR}/verify.sh" ]]; then
+        source "${SCRIPTS_DIR}/verify.sh"
         verify_generate_report
     else
         log_error "Podskrypt verify.sh nie znaleziony!"
@@ -440,8 +448,8 @@ verify_generate_report() {
 # Automation & AI Agent - delegowanie do podskryptu automation.sh
 automation_start_discussion() {
     log_event "Automation Start Discussion Session"
-    if [[ -f "${SCRIPT_DIR}/scripts/automation.sh" ]]; then
-        source "${SCRIPT_DIR}/scripts/automation.sh"
+    if [[ -f "${SCRIPTS_DIR}/automation.sh" ]]; then
+        source "${SCRIPTS_DIR}/automation.sh"
         ai_discussion_session
     else
         log_error "Podskrypt automation.sh nie znaleziony!"
@@ -451,8 +459,8 @@ automation_start_discussion() {
 
 automation_create_workflow() {
     log_event "Automation Create Workflow"
-    if [[ -f "${SCRIPT_DIR}/scripts/automation.sh" ]]; then
-        source "${SCRIPT_DIR}/scripts/automation.sh"
+    if [[ -f "${SCRIPTS_DIR}/automation.sh" ]]; then
+        source "${SCRIPTS_DIR}/automation.sh"
         create_automation_workflow
     else
         log_error "Podskrypt automation.sh nie znaleziony!"
@@ -462,8 +470,8 @@ automation_create_workflow() {
 
 automation_run_task() {
     log_event "Automation Run Task"
-    if [[ -f "${SCRIPT_DIR}/scripts/automation.sh" ]]; then
-        source "${SCRIPT_DIR}/scripts/automation.sh"
+    if [[ -f "${SCRIPTS_DIR}/automation.sh" ]]; then
+        source "${SCRIPTS_DIR}/automation.sh"
         run_automation_task
     else
         log_error "Podskrypt automation.sh nie znaleziony!"
@@ -473,8 +481,8 @@ automation_run_task() {
 
 automation_pause_resume() {
     log_event "Automation Pause/Resume Tasks"
-    if [[ -f "${SCRIPT_DIR}/scripts/automation.sh" ]]; then
-        source "${SCRIPT_DIR}/scripts/automation.sh"
+    if [[ -f "${SCRIPTS_DIR}/automation.sh" ]]; then
+        source "${SCRIPTS_DIR}/automation.sh"
         pause_resume_tasks
     else
         log_error "Podskrypt automation.sh nie znaleziony!"
@@ -484,8 +492,8 @@ automation_pause_resume() {
 
 automation_stop_tasks() {
     log_event "Automation Stop Tasks"
-    if [[ -f "${SCRIPT_DIR}/scripts/automation.sh" ]]; then
-        source "${SCRIPT_DIR}/scripts/automation.sh"
+    if [[ -f "${SCRIPTS_DIR}/automation.sh" ]]; then
+        source "${SCRIPTS_DIR}/automation.sh"
         stop_running_tasks
     else
         log_error "Podskrypt automation.sh nie znaleziony!"
@@ -495,8 +503,8 @@ automation_stop_tasks() {
 
 automation_schedule_task() {
     log_event "Automation Schedule Task"
-    if [[ -f "${SCRIPT_DIR}/scripts/automation.sh" ]]; then
-        source "${SCRIPT_DIR}/scripts/automation.sh"
+    if [[ -f "${SCRIPTS_DIR}/automation.sh" ]]; then
+        source "${SCRIPTS_DIR}/automation.sh"
         schedule_automated_task
     else
         log_error "Podskrypt automation.sh nie znaleziony!"
@@ -506,8 +514,8 @@ automation_schedule_task() {
 
 automation_view_history() {
     log_event "Automation View History"
-    if [[ -f "${SCRIPT_DIR}/scripts/automation.sh" ]]; then
-        source "${SCRIPT_DIR}/scripts/automation.sh"
+    if [[ -f "${SCRIPTS_DIR}/automation.sh" ]]; then
+        source "${SCRIPTS_DIR}/automation.sh"
         view_task_history
     else
         log_error "Podskrypt automation.sh nie znaleziony!"
@@ -517,8 +525,8 @@ automation_view_history() {
 
 automation_quick_autocommit() {
     log_event "Automation Quick Auto-commit"
-    if [[ -f "${SCRIPT_DIR}/scripts/automation.sh" ]]; then
-        source "${SCRIPT_DIR}/scripts/automation.sh"
+    if [[ -f "${SCRIPTS_DIR}/automation.sh" ]]; then
+        source "${SCRIPTS_DIR}/automation.sh"
         quick_autocommit_push
     else
         log_error "Podskrypt automation.sh nie znaleziony!"
@@ -528,8 +536,8 @@ automation_quick_autocommit() {
 
 automation_quick_backup() {
     log_event "Automation Quick Backup"
-    if [[ -f "${SCRIPT_DIR}/scripts/automation.sh" ]]; then
-        source "${SCRIPT_DIR}/scripts/automation.sh"
+    if [[ -f "${SCRIPTS_DIR}/automation.sh" ]]; then
+        source "${SCRIPTS_DIR}/automation.sh"
         quick_daily_backup
     else
         log_error "Podskrypt automation.sh nie znaleziony!"
@@ -539,8 +547,8 @@ automation_quick_backup() {
 
 automation_quick_review() {
     log_event "Automation Quick Code Review"
-    if [[ -f "${SCRIPT_DIR}/scripts/automation.sh" ]]; then
-        source "${SCRIPT_DIR}/scripts/automation.sh"
+    if [[ -f "${SCRIPTS_DIR}/automation.sh" ]]; then
+        source "${SCRIPTS_DIR}/automation.sh"
         quick_code_review_loop
     else
         log_error "Podskrypt automation.sh nie znaleziony!"
@@ -550,8 +558,8 @@ automation_quick_review() {
 
 automation_quick_custom() {
     log_event "Automation Quick Custom Script"
-    if [[ -f "${SCRIPT_DIR}/scripts/automation.sh" ]]; then
-        source "${SCRIPT_DIR}/scripts/automation.sh"
+    if [[ -f "${SCRIPTS_DIR}/automation.sh" ]]; then
+        source "${SCRIPTS_DIR}/automation.sh"
         quick_custom_script_runner
     else
         log_error "Podskrypt automation.sh nie znaleziony!"
@@ -565,8 +573,8 @@ automation_quick_custom() {
 
 config_manage_github_token() {
     log_event "Configuration: Manage GitHub Token"
-    if [[ -f "${SCRIPT_DIR}/scripts/config.sh" ]]; then
-        source "${SCRIPT_DIR}/scripts/config.sh"
+    if [[ -f "${SCRIPTS_DIR}/config.sh" ]]; then
+        source "${SCRIPTS_DIR}/config.sh"
         menu_manage_github_token
     else
         log_error "Podskrypt config.sh nie znaleziony!"
@@ -576,8 +584,8 @@ config_manage_github_token() {
 
 config_configure_qwen_api() {
     log_event "Configuration: Configure Qwen API Endpoint"
-    if [[ -f "${SCRIPT_DIR}/scripts/config.sh" ]]; then
-        source "${SCRIPT_DIR}/scripts/config.sh"
+    if [[ -f "${SCRIPTS_DIR}/config.sh" ]]; then
+        source "${SCRIPTS_DIR}/config.sh"
         menu_configure_qwen_api
     else
         log_error "Podskrypt config.sh nie znaleziony!"
@@ -586,8 +594,8 @@ config_configure_qwen_api() {
 
 config_set_working_directory() {
     log_event "Configuration: Set Working Directory"
-    if [[ -f "${SCRIPT_DIR}/scripts/config.sh" ]]; then
-        source "${SCRIPT_DIR}/scripts/config.sh"
+    if [[ -f "${SCRIPTS_DIR}/config.sh" ]]; then
+        source "${SCRIPTS_DIR}/config.sh"
         menu_set_working_directory
     else
         log_error "Podskrypt config.sh nie znaleziony!"
@@ -596,8 +604,8 @@ config_set_working_directory() {
 
 config_theme_display() {
     log_event "Configuration: Theme & Display Options"
-    if [[ -f "${SCRIPT_DIR}/scripts/config.sh" ]]; then
-        source "${SCRIPT_DIR}/scripts/config.sh"
+    if [[ -f "${SCRIPTS_DIR}/config.sh" ]]; then
+        source "${SCRIPTS_DIR}/config.sh"
         menu_theme_display
     else
         log_error "Podskrypt config.sh nie znaleziony!"
@@ -606,8 +614,8 @@ config_theme_display() {
 
 config_notification_settings() {
     log_event "Configuration: Notification Settings"
-    if [[ -f "${SCRIPT_DIR}/scripts/config.sh" ]]; then
-        source "${SCRIPT_DIR}/scripts/config.sh"
+    if [[ -f "${SCRIPTS_DIR}/config.sh" ]]; then
+        source "${SCRIPTS_DIR}/config.sh"
         menu_notification_settings
     else
         log_error "Podskrypt config.sh nie znaleziony!"
@@ -616,8 +624,8 @@ config_notification_settings() {
 
 config_backup() {
     log_event "Configuration: Backup Configuration"
-    if [[ -f "${SCRIPT_DIR}/scripts/config.sh" ]]; then
-        source "${SCRIPT_DIR}/scripts/config.sh"
+    if [[ -f "${SCRIPTS_DIR}/config.sh" ]]; then
+        source "${SCRIPTS_DIR}/config.sh"
         menu_backup_configuration
     else
         log_error "Podskrypt config.sh nie znaleziony!"
@@ -626,8 +634,8 @@ config_backup() {
 
 config_restore() {
     log_event "Configuration: Restore Configuration"
-    if [[ -f "${SCRIPT_DIR}/scripts/config.sh" ]]; then
-        source "${SCRIPT_DIR}/scripts/config.sh"
+    if [[ -f "${SCRIPTS_DIR}/config.sh" ]]; then
+        source "${SCRIPTS_DIR}/config.sh"
         menu_restore_configuration
     else
         log_error "Podskrypt config.sh nie znaleziony!"
@@ -636,8 +644,8 @@ config_restore() {
 
 config_reset_defaults() {
     log_event "Configuration: Reset to Defaults"
-    if [[ -f "${SCRIPT_DIR}/scripts/config.sh" ]]; then
-        source "${SCRIPT_DIR}/scripts/config.sh"
+    if [[ -f "${SCRIPTS_DIR}/config.sh" ]]; then
+        source "${SCRIPTS_DIR}/config.sh"
         menu_reset_defaults
     else
         log_error "Podskrypt config.sh nie znaleziony!"
@@ -651,8 +659,8 @@ config_reset_defaults() {
 # Logs & Monitoring - delegowanie do podskryptu logs.sh
 handle_logs_menu() {
     log_event "Logs & Monitoring Menu"
-    if [[ -f "${SCRIPT_DIR}/scripts/logs.sh" ]]; then
-        source "${SCRIPT_DIR}/scripts/logs.sh"
+    if [[ -f "${SCRIPTS_DIR}/logs.sh" ]]; then
+        source "${SCRIPTS_DIR}/logs.sh"
         logs_menu
     else
         log_error "Podskrypt logs.sh nie znaleziony!"
@@ -674,8 +682,8 @@ logs_realtime_monitor() { log_info "Real-time Log Monitor (stub)"; }
 # System Information - delegowanie do podskryptu system.sh
 system_resources() {
     log_event "System Resources Check"
-    if [[ -f "${SCRIPT_DIR}/scripts/system.sh" ]]; then
-        source "${SCRIPT_DIR}/scripts/system.sh"
+    if [[ -f "${SCRIPTS_DIR}/system.sh" ]]; then
+        source "${SCRIPTS_DIR}/system.sh"
         system_resources
     else
         log_info "💻 System Resources:"
@@ -687,8 +695,8 @@ system_resources() {
 
 system_temperature_health() {
     log_event "Temperature & Health Status Check"
-    if [[ -f "${SCRIPT_DIR}/scripts/system.sh" ]]; then
-        source "${SCRIPT_DIR}/scripts/system.sh"
+    if [[ -f "${SCRIPTS_DIR}/system.sh" ]]; then
+        source "${SCRIPTS_DIR}/system.sh"
         system_temperature_health
     else
         log_info "🌡️  Temperature & Health Status:"
@@ -704,8 +712,8 @@ system_temperature_health() {
 
 system_dependencies() {
     log_event "Installed Dependencies Check"
-    if [[ -f "${SCRIPT_DIR}/scripts/system.sh" ]]; then
-        source "${SCRIPT_DIR}/scripts/system.sh"
+    if [[ -f "${SCRIPTS_DIR}/system.sh" ]]; then
+        source "${SCRIPTS_DIR}/system.sh"
         system_dependencies
     else
         log_info "📦 Installed Dependencies:"
@@ -718,8 +726,8 @@ system_dependencies() {
 
 system_qwen_status() {
     log_event "Qwen Model Status Check"
-    if [[ -f "${SCRIPT_DIR}/scripts/system.sh" ]]; then
-        source "${SCRIPT_DIR}/scripts/system.sh"
+    if [[ -f "${SCRIPTS_DIR}/system.sh" ]]; then
+        source "${SCRIPTS_DIR}/system.sh"
         system_qwen_status
     else
         log_info "🤖 Qwen Model Status:"
@@ -734,8 +742,8 @@ system_qwen_status() {
 
 system_network() {
     log_event "Network Connectivity Check"
-    if [[ -f "${SCRIPT_DIR}/scripts/system.sh" ]]; then
-        source "${SCRIPT_DIR}/scripts/system.sh"
+    if [[ -f "${SCRIPTS_DIR}/system.sh" ]]; then
+        source "${SCRIPTS_DIR}/system.sh"
         system_network
     else
         log_info "🔗 Network Connectivity:"
@@ -746,8 +754,8 @@ system_network() {
 
 system_version_changelog() {
     log_event "Version & Changelog Display"
-    if [[ -f "${SCRIPT_DIR}/scripts/system.sh" ]]; then
-        source "${SCRIPT_DIR}/scripts/system.sh"
+    if [[ -f "${SCRIPTS_DIR}/system.sh" ]]; then
+        source "${SCRIPTS_DIR}/system.sh"
         system_version_changelog
     else
         log_info "📜 Version & Changelog:"
@@ -773,29 +781,29 @@ update_cluster_nodes() { log_info "Update Cluster Nodes (stub)"; }
 handle_github_menu() {
     while true; do
         show_submenu_github
-        read -rp "  Enter choice [1.1-1.7]: " choice
+        read -rp "  Enter choice [1-7]: " choice
         case $choice in
-            1.1) github_configure_credentials ;;
-            1.2) github_create_repository ;;
-            1.3) github_list_repositories ;;
-            1.4) github_delete_repository ;;
-            1.5) github_clone_repository ;;
-            1.6) github_sync_local_remote ;;
-            1.7|17) break ;;
+            1) github_configure_credentials ;;
+            2) github_create_repository ;;
+            3) github_list_repositories ;;
+            4) github_delete_repository ;;
+            5) github_clone_repository ;;
+            6) github_sync_local_remote ;;
+            7) break ;;
             *) echo -e "${RED}Invalid option!${NC}"; sleep 1 ;;
         esac
-        [[ $choice != "1.7" && $choice != "17" ]] && read -rp "Press Enter to continue..." 
+        [[ $choice != "7" ]] && read -rp "Press Enter to continue..." 
     done
 }
 
 handle_coder_menu() {
     # Wywołanie zewnętrznego podskryptu coder.sh
-    if [[ -f "${SCRIPT_DIR}/scripts/coder.sh" ]]; then
+    if [[ -f "${SCRIPTS_DIR}/coder.sh" ]]; then
         log_debug "Loading coder module from scripts/coder.sh"
-        source "${SCRIPT_DIR}/scripts/coder.sh" --help > /dev/null 2>&1 || true
+        source "${SCRIPTS_DIR}/coder.sh" --help > /dev/null 2>&1 || true
         show_coder_menu
     else
-        log_error "Coder module not found: ${SCRIPT_DIR}/scripts/coder.sh"
+        log_error "Coder module not found: ${SCRIPTS_DIR}/coder.sh"
         echo -e "${RED}Error: Coder module script not found!${NC}"
         sleep 2
     fi
@@ -804,42 +812,42 @@ handle_coder_menu() {
 handle_verification_menu() {
     while true; do
         show_submenu_verification
-        read -rp "  Enter choice [3.1-3.7]: " choice
+        read -rp "  Enter choice [1-7]: " choice
         case $choice in
-            3.1) verify_syntax_shell ;;
-            3.2) verify_syntax_cpp ;;
-            3.3) verify_security_scan ;;
-            3.4) verify_code_style ;;
-            3.5) verify_run_unit_tests ;;
-            3.6) verify_generate_report ;;
-            3.7|37) break ;;
+            1) verify_syntax_shell ;;
+            2) verify_syntax_cpp ;;
+            3) verify_security_scan ;;
+            4) verify_code_style ;;
+            5) verify_run_unit_tests ;;
+            6) verify_generate_report ;;
+            7) break ;;
             *) echo -e "${RED}Invalid option!${NC}"; sleep 1 ;;
         esac
-        [[ $choice != "3.7" && $choice != "37" ]] && read -rp "Press Enter to continue..."
+        [[ $choice != "7" ]] && read -rp "Press Enter to continue..."
     done
 }
 
 handle_automation_menu() {
     while true; do
         show_submenu_automation
-        read -rp "  Enter choice [4.1-4.10, 4.8.1-4.8.4]: " choice
+        read -rp "  Enter choice [1-10, 8.1-8.4]: " choice
         case $choice in
-            4.1) automation_start_discussion ;;
-            4.2) automation_create_workflow ;;
-            4.3) automation_run_task ;;
-            4.4) automation_pause_resume ;;
-            4.5) automation_stop_tasks ;;
-            4.6) automation_schedule_task ;;
-            4.7) automation_view_history ;;
-            4.8.1) automation_quick_autocommit ;;
-            4.8.2) automation_quick_backup ;;
-            4.8.3) automation_quick_review ;;
-            4.8.4) automation_quick_custom ;;
-            4.9|49)
+            1) automation_start_discussion ;;
+            2) automation_create_workflow ;;
+            3) automation_run_task ;;
+            4) automation_pause_resume ;;
+            5) automation_stop_tasks ;;
+            6) automation_schedule_task ;;
+            7) automation_view_history ;;
+            8.1) automation_quick_autocommit ;;
+            8.2) automation_quick_backup ;;
+            8.3) automation_quick_review ;;
+            8.4) automation_quick_custom ;;
+            9)
                 # Multi-Agent Workflows
                 log_event "Multi-Agent Workflows Menu"
-                if [[ -f "${SCRIPT_DIR}/scripts/multi_agent.sh" ]]; then
-                    source "${SCRIPT_DIR}/scripts/multi_agent.sh"
+                if [[ -f "${SCRIPTS_DIR}/multi_agent.sh" ]]; then
+                    source "${SCRIPTS_DIR}/multi_agent.sh"
                     multi_agent_menu
                 else
                     log_error "Podskrypt multi_agent.sh nie znaleziony!"
@@ -847,30 +855,30 @@ handle_automation_menu() {
                     read -rp "Press Enter to continue..."
                 fi
                 ;;
-            4.10|410) break ;;
+            10) break ;;
             *) echo -e "${RED}Invalid option!${NC}"; sleep 1 ;;
         esac
-        [[ $choice != "4.10" && $choice != "410" ]] && read -rp "Press Enter to continue..."
+        [[ $choice != "10" ]] && read -rp "Press Enter to continue..."
     done
 }
 
 handle_config_menu() {
     while true; do
         show_submenu_config
-        read -rp "  Enter choice [5.1-5.9]: " choice
+        read -rp "  Enter choice [1-9]: " choice
         case $choice in
-            5.1) config_manage_github_token ;;
-            5.2) config_configure_qwen_api ;;
-            5.3) config_set_working_directory ;;
-            5.4) config_theme_display ;;
-            5.5) config_notification_settings ;;
-            5.6) config_backup ;;
-            5.7) config_restore ;;
-            5.8) config_reset_defaults ;;
-            5.9|59) break ;;
+            1) config_manage_github_token ;;
+            2) config_configure_qwen_api ;;
+            3) config_set_working_directory ;;
+            4) config_theme_display ;;
+            5) config_notification_settings ;;
+            6) config_backup ;;
+            7) config_restore ;;
+            8) config_reset_defaults ;;
+            9) break ;;
             *) echo -e "${RED}Invalid option!${NC}"; sleep 1 ;;
         esac
-        [[ $choice != "5.9" && $choice != "59" ]] && read -rp "Press Enter to continue..."
+        [[ $choice != "9" ]] && read -rp "Press Enter to continue..."
     done
 }
 
@@ -879,18 +887,18 @@ handle_config_menu() {
 handle_system_menu() {
     while true; do
         show_submenu_system
-        read -rp "  Enter choice [7.1-7.7]: " choice
+        read -rp "  Enter choice [1-7]: " choice
         case $choice in
-            7.1) system_resources ;;
-            7.2) system_temperature_health ;;
-            7.3) system_dependencies ;;
-            7.4) system_qwen_status ;;
-            7.5) system_network ;;
-            7.6) system_version_changelog ;;
-            7.7|77) break ;;
+            1) system_resources ;;
+            2) system_temperature_health ;;
+            3) system_dependencies ;;
+            4) system_qwen_status ;;
+            5) system_network ;;
+            6) system_version_changelog ;;
+            7) break ;;
             *) echo -e "${RED}Invalid option!${NC}"; sleep 1 ;;
         esac
-        [[ $choice != "7.7" && $choice != "77" ]] && read -rp "Press Enter to continue..."
+        [[ $choice != "7" ]] && read -rp "Press Enter to continue..."
     done
 }
 
@@ -901,8 +909,8 @@ handle_system_menu() {
 # Update Application - delegowanie do podskryptu update.sh
 handle_update_menu() {
     log_event "Update Application Menu"
-    if [[ -f "${SCRIPT_DIR}/scripts/update.sh" ]]; then
-        source "${SCRIPT_DIR}/scripts/update.sh"
+    if [[ -f "${SCRIPTS_DIR}/update.sh" ]]; then
+        source "${SCRIPTS_DIR}/update.sh"
         updates_menu
     else
         log_error "Podskrypt update.sh nie znaleziony!"
@@ -910,6 +918,29 @@ handle_update_menu() {
         echo "Wymagane pliki: scripts/update.sh"
         read -rp "Press Enter to continue..."
     fi
+}
+
+#-------------------------------------------------------------------------------
+# Logs & Monitoring menu handler
+#-------------------------------------------------------------------------------
+
+handle_logs_menu() {
+    while true; do
+        show_submenu_logs
+        read -rp "  Enter choice [1-8]: " choice
+        case $choice in
+            1) logs_view_app ;;
+            2) logs_view_debug ;;
+            3) logs_view_events ;;
+            4) logs_search ;;
+            5) logs_clear_old ;;
+            6) logs_export ;;
+            7) logs_realtime_monitor ;;
+            8) break ;;
+            *) echo -e "${RED}Invalid option!${NC}"; sleep 1 ;;
+        esac
+        [[ $choice != "8" ]] && read -rp "Press Enter to continue..."
+    done
 }
 
 #-------------------------------------------------------------------------------
@@ -1087,12 +1118,12 @@ show_submenu_export() {
     show_header
     echo -e "${CYAN}║           EXPORT RESULTS - MOODLE/JOOMLA/NEXTCLOUD           ║${NC}"
     echo -e "${CYAN}╠══════════════════════════════════════════════════════════════╣${NC}"
-    echo -e "${GREEN}║  [10.1] 📚 Export to Moodle as Book Activity                 ║${NC}"
-    echo -e "${GREEN}║  [10.2] 📄 Export to Moodle as Markdown File                 ║${NC}"
-    echo -e "${GREEN}║  [10.3] 📝 Export to Joomla as Article                       ║${NC}"
-    echo -e "${GREEN}║  [10.4] ☁️  Export to Nextcloud                               ║${NC}"
-    echo -e "${GREEN}║  [10.5] ⚙️  Configure Export Settings                         ║${NC}"
-    echo -e "${YELLOW}║  [10.6] ⬅️  Back to Main Menu                                 ║${NC}"
+    echo -e "${GREEN}║  [1] 📚 Export to Moodle as Book Activity                 ║${NC}"
+    echo -e "${GREEN}║  [2] 📄 Export to Moodle as Markdown File                 ║${NC}"
+    echo -e "${GREEN}║  [3] 📝 Export to Joomla as Article                       ║${NC}"
+    echo -e "${GREEN}║  [4] ☁️  Export to Nextcloud                               ║${NC}"
+    echo -e "${GREEN}║  [5] ⚙️  Configure Export Settings                         ║${NC}"
+    echo -e "${YELLOW}║  [6] ⬅️  Back to Main Menu                                 ║${NC}"
     echo -e "${CYAN}╚══════════════════════════════════════════════════════════════╝${NC}"
     echo ""
 }
@@ -1100,17 +1131,17 @@ show_submenu_export() {
 handle_export_menu() {
     while true; do
         show_submenu_export
-        read -rp "  Enter choice [10.1-10.6]: " choice
+        read -rp "  Enter choice [1-6]: " choice
         case $choice in
-            10.1|101) export_to_moodle_book ;;
-            10.2|102) export_to_moodle_file ;;
-            10.3|103) export_to_joomla_article ;;
-            10.4|104) export_to_nextcloud ;;
-            10.5|105) export_configure_settings ;;
-            10.6|106) break ;;
+            1) export_to_moodle_book ;;
+            2) export_to_moodle_file ;;
+            3) export_to_joomla_article ;;
+            4) export_to_nextcloud ;;
+            5) export_configure_settings ;;
+            6) break ;;
             *) echo -e "${RED}Invalid option!${NC}"; sleep 1 ;;
         esac
-        [[ $choice != "10.6" && $choice != "106" ]] && read -rp "Press Enter to continue..."
+        [[ $choice != "6" ]] && read -rp "Press Enter to continue..."
     done
 }
 
@@ -1167,8 +1198,8 @@ main_menu_loop() {
             6) handle_logs_menu ;;
             7) handle_system_menu ;;
             8) handle_update_menu ;;
-            10) handle_export_menu ;;
-            9) 
+            9) handle_export_menu ;;
+            10) 
                 log_info "Exiting Qwen Time & Automation Manager"
                 log_event "Application exited by user"
                 clear_screen
