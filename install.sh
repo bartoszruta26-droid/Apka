@@ -18,12 +18,12 @@ readonly CONFIG_FILE="${HOME}/.qwen_tam_config"
 readonly LOG_FILE="/tmp/qwen-tam-install.log"
 
 # Kolory ANSI
-readonly RED='\033[0;31m'
-readonly GREEN='\033[0;32m'
-readonly YELLOW='\033[1;33m'
-readonly BLUE='\033[0;34m'
-readonly CYAN='\033[0;36m'
-readonly NC='\033[0m' # No Color
+readonly RED=$'\033[0;31m'
+readonly GREEN=$'\033[0;32m'
+readonly YELLOW=$'\033[1;33m'
+readonly BLUE=$'\033[0;34m'
+readonly CYAN=$'\033[0;36m'
+readonly NC=$'\033[0m' # No Color
 
 # Tryby pracy
 VERBOSE_MODE=false
@@ -71,11 +71,21 @@ log_success() {
 #-------------------------------------------------------------------------------
 
 check_root() {
-    if [[ $EUID -ne 0 ]]; then
-        log_error "Ten skrypt musi być uruchomiony z uprawnieniami administratora (użyj sudo)"
-        exit 1
+    # Nie wymagamy uprawnień root - instalujemy w katalogu użytkownika
+    if [[ $EUID -eq 0 ]]; then
+        log_warning "Wykryto uprawnienia administratora. Skrypt powinien być uruchomiony jako zwykły użytkownik."
+        log_info "Sprawdzanie zmiennej SUDO_USER..."
+        if [[ -n "${SUDO_USER:-}" ]]; then
+            log_info "Użytkownik wywołujący: ${SUDO_USER}"
+            # Przełącz HOME na katalog użytkownika wywołującego
+            export HOME=$(getent passwd "$SUDO_USER" | cut -d: -f6)
+            log_info "Ustawiono HOME na: $HOME"
+        else
+            log_error "Skrypt uruchomiony jako root bez SUDO_USER. Uruchom jako zwykły użytkownik lub użyj 'sudo -E'."
+            exit 1
+        fi
     fi
-    log_debug "Administrator privileges confirmed"
+    log_debug "Użytkownik: $(whoami), HOME: $HOME"
 }
 
 #-------------------------------------------------------------------------------
