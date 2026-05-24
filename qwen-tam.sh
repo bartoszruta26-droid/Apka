@@ -226,10 +226,10 @@ show_submenu_automation() {
     echo -e "${GREEN}║  [6] 📅 Schedule Automated Task                            ║${NC}"
     echo -e "${GREEN}║  [7] 📜 View Task History                                  ║${NC}"
     echo -e "${GREEN}║  [8] ⚡ Quick Automations                                  ║${NC}"
-    echo -e "${GREEN}║      ├─ [1] Auto-commit & Push                           ║${NC}"
-    echo -e "${GREEN}║      ├─ [2] Daily Backup                                 ║${NC}"
-    echo -e "${GREEN}║      ├─ [3] Code Review Loop                             ║${NC}"
-    echo -e "${GREEN}║      └─ [4] Custom Script Runner                         ║${NC}"
+    echo -e "${GREEN}║      ├─ [81] Auto-commit & Push                           ║${NC}"
+    echo -e "${GREEN}║      ├─ [82] Daily Backup                                 ║${NC}"
+    echo -e "${GREEN}║      ├─ [83] Code Review Loop                             ║${NC}"
+    echo -e "${GREEN}║      └─ [84] Custom Script Runner                         ║${NC}"
     echo -e "${BLUE}║  [9] 🤖 Multi-Agent Workflows (Cluster RPi4)                ║${NC}"
     echo -e "${YELLOW}║  [10] ⬅️  Back to Main Menu                                ║${NC}"
     echo -e "${CYAN}╚══════════════════════════════════════════════════════════════╝${NC}"
@@ -833,7 +833,7 @@ handle_verification_menu() {
 handle_automation_menu() {
     while true; do
         show_submenu_automation
-        read -rp "  Enter choice [1-10, 8.1-8.4]: " choice
+        read -rp "  Enter choice [1-10, 81-84]: " choice
         case $choice in
             1) automation_start_discussion ;;
             2) automation_create_workflow ;;
@@ -842,10 +842,10 @@ handle_automation_menu() {
             5) automation_stop_tasks ;;
             6) automation_schedule_task ;;
             7) automation_view_history ;;
-            8.1) automation_quick_autocommit ;;
-            8.2) automation_quick_backup ;;
-            8.3) automation_quick_review ;;
-            8.4) automation_quick_custom ;;
+            81) automation_quick_autocommit ;;
+            82) automation_quick_backup ;;
+            83) automation_quick_review ;;
+            84) automation_quick_custom ;;
             9)
                 # Multi-Agent Workflows
                 log_event "Multi-Agent Workflows Menu"

@@ -145,7 +145,7 @@ update_check() {
     fi
     
     echo ""
-    echo -e "${YELLOW}Run option [8.2] to download the update.${NC}"
+    echo -e "${YELLOW}Run option [2] to download the update.${NC}"
 }
 
 #-------------------------------------------------------------------------------
@@ -229,7 +229,7 @@ update_download() {
         echo -e "${GREEN}✅ Download completed successfully!${NC}"
         echo ""
         echo -e "${CYAN}Files ready in staging directory: ${STAGING_DIR}${NC}"
-        echo -e "${YELLOW}Run option [8.4] to install the update.${NC}"
+        echo -e "${YELLOW}Run option [4] to install the update.${NC}"
         return 0
     else
         log_update_error "Extraction failed!"
@@ -1064,34 +1064,34 @@ updates_menu() {
         show_header
         echo -e "${CYAN}║                  UPDATE APPLICATION                          ║${NC}"
         echo -e "${CYAN}╠══════════════════════════════════════════════════════════════╣${NC}"
-        echo -e "${GREEN}║  [8.1] 🔄 Check for Updates                                  ║${NC}"
-        echo -e "${GREEN}║  [8.2] ⬇️  Download Latest Version                           ║${NC}"
-        echo -e "${GREEN}║  [8.3] 📦 Auto-Install Dependencies                          ║${NC}"
-        echo -e "${GREEN}║  [8.4] 🚀 Install Update (Rolling/Blue-Green)                ║${NC}"
-        echo -e "${GREEN}║  [8.5] 📋 View Changelog                                     ║${NC}"
-        echo -e "${GREEN}║  [8.6] ↩️  Rollback to Previous Version                      ║${NC}"
-        echo -e "${GREEN}║  [8.7] ⚙️  Configure Auto-Update Settings                    ║${NC}"
-        echo -e "${GREEN}║  [8.8] 📊 Update Cluster Nodes (Swarm)                       ║${NC}"
-        echo -e "${YELLOW}║  [8.9] ⬅️  Back to Main Menu                                 ║${NC}"
+        echo -e "${GREEN}║  [1] 🔄 Check for Updates                                  ║${NC}"
+        echo -e "${GREEN}║  [2] ⬇️  Download Latest Version                           ║${NC}"
+        echo -e "${GREEN}║  [3] 📦 Auto-Install Dependencies                          ║${NC}"
+        echo -e "${GREEN}║  [4] 🚀 Install Update (Rolling/Blue-Green)                ║${NC}"
+        echo -e "${GREEN}║  [5] 📋 View Changelog                                     ║${NC}"
+        echo -e "${GREEN}║  [6] ↩️  Rollback to Previous Version                      ║${NC}"
+        echo -e "${GREEN}║  [7] ⚙️  Configure Auto-Update Settings                    ║${NC}"
+        echo -e "${GREEN}║  [8] 📊 Update Cluster Nodes (Swarm)                       ║${NC}"
+        echo -e "${YELLOW}║  [9] ⬅️  Back to Main Menu                                 ║${NC}"
         echo -e "${CYAN}╚══════════════════════════════════════════════════════════════╝${NC}"
         echo ""
         
-        read -rp "  Enter choice [8.1-8.9]: " choice
+        read -rp "  Enter choice [1-9]: " choice
         
         case $choice in
-            8.1) update_check ;;
-            8.2) update_download ;;
-            8.3) update_install_deps ;;
-            8.4) update_install ;;
-            8.5) update_changelog ;;
-            8.6) update_rollback ;;
-            8.7) update_configure_auto ;;
-            8.8) update_cluster_nodes ;;
-            8.9|89) break ;;
+            1) update_check ;;
+            2) update_download ;;
+            3) update_install_deps ;;
+            4) update_install ;;
+            5) update_changelog ;;
+            6) update_rollback ;;
+            7) update_configure_auto ;;
+            8) update_cluster_nodes ;;
+            9) break ;;
             *) echo -e "${RED}Invalid option!${NC}"; sleep 1 ;;
         esac
         
-        if [[ "$choice" != "8.9" && "$choice" != "89" ]]; then
+        if [[ "$choice" != "9" ]]; then
             echo ""
             read -rp "Press Enter to continue..." 
         fi

@@ -1326,19 +1326,18 @@ config_menu() {
     
     while true; do
         show_config_menu
-        read -rp "  Enter choice [5.1-5.9 or 1-9]: " choice
+        read -rp "  Enter choice [1-9]: " choice
         
-        # Obsługa formatów 5.x oraz x
         case $choice in
-            5.1|1) menu_manage_github_token ;;
-            5.2|2) menu_configure_qwen_api ;;
-            5.3|3) menu_set_working_directory ;;
-            5.4|4) menu_theme_display ;;
-            5.5|5) menu_notification_settings ;;
-            5.6|6) menu_backup_configuration ;;
-            5.7|7) menu_restore_configuration ;;
-            5.8|8) menu_reset_defaults ;;
-            5.9|9|99) 
+            1) menu_manage_github_token ;;
+            2) menu_configure_qwen_api ;;
+            3) menu_set_working_directory ;;
+            4) menu_theme_display ;;
+            5) menu_notification_settings ;;
+            6) menu_backup_configuration ;;
+            7) menu_restore_configuration ;;
+            8) menu_reset_defaults ;;
+            9|99) 
                 log_config_event "Configuration menu exited"
                 break
                 ;;
