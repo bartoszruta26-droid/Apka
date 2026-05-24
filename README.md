@@ -11,7 +11,7 @@ Aplikacja bash shell script do zarządzania czasem i automatyzacji procesów z w
 ```bash
 # Pobierz repozytorium
 git clone https://github.com/bartoszruta26-droid/Apka
-cd qwen-tam
+cd Apka
 
 # Uruchom skrypt instalacyjny (wymaga uprawnień root)
 sudo ./install.sh
