@@ -513,6 +513,49 @@ verify_installation() {
 }
 
 #-------------------------------------------------------------------------------
+# Dodanie ~/bin do PATH w pliku konfiguracyjnym powłoki
+#-------------------------------------------------------------------------------
+
+add_bin_to_path() {
+    log_info "Dodawanie ~/bin do PATH w pliku konfiguracyjnym powłoki..."
+    
+    local shell_rc=""
+    local path_line='export PATH="$HOME/bin:$PATH"'
+    
+    # Wykryj powłokę użytkownika
+    if [[ -f "${HOME}/.bashrc" ]]; then
+        shell_rc="${HOME}/.bashrc"
+    elif [[ -f "${HOME}/.zshrc" ]]; then
+        shell_rc="${HOME}/.zshrc"
+    elif [[ -f "${HOME}/.profile" ]]; then
+        shell_rc="${HOME}/.profile"
+    else
+        # Jeśli nie znaleziono żadnego pliku, utwórz .bashrc
+        shell_rc="${HOME}/.bashrc"
+        touch "$shell_rc"
+        log_debug "Utworzono plik: $shell_rc"
+    fi
+    
+    # Sprawdź czy PATH już zawiera ~/bin
+    if grep -q '\$HOME/bin' "$shell_rc" 2>/dev/null || grep -q '~/bin' "$shell_rc" 2>/dev/null; then
+        log_debug "~/bin jest już w PATH w pliku $shell_rc"
+    else
+        echo "" >> "$shell_rc"
+        echo "# Qwen Time & Automation Manager - dodanie ~/bin do PATH" >> "$shell_rc"
+        echo "$path_line" >> "$shell_rc"
+        log_debug "Dodano ~/bin do PATH w pliku $shell_rc"
+    fi
+    
+    # Eksportuj PATH dla bieżącej sesji (tylko jeśli nie jest już dodane)
+    if [[ ":$PATH:" != *":$HOME/bin:"* ]]; then
+        export PATH="$HOME/bin:$PATH"
+        log_debug "Dodano ~/bin do PATH dla bieżącej sesji"
+    fi
+    
+    log_success "Skonfigurowano PATH dla ~/bin"
+}
+
+#-------------------------------------------------------------------------------
 # Pokaż informacje po instalacji
 #-------------------------------------------------------------------------------
 
@@ -527,14 +570,13 @@ show_post_install_info() {
     echo -e "${GREEN}Katalog roboczy:${NC} ${HOME}/qwen-projects"
     echo ""
     echo -e "${BLUE}Jak uruchomić aplikację:${NC}"
-    echo "  1. Upewnij się, że katalog ~/bin jest w PATH"
-    echo "  2. Uruchom polecenie: ${CYAN}qwen-tam${NC}"
-    echo "  3. Lub bezpośrednio: ${CYAN}$INSTALL_DIR/qwen-tam.sh${NC}"
+    echo "  Uruchom polecenie: ${CYAN}qwen-tam${NC}"
+    echo "  Lub bezpośrednio: ${CYAN}$INSTALL_DIR/qwen-tam.sh${NC}"
     echo ""
-    echo -e "${YELLOW}Dodanie ~/bin do PATH (jeśli jeszcze nie dodane):${NC}"
-    echo "  Dodaj do ~/.bashrc lub ~/.zshrc:"
-    echo "  ${CYAN}export PATH=\"\$HOME/bin:\$PATH\"${NC}"
-    echo "  Następnie uruchom ponownie terminal lub: ${CYAN}source ~/.bashrc${NC}"
+    echo -e "${GREEN}Konfiguracja środowiska:${NC}"
+    echo "  ✓ Katalog ~/bin został automatycznie dodany do PATH"
+    echo "  ✓ Plik konfiguracyjny powłoki (${HOME}/.bashrc lub ~/.zshrc) został zaktualizowany"
+    echo "  ✓ Jeśli to nowa sesja terminala, uruchom: ${CYAN}source ~/.bashrc${NC} (lub ~/.zshrc)"
     echo ""
     echo -e "${YELLOW}Następne kroki:${NC}"
     echo "  1. Uruchom aplikację: ${CYAN}qwen-tam${NC}"
@@ -674,6 +716,7 @@ main() {
     setup_permissions
     create_config
     create_work_dir
+    add_bin_to_path
     add_shell_alias
     verify_installation
     show_post_install_info
