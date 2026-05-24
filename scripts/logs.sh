@@ -951,7 +951,9 @@ show_header_logs_submenu() {
 
 # Jeśli skrypt jest uruchamiany bezpośrednio (nie source'owany)
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
-    # Ustawienie SCRIPT_DIR dla samodzielnego uruchomienia
-    SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+    # Ustawienie SCRIPT_DIR dla samodzielnego uruchomienia (tylko jeśli nie ustawiony)
+    if [[ -z "${SCRIPT_DIR:-}" ]]; then
+        SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+    fi
     logs_menu
 fi

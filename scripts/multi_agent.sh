@@ -16,7 +16,9 @@ set -euo pipefail
 [[ -z "${NC:-}" ]] && NC='\033[0m' # No Color
 
 # Ścieżki
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+if [[ -z "${SCRIPT_DIR:-}" ]]; then
+    SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+fi
 CONFIG_FILE="${HOME}/.qwen_tam_config"
 CLUSTER_CONFIG="${HOME}/.qwen_tam_cluster"
 LOG_DIR="${HOME}/.qwen_tam_logs"

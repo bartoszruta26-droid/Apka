@@ -13,7 +13,10 @@ set -euo pipefail
 #-------------------------------------------------------------------------------
 readonly VERSION="1.0"
 readonly SCRIPT_NAME="$(basename "$0")"
-readonly SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# Get script directory (only if not already set)
+if [[ -z "${SCRIPT_DIR:-}" ]]; then
+    readonly SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+fi
 CONFIG_FILE="${HOME}/.qwen_tam_config"
 LOG_DIR="${SCRIPT_DIR}/logs"
 APP_LOG="${LOG_DIR}/app.log"

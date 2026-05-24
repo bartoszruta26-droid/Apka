@@ -12,7 +12,10 @@ set -euo pipefail
 #-------------------------------------------------------------------------------
 CONFIG_VERSION="1.0"
 CONFIG_MODULE_NAME="config"
-CONFIG_SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# Get script directory (only if not already set by parent script)
+if [[ -z "${CONFIG_SCRIPT_DIR:-}" ]]; then
+    CONFIG_SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+fi
 MAIN_SCRIPT_DIR="$(dirname "$CONFIG_SCRIPT_DIR")"
 CONFIG_FILE="${HOME}/.qwen_tam_config"
 CONFIG_BACKUP_DIR="${HOME}/.qwen_tam_backups"
