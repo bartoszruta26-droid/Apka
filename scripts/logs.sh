@@ -903,17 +903,17 @@ logs_menu() {
     while true; do
         clear
         show_header_logs_submenu
-        read -rp "  Enter choice [6.1-6.8]: " choice
+        read -rp "  Enter choice [1-8]: " choice
         
         case $choice in
-            6.1) logs_view_app ;;
-            6.2) logs_view_debug ;;
-            6.3) logs_view_events ;;
-            6.4) logs_search ;;
-            6.5) logs_clear_old ;;
-            6.6) logs_export ;;
-            6.7) logs_realtime_monitor ;;
-            6.8|68) 
+            1) logs_view_app ;;
+            2) logs_view_debug ;;
+            3) logs_view_events ;;
+            4) logs_search ;;
+            5) logs_clear_old ;;
+            6) logs_export ;;
+            7) logs_realtime_monitor ;;
+            8) 
                 echo "Returning to main menu..."
                 break
                 ;;
@@ -923,7 +923,7 @@ logs_menu() {
                 ;;
         esac
         
-        if [[ "$choice" != "6.8" && "$choice" != "68" ]]; then
+        if [[ "$choice" != "8" ]]; then
             read -rp "Press Enter to continue..."
         fi
     done
@@ -937,14 +937,14 @@ show_header_logs_submenu() {
     echo "╔══════════════════════════════════════════════════════════════╗"
     echo "║                  LOGS & MONITORING                           ║"
     echo "╠══════════════════════════════════════════════════════════════╣"
-    echo -e "${GREEN}║  [6.1] 📄 View Application Log (app.log)                     ║${NC}"
-    echo -e "${GREEN}║  [6.2] 🐛 View Debug Log (debug.log)                         ║${NC}"
-    echo -e "${GREEN}║  [6.3] 📊 View Events Log (events.log)                       ║${NC}"
-    echo -e "${GREEN}║  [6.4] 🔍 Search Logs                                        ║${NC}"
-    echo -e "${GREEN}║  [6.5] 🧹 Clear Old Logs                                     ║${NC}"
-    echo -e "${GREEN}║  [6.6] 📥 Export Logs                                        ║${NC}"
-    echo -e "${GREEN}║  [6.7] 📈 Real-time Log Monitor                              ║${NC}"
-    echo -e "${YELLOW}║  [6.8] ⬅️  Back to Main Menu                                 ║${NC}"
+    echo -e "${GREEN}║  [1] 📄 View Application Log (app.log)                     ║${NC}"
+    echo -e "${GREEN}║  [2] 🐛 View Debug Log (debug.log)                         ║${NC}"
+    echo -e "${GREEN}║  [3] 📊 View Events Log (events.log)                       ║${NC}"
+    echo -e "${GREEN}║  [4] 🔍 Search Logs                                        ║${NC}"
+    echo -e "${GREEN}║  [5] 🧹 Clear Old Logs                                     ║${NC}"
+    echo -e "${GREEN}║  [6] 📥 Export Logs                                        ║${NC}"
+    echo -e "${GREEN}║  [7] 📈 Real-time Log Monitor                              ║${NC}"
+    echo -e "${YELLOW}║  [8] ⬅️  Back to Main Menu                                 ║${NC}"
     echo -e "${CYAN}╚══════════════════════════════════════════════════════════════╝${NC}"
     echo ""
 }

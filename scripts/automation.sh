@@ -1323,29 +1323,29 @@ automation_menu() {
         echo -e "${GREEN}║  [6] 📅 Schedule Automated Task                              ║${NC}"
         echo -e "${GREEN}║  [7] 📜 View Task History                                    ║${NC}"
         echo -e "${GREEN}║  [8] ⚡ Quick Automations                                    ║${NC}"
-        echo -e "${GREEN}║      ├─ [8.1] Auto-commit & Push                             ║${NC}"
-        echo -e "${GREEN}║      ├─ [8.2] Daily Backup                                   ║${NC}"
-        echo -e "${GREEN}║      ├─ [8.3] Code Review Loop                               ║${NC}"
-        echo -e "${GREEN}║      └─ [8.4] Custom Script Runner                           ║${NC}"
+        echo -e "${GREEN}║      ├─ [81] Auto-commit & Push                             ║${NC}"
+        echo -e "${GREEN}║      ├─ [82] Daily Backup                                   ║${NC}"
+        echo -e "${GREEN}║      ├─ [83] Code Review Loop                               ║${NC}"
+        echo -e "${GREEN}║      └─ [84] Custom Script Runner                           ║${NC}"
         echo -e "${YELLOW}║  [9] ⬅️  Back to Main Menu                                   ║${NC}"
         echo -e "${CYAN}╚══════════════════════════════════════════════════════════════╝${NC}"
         echo ""
         
-        read -rp "  Enter choice [1-9, 8.1-8.4]: " choice
+        read -rp "  Enter choice [1-9, 81-84]: " choice
         
         case $choice in
-            1|1.1|4.1) ai_discussion_session ;;
-            2|2.1|4.2) create_automation_workflow ;;
-            3|3.1|4.3) run_automation_task ;;
-            4|4.1|4.4) pause_resume_tasks ;;
-            5|5.1|4.5) stop_running_tasks ;;
-            6|6.1|4.6) schedule_automated_task ;;
-            7|7.1|4.7) view_task_history ;;
-            8.1|81) quick_autocommit_push ;;
-            8.2|82) quick_daily_backup ;;
-            8.3|83) quick_code_review_loop ;;
-            8.4|84) quick_custom_script_runner ;;
-            9|9.1|4.9) break ;;
+            1) ai_discussion_session ;;
+            2) create_automation_workflow ;;
+            3) run_automation_task ;;
+            4) pause_resume_tasks ;;
+            5) stop_running_tasks ;;
+            6) schedule_automated_task ;;
+            7) view_task_history ;;
+            81) quick_autocommit_push ;;
+            82) quick_daily_backup ;;
+            83) quick_code_review_loop ;;
+            84) quick_custom_script_runner ;;
+            9) break ;;
             *) echo -e "${RED}Invalid option!${NC}"; sleep 1 ;;
         esac
     done

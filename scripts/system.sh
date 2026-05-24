@@ -786,44 +786,44 @@ system_menu() {
         show_header
         echo -e "${CYAN}║                 SYSTEM INFORMATION                           ║${NC}"
         echo -e "${CYAN}╠══════════════════════════════════════════════════════════════╣${NC}"
-        echo -e "${GREEN}║  [7.1] 💻 System Resources (CPU/RAM/Disk)                    ║${NC}"
-        echo -e "${GREEN}║  [7.2] 🌡️  Temperature & Health Status                       ║${NC}"
-        echo -e "${GREEN}║  [7.3] 📦 Installed Dependencies                             ║${NC}"
-        echo -e "${GREEN}║  [7.4] 🤖 Qwen Model Status                                  ║${NC}"
-        echo -e "${GREEN}║  [7.5] 🔗 Network Connectivity                               ║${NC}"
-        echo -e "${GREEN}║  [7.6] 📜 Version & Changelog                                ║${NC}"
-        echo -e "${YELLOW}║  [7.7] ⬅️  Back to Main Menu                                 ║${NC}"
+        echo -e "${GREEN}║  [1] 💻 System Resources (CPU/RAM/Disk)                    ║${NC}"
+        echo -e "${GREEN}║  [2] 🌡️  Temperature & Health Status                       ║${NC}"
+        echo -e "${GREEN}║  [3] 📦 Installed Dependencies                             ║${NC}"
+        echo -e "${GREEN}║  [4] 🤖 Qwen Model Status                                  ║${NC}"
+        echo -e "${GREEN}║  [5] 🔗 Network Connectivity                               ║${NC}"
+        echo -e "${GREEN}║  [6] 📜 Version & Changelog                                ║${NC}"
+        echo -e "${YELLOW}║  [7] ⬅️  Back to Main Menu                                 ║${NC}"
         echo -e "${CYAN}╚══════════════════════════════════════════════════════════════╝${NC}"
         echo ""
         
-        read -rp "  Enter choice [7.1-7.7]: " choice
+        read -rp "  Enter choice [1-7]: " choice
         
         case $choice in
-            7.1|71)
+            1)
                 system_resources
                 read -rp "Press Enter to continue..."
                 ;;
-            7.2|72)
+            2)
                 system_temperature_health
                 read -rp "Press Enter to continue..."
                 ;;
-            7.3|73)
+            3)
                 system_dependencies
                 read -rp "Press Enter to continue..."
                 ;;
-            7.4|74)
+            4)
                 system_qwen_status
                 read -rp "Press Enter to continue..."
                 ;;
-            7.5|75)
+            5)
                 system_network
                 read -rp "Press Enter to continue..."
                 ;;
-            7.6|76)
+            6)
                 system_version_changelog
                 read -rp "Press Enter to continue..."
                 ;;
-            7.7|77)
+            7)
                 break
                 ;;
             *)
