@@ -1,6 +1,1 @@
-The modified files `qwen-tam.sh` and `scripts/coder.sh` are shell scripts, which are source code files. There are no build artifacts, dependency directories, temporary files, or other ignorable items in the provided file change list.
-
-Therefore, no entries need to be added to the .gitignore file.
-
-```(empty)
-```
+Nothing should be ignored based on the provided file changes, as they only include shell script files (.sh) which are source files.

@@ -658,6 +658,113 @@ EOF
 }
 
 #-------------------------------------------------------------------------------
+# Funkcja wczytywania istniejącego projektu
+#-------------------------------------------------------------------------------
+load_existing_project() {
+    show_header
+    echo -e "${CYAN}Load Existing Project${NC}"
+    echo ""
+    
+    # Sprawdź czy katalog z projektami istnieje
+    if [[ ! -d "$WORK_DIR" ]]; then
+        log_error "No projects directory found at: $WORK_DIR"
+        wait_for_enter
+        return 1
+    fi
+    
+    # Znajdź wszystkie projekty (katalogi z plikiem .project_config)
+    local projects=()
+    local project_dirs=()
+    
+    while IFS= read -r -d '' dir; do
+        if [[ -f "${dir}/.project_config" ]]; then
+            local project_name=$(basename "$dir")
+            projects+=("$project_name")
+            project_dirs+=("$dir")
+        fi
+    done < <(find "$WORK_DIR" -mindepth 1 -maxdepth 1 -type d -print0 2>/dev/null | sort -z)
+    
+    # Sprawdź czy znaleziono jakieś projekty
+    if [[ ${#projects[@]} -eq 0 ]]; then
+        echo -e "${YELLOW}No existing projects found.${NC}"
+        echo "Create a new project first using option 1."
+        wait_for_enter
+        return 1
+    fi
+    
+    # Wyświetl listę projektów
+    echo -e "${GREEN}Available Projects:${NC}"
+    echo "─────────────────────────────────────────"
+    for i in "${!projects[@]}"; do
+        local idx=$((i + 1))
+        local project_name="${projects[$i]}"
+        local project_dir="${project_dirs[$i]}"
+        
+        # Wczytaj krótki opis z pliku konfiguracyjnego
+        local goal=""
+        if [[ -f "${project_dir}/.project_config" ]]; then
+            goal=$(grep "^PROJECT_GOAL=" "${project_dir}/.project_config" 2>/dev/null | cut -d'=' -f2-)
+        fi
+        
+        echo -e "  ${idx}) ${GREEN}${project_name}${NC}"
+        if [[ -n "$goal" ]]; then
+            echo -e "     ${CYAN}Goal: ${goal:0:60}$( [[ ${#goal} -gt 60 ]] && echo "...")${NC}"
+        fi
+        echo ""
+    done
+    echo "─────────────────────────────────────────"
+    echo "  0) Cancel"
+    echo ""
+    
+    # Wybór projektu
+    read -rp "Select project to load [0-${#projects[@]}]: " choice
+    
+    if [[ "$choice" -eq 0 ]]; then
+        return 0
+    fi
+    
+    if [[ "$choice" -lt 1 || "$choice" -gt ${#projects[@]} ]]; then
+        log_error "Invalid choice"
+        wait_for_enter
+        return 1
+    fi
+    
+    # Wczytaj wybrany projekt
+    local selected_idx=$((choice - 1))
+    local selected_project="${projects[$selected_idx]}"
+    local selected_dir="${project_dirs[$selected_idx]}"
+    
+    echo ""
+    log_info "Loading project: $selected_project"
+    
+    # Wczytaj konfigurację projektu
+    if [[ -f "${selected_dir}/.project_config" ]]; then
+        source "${selected_dir}/.project_config"
+        CURRENT_PROJECT_NAME="$PROJECT_NAME"
+        CURRENT_PROJECT_GOAL="$PROJECT_GOAL"
+        CURRENT_PROJECT_FUNCTIONS="$PROJECT_FUNCTIONS"
+        CURRENT_PROJECT_DESCRIPTION="$PROJECT_DESCRIPTION"
+        
+        echo -e "${GREEN}✓ Project loaded successfully!${NC}"
+        echo -e "${CYAN}  Name: $CURRENT_PROJECT_NAME${NC}"
+        echo -e "${CYAN}  Goal: $CURRENT_PROJECT_GOAL${NC}"
+        echo -e "${CYAN}  Functions: $CURRENT_PROJECT_FUNCTIONS${NC}"
+        echo -e "${CYAN}  Location: $selected_dir${NC}"
+        echo ""
+        
+        log_event "Loaded project: $CURRENT_PROJECT_NAME"
+        wait_for_enter
+        
+        # Przejdź do menu generowania kodu dla tego projektu
+        show_project_generation_menu
+    else
+        log_error "Project configuration file not found"
+        wait_for_enter
+        return 1
+    fi
+}
+
+#-------------------------------------------------------------------------------
 # Menu generowania kodu dla projektu
 #-------------------------------------------------------------------------------
 show_project_generation_menu() {
@@ -1140,26 +1247,28 @@ show_coder_menu() {
         show_header
         echo -e "${YELLOW}Select option:${NC}"
         echo "  1) 📁 Create New Project (with AI setup)"
-        echo "  2) 📜 Create/Update Shell Script"
-        echo "  3) 💻 Create/Update C/C#/C++ Code with GUI"
-        echo "  4) 🌐 Create/Update WebUI Script"
-        echo "  5) 📱 Create/Update Android App"
-        echo "  6) ✏️  Edit Existing File with AI"
-        echo "  7) 📂 Project Templates Manager"
-        echo "  8) ⚙️  Daemon/Service Generator"
-        echo "  9) ⬅️  Back to Main Menu"
+        echo "  2) 📂 Load Existing Project"
+        echo "  3) 📜 Create/Update Shell Script"
+        echo "  4) 💻 Create/Update C/C#/C++ Code with GUI"
+        echo "  5) 🌐 Create/Update WebUI Script"
+        echo "  6) 📱 Create/Update Android App"
+        echo "  7) ✏️  Edit Existing File with AI"
+        echo "  8) 📂 Project Templates Manager"
+        echo "  9) ⚙️  Daemon/Service Generator"
+        echo "  0) ⬅️  Back to Main Menu"
         echo ""
         
-        read -rp "  Choice [1-9]: " choice
+        read -rp "  Choice [0-9]: " choice
         
         case $choice in
             1) create_new_project ;;
-            2) generate_shell_scripts ;;
-            3) generate_cpp_gui_code ;;
-            4) generate_webui_scripts ;;
-            5) create_android_app ;;
-            6) edit_existing_file ;;
-            7) 
+            2) load_existing_project ;;
+            3) generate_shell_scripts ;;
+            4) generate_cpp_gui_code ;;
+            5) generate_webui_scripts ;;
+            6) create_android_app ;;
+            7) edit_existing_file ;;
+            8) 
                 # Launch Templates Manager
                 if [[ -f "${CODER_SCRIPT_DIR}/../templates-manager.sh" ]]; then
                     bash "${CODER_SCRIPT_DIR}/../templates-manager.sh"
@@ -1168,8 +1277,8 @@ show_coder_menu() {
                     sleep 2
                 fi
                 ;;
-            8) generate_daemon_script ;;
-            9) break ;;
+            9) generate_daemon_script ;;
+            0) break ;;
             *) echo -e "${RED}Invalid option!${NC}"; sleep 1 ;;
         esac
     done
