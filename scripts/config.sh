@@ -12,8 +12,8 @@ set -euo pipefail
 #-------------------------------------------------------------------------------
 readonly CONFIG_VERSION="1.0"
 readonly CONFIG_MODULE_NAME="config"
-readonly SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-readonly MAIN_SCRIPT_DIR="$(dirname "$SCRIPT_DIR")"
+readonly CONFIG_SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+readonly MAIN_SCRIPT_DIR="$(dirname "$CONFIG_SCRIPT_DIR")"
 readonly CONFIG_FILE="${HOME}/.qwen_tam_config"
 readonly CONFIG_BACKUP_DIR="${HOME}/.qwen_tam_backups"
 readonly LOG_DIR="${MAIN_SCRIPT_DIR}/logs"
