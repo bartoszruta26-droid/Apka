@@ -9,22 +9,68 @@
 
 ## ROZDZIAŁ I: CEL PROJEKTU .................................................................... 3
 ### 1.1. Cel główny projektu ...................................................................... 3
-### 1.2. Cele szczegółowe .......................................................................... 4
-### 1.3. Cele operacyjne ............................................................................ 6
-### 1.4. Misja i wizja projektu ................................................................... 8
+#### 1.1.1. Definicja celu głównego ............................................................... 3
+#### 1.1.2. Uzasadnienie wyboru celu głównego ........................................... 4
+#### 1.1.3. Zgodność z potrzebami społeczności lokalnej ............................. 5
+### 1.2. Cele szczegółowe .......................................................................... 6
+#### 1.2.1. Cel szczegółowy nr 1: Rozwój kompetencji ekologicznych ......... 6
+#### 1.2.2. Cel szczegółowy nr 2: Integracja społeczności lokalnej ............. 7
+#### 1.2.3. Cel szczegółowy nr 3: Poprawa estetyki przestrzeni publicznej .. 8
+#### 1.2.4. Cel szczegółowy nr 4: Ochrona bioróżnorodności ....................... 9
+#### 1.2.5. Cel szczegółowy nr 5: Promocja zdrowego stylu życia .............. 10
+### 1.3. Cele operacyjne ............................................................................ 11
+#### 1.3.1. Cele operacyjne etapu przygotowawczego .................................. 11
+#### 1.3.2. Cele operacyjne etapu edukacyjnego .......................................... 12
+#### 1.3.3. Cele operacyjne etapu wdrożeniowego ....................................... 13
+#### 1.3.4. Cele operacyjne etapu ewaluacyjnego ........................................ 14
+### 1.4. Misja i wizja projektu ................................................................... 15
+#### 1.4.1. Sformułowanie misji projektu ...................................................... 15
+#### 1.4.2. Wizja długoterminowa rozwoju inicjatywy .................................. 16
+#### 1.4.3. Wartości przewodnie projektu ..................................................... 17
 
-## ROZDZIAŁ II: ZAŁOŻENIA PROJEKTU ....................................................... 10
-### 2.1. Założenia merytoryczne ................................................................ 10
-### 2.2. Założenia organizacyjne ................................................................ 12
-### 2.3. Założenia społeczne ..................................................................... 14
-### 2.4. Założenia ekologiczne .................................................................. 16
-### 2.5. Założenia edukacyjne ................................................................... 18
-### 2.6. Założenia ekonomiczne ................................................................ 20
+## ROZDZIAŁ II: ZAŁOŻENIA PROJEKTU ....................................................... 18
+### 2.1. Założenia merytoryczne ................................................................ 18
+#### 2.1.1. Podstawy naukowe i badawcze ................................................... 18
+#### 2.1.2. Wykorzystanie tradycyjnej wiedzy o ziołach ............................... 19
+#### 2.1.3. Nowoczesne podejście do ogrodnictwa miejskiego ...................... 20
+### 2.2. Założenia organizacyjne ................................................................ 21
+#### 2.2.1. Struktura zarządzania projektem ................................................. 21
+#### 2.2.2. Podział ról i odpowiedzialności .................................................... 22
+#### 2.2.3. System komunikacji wewnętrznej ................................................. 23
+### 2.3. Założenia społeczne ..................................................................... 24
+#### 2.3.1. Partycypacja społeczności lokalnej ............................................. 24
+#### 2.3.2. Budowanie kapitału społecznego ................................................. 25
+#### 2.3.3. Włączenie grup wykluczonych ..................................................... 26
+### 2.4. Założenia ekologiczne .................................................................. 27
+#### 2.4.1. Zasada zrównoważonego rozwoju ............................................... 27
+#### 2.4.2. Ochrona bioróżnorodności gatunkowej ....................................... 28
+#### 2.4.3. Minimalizacja śladu węglowego ................................................... 29
+### 2.5. Założenia edukacyjne ................................................................... 30
+#### 2.5.1. Uczenie się przez działanie ......................................................... 30
+#### 2.5.2. Transfer wiedzy międzypokoleniowej .......................................... 31
+#### 2.5.3. Certyfikacja zdobytych kompetencji ............................................ 32
+### 2.6. Założenia ekonomiczne ................................................................ 33
+#### 2.6.1. Efektywność kosztowa działań ..................................................... 33
+#### 2.6.2. Lokalny rozwój gospodarczy ....................................................... 34
+#### 2.6.3. Trwałość finansowa po zakończeniu projektu ............................. 35
 
-## ROZDZIAŁ III: GRUPY DOCELOWE ........................................................... 22
-### 3.1. Bezpośredni beneficjenci ............................................................. 22
-### 3.2. Pośredni beneficjenci ................................................................... 24
-### 3.3. Partnerzy projektu ....................................................................... 26
+## ROZDZIAŁ III: GRUPY DOCELOWE ........................................................... 36
+### 3.1. Bezpośredni beneficjenci ............................................................. 36
+#### 3.1.1. Mieszkańcy Gostynina i okolic .................................................... 36
+#### 3.1.2. Uczestnicy kursu sadzenia i pielęgnacji ...................................... 37
+#### 3.1.3. Rodziny z dziećmi w wieku przedszkolnym i szkolnym ............... 38
+#### 3.1.4. Osoby starsze i seniorzy .............................................................. 39
+#### 3.1.5. Osoby z niepełnosprawnościami ................................................... 40
+### 3.2. Pośredni beneficjenci ................................................................... 41
+#### 3.2.1. Cała społeczność lokalna powiatu ............................................... 41
+#### 3.2.2. Lokalne organizacje pozarządowe ................................................ 42
+#### 3.2.3. Przyszłe pokolenia mieszkańców ................................................. 43
+### 3.3. Partnerzy projektu ....................................................................... 44
+#### 3.3.1. Instytucje samorządu terytorialnego ........................................... 44
+#### 3.3.2. Placówki oświatowe i edukacyjne ................................................. 45
+#### 3.3.3. Organizacje ekologiczne i prospołeczne ...................................... 46
+#### 3.3.4. Lokalny biznes i przedsiębiorcy .................................................... 47
+#### 3.3.5. Media lokalne i regionalne ........................................................... 48
 
 ## ROZDZIAŁ IV: ETAPY REALIZACJI PROJEKTU .............................................. 28
 
@@ -117,55 +163,188 @@
 #### 4.7.8. Rekomendacje dla podobnych projektów .................................. 167
 #### 4.7.9. Kamień milowy etapu 7 ............................................................. 169
 
-## ROZDZIAŁ V: HARMONOGRAM CAŁEGO PROJEKTU ...................................... 170
-### 5.1. Oś czasu realizacji ...................................................................... 170
-### 5.2. Kamienie milowe projektu ........................................................... 172
-### 5.3. Zależności między etapami ......................................................... 174
+## ROZDZIAŁ V: HARMONOGRAM CAŁEGO PROJEKTU ...................................... 210
+### 5.1. Oś czasu realizacji ...................................................................... 210
+#### 5.1.1. Faza inicjacji (miesiące 1-2) ....................................................... 210
+#### 5.1.2. Faza planowania (miesiące 3-4) ................................................... 211
+#### 5.1.3. Faza realizacji (miesiące 5-20) ..................................................... 212
+#### 5.1.4. Faza zakończenia (miesiące 21-24) ............................................. 213
+### 5.2. Kamienie milowe projektu ........................................................... 214
+#### 5.2.1. Kamień milowy nr 1: Zakończenie etapu diagnostycznego ........ 214
+#### 5.2.2. Kamień milowy nr 2: Przeprowadzenie kursu ............................ 215
+#### 5.2.3. Kamień milowy nr 3: Uruchomienie punktów wymiany ............... 216
+#### 5.2.4. Kamień milowy nr 4: Realizacja nasadzeń publicznych .............. 217
+#### 5.2.5. Kamień milowy nr 5: Ewaluacja końcowa .................................. 218
+### 5.3. Zależności między etapami ......................................................... 219
+#### 5.3.1. Mapowanie zależności krytycznych ............................................ 219
+#### 5.3.2. Bufory czasowe i zarządzanie opóźnieniami ............................... 220
+#### 5.3.3. Równoległa realizacja zadań komplementarnych ......................... 221
 
-## ROZDZIAŁ VI: BUDŻET PROJEKTU ........................................................... 176
-### 6.1. Koszty bezpośrednie ................................................................... 176
-### 6.2. Koszty pośrednie ....................................................................... 178
-### 6.3. Źródła finansowania ................................................................... 180
-### 6.4. Monitorowanie wydatków ........................................................... 182
+## ROZDZIAŁ VI: BUDŻET PROJEKTU ........................................................... 222
+### 6.1. Koszty bezpośrednie ................................................................... 222
+#### 6.1.1. Wynagrodzenia zespołu realizacyjnego ...................................... 222
+#### 6.1.2. Zakup materiałów szkoleniowych i edukacyjnych ......................... 223
+#### 6.1.3. Zakup sadzonek, nasion i narzędzi ogrodniczych ........................ 224
+#### 6.1.4. Organizacja wydarzeń i warsztatów ............................................ 225
+#### 6.1.5. Działania promocyjne i marketingowe ........................................ 226
+### 6.2. Koszty pośrednie ....................................................................... 227
+#### 6.2.1. Koszty administracyjne i biurowe ............................................... 227
+#### 6.2.2. Media i energia ........................................................................... 228
+#### 6.2.3. Ubezpieczenia i opłaty prawne .................................................... 229
+#### 6.2.4. Amortyzacja sprzętu i infrastruktury ........................................... 230
+### 6.3. Źródła finansowania ................................................................... 231
+#### 6.3.1. Dotacje zewnętrzne i granty ....................................................... 231
+#### 6.3.2. Wsparcie samorządu lokalnego ................................................... 232
+#### 6.3.3. Sponsorzy prywatni i darczyńcy .................................................. 233
+#### 6.3.4. Wkład własny organizacji ........................................................... 234
+### 6.4. Monitorowanie wydatków ........................................................... 235
+#### 6.4.1. System raportowania finansowego .............................................. 235
+#### 6.4.2. Kontrola wewnętrzna i audyty ..................................................... 236
+#### 6.4.3. Procedury zatwierdzania wydatków ............................................ 237
 
-## ROZDZIAŁ VII: ZARZĄDZANIE RYZYKIEM .................................................. 184
-### 7.1. Identyfikacja ryzyk ..................................................................... 184
-### 7.2. Analiza prawdopodobieństwa i wpływu ....................................... 186
-### 7.3. Strategie minimalizacji ryzyka .................................................... 188
-### 7.4. Plan awaryjny ............................................................................ 190
+## ROZDZIAŁ VII: ZARZĄDZANIE RYZYKIEM .................................................. 238
+### 7.1. Identyfikacja ryzyk ..................................................................... 238
+#### 7.1.1. Ryzyka środowiskowe i pogodowe .............................................. 238
+#### 7.1.2. Ryzyka organizacyjne i kadrowe ................................................. 239
+#### 7.1.3. Ryzyka finansowe i budżetowe .................................................... 240
+#### 7.1.4. Ryzyka społeczne i wizerunkowe ................................................. 241
+#### 7.1.5. Ryzyka prawne i administracyjne ................................................. 242
+### 7.2. Analiza prawdopodobieństwa i wpływu ....................................... 243
+#### 7.2.1. Macierz ryzyka – metodologia oceny .......................................... 243
+#### 7.2.2. Kwalifikacja ryzyk według poziomu krytyczności ......................... 244
+#### 7.2.3. Priorytetyzacja działań zaradczych .............................................. 245
+### 7.3. Strategie minimalizacji ryzyka .................................................... 246
+#### 7.3.1. Działania prewencyjne i zapobiegawcze ..................................... 246
+#### 7.3.2. Plany awaryjne dla ryzyk wysokich ............................................. 247
+#### 7.3.3. Transfer ryzyka (ubezpieczenia, outsourcing) .............................. 248
+#### 7.3.4. Monitorowanie wskaźników wczesnego ostrzegania .................... 249
+### 7.4. Plan awaryjny ............................................................................ 250
+#### 7.4.1. Procedury reagowania kryzysowego ........................................... 250
+#### 7.4.2. Zespół zarządzania kryzysowego ................................................. 251
+#### 7.4.3. Komunikacja w sytuacjach awaryjnych ........................................ 252
 
-## ROZDZIAŁ VIII: KOMUNIKACJA I PROMOCJA PROJEKTU ............................... 192
-### 8.1. Strategia komunikacji .................................................................. 192
-### 8.2. Narzędzia promocji .................................................................... 194
-### 8.3. Identyfikacja wizualna projektu ................................................... 196
-### 8.4. Media społecznościowe .............................................................. 198
-### 8.5. Współpraca z mediami ................................................................ 200
+## ROZDZIAŁ VIII: KOMUNIKACJA I PROMOCJA PROJEKTU ............................... 253
+### 8.1. Strategia komunikacji .................................................................. 253
+#### 8.1.1. Cele komunikacyjne projektu ...................................................... 253
+#### 8.1.2. Grupy docelowe komunikacji ...................................................... 254
+#### 8.1.3. Kluczowe przekazy i narracja ..................................................... 255
+#### 8.1.4. Kanały komunikacji zewnętrznej .................................................. 256
+### 8.2. Narzędzia promocji .................................................................... 257
+#### 8.2.1. Materiały drukowane (ulotki, plakaty, banery) ........................... 257
+#### 8.2.2. Gadżety promocyjne z logo projektu .......................................... 258
+#### 8.2.3. Strona internetowa i newsletter ................................................... 259
+#### 8.2.4. Aplikacja mobilna projektu .......................................................... 260
+### 8.3. Identyfikacja wizualna projektu ................................................... 261
+#### 8.3.1. Logo i księga znaku ................................................................... 261
+#### 8.3.2. Paleta kolorów i typografia ......................................................... 262
+#### 8.3.3. Zastosowanie identyfikacji w materiałach ................................... 263
+### 8.4. Media społecznościowe .............................................................. 264
+#### 8.4.1. Strategia content marketingu ...................................................... 264
+#### 8.4.2. Zarządzanie profilami na Facebook, Instagram, YouTube ........... 265
+#### 8.4.3. Kampanie reklamowe online ....................................................... 266
+#### 8.4.4. Współpraca z influencerami i blogerami .................................... 267
+### 8.5. Współpraca z mediami ................................................................ 268
+#### 8.5.1. Konferencje prasowe i briefingi medialne ................................... 268
+#### 8.5.2. Artykuły sponsorowane i patronaty medialne .............................. 269
+#### 8.5.3. Monitorowanie mediów i analiza przekazu .................................. 270
 
-## ROZDZIAŁ IX: PARTNERSTWA I WSPÓŁPRACA ............................................ 202
-### 9.1. Partnerzy strategiczni ................................................................ 202
-### 9.2. Partnerzy merytoryczni ................................................................ 204
-### 9.3. Partnerzy finansowi .................................................................... 206
-### 9.4. Sieć współpracy lokalnej ............................................................. 208
+## ROZDZIAŁ IX: PARTNERSTWA I WSPÓŁPRACA ............................................ 271
+### 9.1. Partnerzy strategiczni ................................................................ 271
+#### 9.1.1. Urząd Miasta i Gminy Gostynin .................................................. 271
+#### 9.1.2. Starostwo Powiatowe w Gostyninie ............................................ 272
+#### 9.1.3. Wojewódzkie instytucje ochrony środowiska ............................... 273
+### 9.2. Partnerzy merytoryczni ................................................................ 274
+#### 9.2.1. Uczelnie wyższe i jednostki badawcze ........................................ 274
+#### 9.2.2. Ogrody botaniczne i arboreta ..................................................... 275
+#### 9.2.3. Stowarzyszenia i fundacje ekologiczne ...................................... 276
+#### 9.2.4. Eksperci i doradcy ds. ziołolecznictwa ....................................... 277
+### 9.3. Partnerzy finansowi .................................................................... 278
+#### 9.3.1. Instytucje grantowe krajowe ....................................................... 278
+#### 9.3.2. Fundusze europejskie i programy międzynarodne ....................... 279
+#### 9.3.3. Sponsorzy korporacyjni ............................................................... 280
+#### 9.3.4. Darczyńcy indywidualni ............................................................... 281
+### 9.4. Sieć współpracy lokalnej ............................................................. 282
+#### 9.4.1. Rady dzielnic i osiedli ................................................................. 282
+#### 9.4.2. Koła gospodyń wiejskich i organizacje sąsiedzkie ...................... 283
+#### 9.4.3. Szkolne koła ekologiczne i harcerstwo ....................................... 284
+#### 9.4.4. Lokalne przedsiębiorstwa i rzemieślnicy ..................................... 285
 
-## ROZDZIAŁ X: REZULTATY I OCZEKIWANE EFEKTY ...................................... 210
-### 10.1. Rezultaty ilościowe ................................................................... 210
-### 10.2. Rezultaty jakościowe ................................................................ 212
-### 10.3. Efekty ekologiczne ................................................................... 214
-### 10.4. Efekty społeczne ..................................................................... 216
-### 10.5. Efekty edukacyjne ................................................................... 218
-### 10.6. Długoterminowy wpływ na społeczność .................................... 220
+## ROZDZIAŁ X: REZULTATY I OCZEKIWANE EFEKTY ...................................... 286
+### 10.1. Rezultaty ilościowe ................................................................... 286
+#### 10.1.1. Liczba przeszkolonych uczestników ......................................... 286
+#### 10.1.2. Liczba przeprowadzonych nasadzeń ........................................ 287
+#### 10.1.3. Powierzchnia zagospodarowanej zieleni ................................... 288
+#### 10.1.4. Liczba utworzonych punktów wymiany ..................................... 289
+#### 10.1.5. Frekwencja na wydarzeniach i warsztatach ............................... 290
+### 10.2. Rezultaty jakościowe ................................................................ 291
+#### 10.2.1. Wzrost świadomości ekologicznej mieszkańców ....................... 291
+#### 10.2.2. Poprawa estetyki przestrzeni publicznej ................................... 292
+#### 10.2.3. Wzmocnienie więzi sąsiedzkich i integracji ............................... 293
+#### 10.2.4. Podniesienie kompetencji ogrodniczych ................................... 294
+### 10.3. Efekty ekologiczne ................................................................... 295
+#### 10.3.1. Zwiększenie bioróżnorodności gatunkowej ............................... 295
+#### 10.3.2. Poprawa jakości powietrza i mikroklimatu ................................ 296
+#### 10.3.3. Retencja wody deszczowej i ochrona przed erozją ................... 297
+#### 10.3.4. Redukcja śladu węglowego społeczności .................................. 298
+### 10.4. Efekty społeczne ..................................................................... 299
+#### 10.4.1. Aktywizacja grup wykluczonych społecznie ............................... 299
+#### 10.4.2. Budowanie kapitału społecznego ............................................... 300
+#### 10.4.3. Rozwój wolontariatu obywatelskiego ........................................ 301
+#### 10.4.4. Integracja międzypokoleniowa ................................................... 302
+### 10.5. Efekty edukacyjne ................................................................... 303
+#### 10.5.1. Upowszechnienie wiedzy o ziołolecznictwie ............................. 303
+#### 10.5.2. Promocja zdrowego stylu życia .................................................. 304
+#### 10.5.3. Edukacja przyrodnicza dzieci i młodzieży .................................. 305
+#### 10.5.4. Certyfikowane kwalifikacje zawodowe ...................................... 306
+### 10.6. Długoterminowy wpływ na społeczność .................................... 307
+#### 10.6.1. Trwałość rezultatów po zakończeniu projektu ........................... 307
+#### 10.6.2. Potencjał replikacji w innych społecznościach ........................... 308
+#### 10.6.3. Dziedzictwo projektu dla przyszłych pokoleń ............................ 309
+#### 10.6.4. Wkład w realizację celów zrównoważonego rozwoju ................. 310
 
-## ZAŁĄCZNIKI .......................................................................................... 222
-### Załącznik 1: Wzór karty zgłoszeniowej na kurs .................................. 222
-### Załącznik 2: Lista rekomendowanych gatunków ziół .......................... 224
-### Załącznik 3: Lista rekomendowanych gatunków krzewów ................... 226
-### Załącznik 4: Lista rekomendowanych gatunków drzew ...................... 228
-### Załącznik 5: Wzór umowy partnerskiej ............................................... 230
-### Załącznik 6: Regulamin punktów wymiany sadzonek .......................... 232
-### Załącznik 7: Karta obserwacji rośliny ................................................. 234
-### Załącznik 8: Ankieta ewaluacyjna dla uczestników ............................. 236
-### Załącznik 9: wzór protokołu z posiedzenia zespołu ............................ 238
-### Załącznik 10: Bibliografia i źródła wiedzy ......................................... 240
+## ZAŁĄCZNIKI .......................................................................................... 311
+### Załącznik 1: Wzór karty zgłoszeniowej na kurs .................................. 311
+#### 1.1. Dane osobowe uczestnika ........................................................... 311
+#### 1.2. Preferencje tematyczne i dostępność czasowa ............................. 312
+#### 1.3. Oświadczenia i zgody .................................................................. 313
+### Załącznik 2: Lista rekomendowanych gatunków ziół .......................... 314
+#### 2.1. Zioła jednoroczne do uprawy amatorskiej .................................... 314
+#### 2.2. Zioła wieloletnie i byliny .............................................................. 315
+#### 2.3. Zioła o właściwościach leczniczych .............................................. 316
+#### 2.4. Zioła kuchenne i przyprawowe ..................................................... 317
+### Załącznik 3: Lista rekomendowanych gatunków krzewów ................... 318
+#### 3.1. Krzewy owocowe ........................................................................ 318
+#### 3.2. Krzewy ozdobne i miododajne ..................................................... 319
+#### 3.3. Krzewy odporne na warunki miejskie .......................................... 320
+### Załącznik 4: Lista rekomendowanych gatunków drzew ...................... 321
+#### 4.1. Drzewa liściaste ......................................................................... 321
+#### 4.2. Drzewa iglaste ........................................................................... 322
+#### 4.3. Drzewa owocowe małych form .................................................... 323
+### Załącznik 5: Wzór umowy partnerskiej ............................................... 324
+#### 5.1. Zakres współpracy i zobowiązania stron ...................................... 324
+#### 5.2. Zasady finansowania i rozliczeń .................................................. 325
+#### 5.3. Postanowienia końcowe ............................................................... 326
+### Załącznik 6: Regulamin punktów wymiany sadzonek .......................... 327
+#### 6.1. Zasady korzystania z punktów wymiany ...................................... 327
+#### 6.2. Prawa i obowiązki użytkowników ................................................. 328
+#### 6.3. Procedury zgłaszania nieprawidłowości ....................................... 329
+### Załącznik 7: Karta obserwacji rośliny ................................................. 330
+#### 7.1. Dane identyfikacyjne rośliny ......................................................... 330
+#### 7.2. Terminarz prac pielęgnacyjnych ................................................... 331
+#### 7.3. Notatki z obserwacji rozwoju ......................................................... 332
+### Załącznik 8: Ankieta ewaluacyjna dla uczestników ............................. 333
+#### 8.1. Ocena jakości przeprowadzonych szkoleń ................................... 333
+#### 8.2. Satysfakcja z udziału w projekcie ................................................. 334
+#### 8.3. Sugestie i rekomendacje na przyszłość ........................................ 335
+### Załącznik 9: Wzór protokołu z posiedzenia zespołu ............................ 336
+#### 9.1. Porządek obrad i lista obecności .................................................. 336
+#### 9.2. Podjęte uchwały i decyzje ............................................................. 337
+#### 9.3. Zadania do realizacji i terminy ...................................................... 338
+### Załącznik 10: Bibliografia i źródła wiedzy ......................................... 339
+#### 10.1. Publikacje naukowe i monografie ............................................... 339
+#### 10.2. Przewodniki i poradniki ogrodnicze ........................................... 340
+#### 10.3. Strony internetowe i bazy danych .............................................. 341
+#### 10.4. Materiały szkoleniowe projektu .................................................. 342
 
 ---
 

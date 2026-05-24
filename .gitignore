@@ -1,2 +1,1 @@
-# Project documentation
-projekty/ziolowy/spis_tresci.md
+Nothing needs to be added to .gitignore since only a markdown file (.md) was modified and there are no build artifacts, dependencies, or temporary files in the changes.
