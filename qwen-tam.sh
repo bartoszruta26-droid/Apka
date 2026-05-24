@@ -803,8 +803,8 @@ handle_coder_menu() {
     # Wywołanie zewnętrznego podskryptu coder.sh
     if [[ -f "${SCRIPTS_DIR}/coder.sh" ]]; then
         log_debug "Loading coder module from scripts/coder.sh"
-        source "${SCRIPTS_DIR}/coder.sh" --help > /dev/null 2>&1 || true
-        show_coder_menu
+        # Uruchom jako osobny proces bash
+        bash "${SCRIPTS_DIR}/coder.sh"
     else
         log_error "Coder module not found: ${SCRIPTS_DIR}/coder.sh"
         echo -e "${RED}Error: Coder module script not found!${NC}"
