@@ -19,7 +19,7 @@ fi
 LOG_DIR="${PUTER_SCRIPT_DIR}/../logs"
 
 # Domyślne modele
-DEFAULT_QWEN_MODEL="qwen/qwen3.6-plus"
+DEFAULT_QWEN_MODEL="qwen/qwen3.7-max"
 DEFAULT_OPENAI_MODEL="gpt-5.4-nano"
 
 # Kolory ANSI
@@ -149,7 +149,7 @@ puter.ai.chat(prompt, {
 generate_qwen_code() {
     local prompt="$1"
     local language="${2:-javascript}"
-    local model="qwen/qwen3.6-max-preview"
+    local model="qwen/qwen3.7-max"
     
     log_puter_debug "Generating $language code with Qwen Coder"
     
