@@ -194,6 +194,7 @@ show_submenu_coder() {
     echo -e "${GREEN}║  [7] ✏️  Edit Existing File with AI                        ║${NC}"
     echo -e "${GREEN}║  [8] 📂 Project Templates Manager                          ║${NC}"
     echo -e "${GREEN}║  [9] ⚙️  Daemon/Service Generator                          ║${NC}"
+    echo -e "${GREEN}║  [A] 🌿 Ziołowy Gostynin - Generator Rozdziałów AI         ║${NC}"
     echo -e "${YELLOW}║  [0] ⬅️  Back to Main Menu                                 ║${NC}"
     echo -e "${CYAN}╚══════════════════════════════════════════════════════════════╝${NC}"
     echo ""
@@ -812,6 +813,55 @@ handle_coder_menu() {
         echo -e "${RED}Error: Coder module script not found!${NC}"
         sleep 2
     fi
+}
+
+# Funkcja do otwierania generatora rozdziałów Ziołowy Gostynin
+handle_ziolowy_gostynin_generator() {
+    clear_screen
+    show_header
+    echo -e "${CYAN}║         🌿 ZIOŁOWY GOSTYNIN - GENERATOR ROZDZIAŁÓW AI       ║${NC}"
+    echo -e "${CYAN}╠══════════════════════════════════════════════════════════════╣${NC}"
+    echo ""
+    echo -e "${GREEN}Generator wykorzystuje Puter.js i Qwen API do automatycznego${NC}"
+    echo -e "${GREEN}tworzenia rozdziałów książki na podstawie spisu treści.${NC}"
+    echo ""
+    echo -e "${YELLOW}Wymagania:${NC}"
+    echo "  - Przeglądarka internetowa"
+    echo "  - Dostęp do Puter.com (konto użytkownika)"
+    echo "  - Połączenie z internetem"
+    echo ""
+    echo -e "${CYAN}Lokalizacja pliku HTML:${NC}"
+    echo "  ${SCRIPT_DIR}/projekty/ziolowy/generator-rozdzialow.html"
+    echo ""
+    echo -e "${YELLOW}Instrukcja uruchomienia:${NC}"
+    echo "  1. Otwórz przeglądarkę internetową"
+    echo "  2. Przejdź na https://puter.com"
+    echo "  3. Zaloguj się na swoje konto"
+    echo "  4. Utwórz nowy projekt lub otwórz istniejący"
+    echo "  5. Skopiuj plik generator-rozdzialow.html do projektu"
+    echo "  6. Otwórz plik w przeglądarce Puter"
+    echo "  7. Kliknij 'Wczytaj Spis Treści' i generuj rozdziały!"
+    echo ""
+    echo -e "${GREEN}Alternatywnie, możesz otworzyć plik lokalnie:${NC}"
+    echo "  xdg-open ${SCRIPT_DIR}/projekty/ziolowy/generator-rozdzialow.html"
+    echo ""
+    
+    read -rp "Czy chcesz otworzyć plik w przeglądarce? [t/N]: " open_browser
+    if [[ "$open_browser" == "t" || "$open_browser" == "T" || "$open_browser" == "tak" || "$open_browser" == "Tak" ]]; then
+        if command -v xdg-open &> /dev/null; then
+            xdg-open "${SCRIPT_DIR}/projekty/ziolowy/generator-rozdzialow.html" &
+            echo -e "${GREEN}Otwieram plik w przeglądarce...${NC}"
+        elif command -v gnome-open &> /dev/null; then
+            gnome-open "${SCRIPT_DIR}/projekty/ziolowy/generator-rozdzialow.html" &
+            echo -e "${GREEN}Otwieram plik w przeglądarce...${NC}"
+        else
+            echo -e "${YELLOW}Nie znaleziono polecenia do otwierania plików.${NC}"
+            echo -e "${YELLOW}Otwórz plik ręcznie: ${SCRIPT_DIR}/projekty/ziolowy/generator-rozdzialow.html${NC}"
+        fi
+    fi
+    
+    echo ""
+    read -rp "Press Enter to continue..."
 }
 
 handle_verification_menu() {

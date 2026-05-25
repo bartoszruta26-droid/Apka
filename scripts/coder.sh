@@ -1256,9 +1256,10 @@ show_coder_menu() {
         echo "  8) 📂 Project Templates Manager"
         echo "  9) ⚙️  Daemon/Service Generator"
         echo "  0) ⬅️  Back to Main Menu"
+        echo "  A) 🌿 Ziołowy Gostynin - Generator Rozdziałów AI"
         echo ""
         
-        read -rp "  Choice [0-9]: " choice
+        read -rp "  Choice [0-9, A]: " choice
         
         case $choice in
             1) create_new_project ;;
@@ -1278,6 +1279,7 @@ show_coder_menu() {
                 fi
                 ;;
             9) generate_daemon_script ;;
+            A|a) launch_ziolowy_gostynin_generator ;;
             0) break ;;
             *) echo -e "${RED}Invalid option!${NC}"; sleep 1 ;;
         esac
