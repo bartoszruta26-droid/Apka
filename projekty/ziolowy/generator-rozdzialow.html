@@ -245,6 +245,10 @@
         const PROJECT_PATH = 'projekty/ziolowy';
         const TOC_FILE = 'spis_tresci.md';
         const OUTPUT_DIR = 'projekty/ziolowy/rozdzialy';
+        
+        // Dane logowania do Puter.com
+        const PUTER_EMAIL = 'bartosz.ruta@o2.pl';
+        const PUTER_PASSWORD = '22RUdi22@@';
 
         // Funkcje logowania
         function log(message, type = 'info') {
@@ -287,6 +291,42 @@
             hideStatus();
             log('Wyczyszczono wszystkie dane', 'info');
         }
+        
+        // Automatyczne logowanie do Puter.com
+        async function autoLoginToPuter() {
+            try {
+                if (typeof puter === 'undefined') {
+                    throw new Error('Biblioteka puter.js nie jest dostępna');
+                }
+                
+                log('Sprawdzanie stanu logowania...', 'info');
+                
+                // Sprawdź czy użytkownik jest już zalogowany
+                const user = await puter.auth.getUser();
+                if (user && user.email) {
+                    log(`Zalogowano jako: ${user.email}`, 'success');
+                    return true;
+                }
+                
+                // Spróbuj automatycznego logowania
+                log('Próba automatycznego logowania...', 'info');
+                await puter.auth.signIn(PUTER_EMAIL, PUTER_PASSWORD);
+                
+                const newUser = await puter.auth.getUser();
+                if (newUser && newUser.email) {
+                    log(`Pomyślnie zalogowano: ${newUser.email}`, 'success');
+                    showStatus(`Zalogowano do Puter.com jako ${newUser.email}`, 'success');
+                    return true;
+                }
+                
+                throw new Error('Nie udało się zalogować');
+                
+            } catch (error) {
+                log(`Logowanie automatyczne nieudane: ${error.message}`, 'warning');
+                showStatus('Zaloguj się ręcznie na puter.com', 'warning');
+                return false;
+            }
+        }
 
         // Wczytywanie spisu treści
         async function loadTableOfContents() {
@@ -302,6 +342,9 @@
                 if (typeof puter === 'undefined') {
                     throw new Error('Biblioteka puter.js nie jest dostępna. Upewnij się, że działasz w środowisku Puter.com');
                 }
+                
+                // Spróbuj automatycznego logowania
+                await autoLoginToPuter();
 
                 const filePath = `${PROJECT_PATH}/${TOC_FILE}`;
                 log(`Odczytywanie pliku: ${filePath}`, 'info');
