@@ -1256,9 +1256,10 @@ show_coder_menu() {
         echo "  8) 📂 Project Templates Manager"
         echo "  9) ⚙️  Daemon/Service Generator"
         echo "  0) ⬅️  Back to Main Menu"
+        echo "  A) 🌿 Ziołowy Gostynin - Generator Rozdziałów AI"
         echo ""
         
-        read -rp "  Choice [0-9]: " choice
+        read -rp "  Choice [0-9, A]: " choice
         
         case $choice in
             1) create_new_project ;;
@@ -1278,10 +1279,63 @@ show_coder_menu() {
                 fi
                 ;;
             9) generate_daemon_script ;;
+            A|a) launch_ziolowy_gostynin_generator ;;
             0) break ;;
             *) echo -e "${RED}Invalid option!${NC}"; sleep 1 ;;
         esac
     done
+}
+
+#-------------------------------------------------------------------------------
+# Launch Ziołowy Gostynin - Generator Rozdziałów AI
+#-------------------------------------------------------------------------------
+launch_ziolowy_gostynin_generator() {
+    show_header
+    echo -e "${CYAN}🌿 Ziołowy Gostynin - Generator Rozdziałów AI${NC}"
+    echo ""
+    echo "Uruchamianie generatora rozdziałów z wykorzystaniem Qwen AI przez Puter.js..."
+    echo ""
+    
+    local generator_file="${CODER_SCRIPT_DIR}/../projekty/ziolowy/generator-rozdzialow.html"
+    
+    if [[ ! -f "$generator_file" ]]; then
+        echo -e "${RED}Błąd: Plik generatora nie został znaleziony: $generator_file${NC}"
+        echo ""
+        echo "Sprawdź czy projekt 'ziolowy' istnieje w katalogu projekty/"
+        wait_for_enter
+        return 1
+    fi
+    
+    echo -e "${GREEN}Plik generatora: $generator_file${NC}"
+    echo ""
+    echo "Aby uruchomić generator:"
+    echo "  1. Otwórz przeglądarkę internetową"
+    echo "  2. Przejdź na https://puter.com"
+    echo "  3. Zaloguj się na konto: bartosz.ruta@o2.pl"
+    echo "  4. Wgraj plik generatora do swojego pulpitu Puter"
+    echo "  5. Kliknij dwukrotnie plik generator-rozdzialow.html"
+    echo ""
+    echo "LUB użyj polecenia:"
+    echo -e "  ${YELLOW}xdg-open '$generator_file'${NC} (Linux)"
+    echo -e "  ${YELLOW}open '$generator_file'${NC} (macOS)"
+    echo ""
+    
+    # Spróbuj otworzyć w przeglądarce systemowej
+    if command -v xdg-open &> /dev/null; then
+        echo "Otwieranie w przeglądarce..."
+        xdg-open "$generator_file" &
+    elif command -v open &> /dev/null; then
+        echo "Otwieranie w przeglądarce..."
+        open "$generator_file" &
+    else
+        echo "Nie znaleziono polecenia do otwarcia przeglądarki."
+        echo "Otwórz plik ręcznie w przeglądarce internetowej."
+    fi
+    
+    echo ""
+    echo -e "${YELLOW}UWAGA: Generator wymaga połączenia z Puter.com i zalogowania.${NC}"
+    echo ""
+    wait_for_enter
 }
 
 #-------------------------------------------------------------------------------
