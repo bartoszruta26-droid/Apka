@@ -242,9 +242,13 @@
         // Globalne zmienne
         let chapters = [];
         let isProcessing = false;
-        const PROJECT_PATH = 'projekty/ziolowy';
+        
+        // Dynamiczne ścieżki - dostosuj do bieżącego projektu
+        // Jeśli HTML jest w root projektu: PROJECT_PATH = '.'
+        // Jeśli HTML jest w podkatalogu, użyj '../..' odpowiednio
+        const PROJECT_PATH = '.';  // Aktualny katalog projektu
         const TOC_FILE = 'spis_tresci.md';
-        const OUTPUT_DIR = 'projekty/ziolowy/rozdzialy';
+        const OUTPUT_DIR = './rozdzialy';  // Podkatalog rozdzialy w bieżącym projekcie
         
         // Dane logowania do Puter.com
         const PUTER_EMAIL = 'bartosz.ruta@o2.pl';
@@ -302,7 +306,13 @@
                 log('Sprawdzanie stanu logowania...', 'info');
                 
                 // Sprawdź czy użytkownik jest już zalogowany
-                const user = await puter.auth.getUser();
+                let user = null;
+                try {
+                    user = await puter.auth.getUser();
+                } catch (e) {
+                    log('Użytkownik nie jest zalogowany, próba logowania...', 'info');
+                }
+                
                 if (user && user.email) {
                     log(`Zalogowano jako: ${user.email}`, 'success');
                     return true;
@@ -310,7 +320,20 @@
                 
                 // Spróbuj automatycznego logowania
                 log('Próba automatycznego logowania...', 'info');
-                await puter.auth.signIn(PUTER_EMAIL, PUTER_PASSWORD);
+                
+                // Puter.js v2 używa puter.login() lub wymaga interakcji użytkownika
+                // signIn może nie być dostępne we wszystkich wersjach
+                if (typeof puter.auth.signIn === 'function') {
+                    await puter.auth.signIn(PUTER_EMAIL, PUTER_PASSWORD);
+                } else if (typeof puter.login === 'function') {
+                    await puter.login(PUTER_EMAIL, PUTER_PASSWORD);
+                } else {
+                    // Jeśli brak metody signIn/login, wyświetl informację
+                    log('Automatyczne logowanie nie jest obsługiwane w tej wersji puter.js', 'warning');
+                    log('Proszę zalogować się ręcznie przez interfejs Puter.com', 'warning');
+                    showStatus('Zaloguj się ręcznie na puter.com', 'warning');
+                    return false;
+                }
                 
                 const newUser = await puter.auth.getUser();
                 if (newUser && newUser.email) {
@@ -541,8 +564,10 @@ Napisz teraz kompletny rozdział:`;
             try {
                 log('Wysyłanie żądania do Qwen AI...', 'info');
                 
+                // Użyj qwen-turbo lub domyślnego modelu Qwen
+                // Puter.js obsługuje różne modele Qwen: qwen-turbo, qwen-plus, qwen-max
                 const response = await puter.ai.chat(prompt, {
-                    model: 'qwen-turbo'
+                    model: 'qwen-turbo'  // Darmowy, szybki model Qwen
                 });
                 
                 if (!response || !response.message) {
