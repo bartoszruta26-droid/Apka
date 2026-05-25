@@ -1,1 +1,5 @@
-(projekty/ziolowy/.gitignore - all content)
+(projekty/ziolowy/rozdzial_1.4_misja_i_wizja.md is a markdown file, which is a source/config file, so according to rule 6, if the changes contain only source/config files and no build artifacts, dependencies, or temp files, output empty)
+
+```markdown
+
+```
