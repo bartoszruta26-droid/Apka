@@ -1,64 +1,80 @@
 # Project-specific ignores
 projekty/ziolowy/*.tmp
-projekty/ziolowy/*.log
 projekty/ziolowy/*~
 
 # General ignores
 *.tmp
-*.log
 *~
 .DS_Store
 Thumbs.db
 
-# Environment files
-.env
-.env.local
-*.env.*
+# Logs
+*.log
 
-# Editor/IDE files
-.vscode/
-.idea/
-*.swp
-*.swo
-
-# Python specific
+# Python
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
 .Python
-*.so
-
-# Build artifacts
-build/
-dist/
-*.o
-*.obj
-*.out
-*.exe
-*.dll
-*.so
-*.a
-
-# Dependencies
-node_modules/
+env/
 venv/
 .venv/
-.mypy_cache/
-.pytest_cache/
+.ENV
+.python-version
+
+# Build outputs
+dist/
+build/
+*.egg-info/
+
+# Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Environment
+.env
+.env.local
+*.env.*
+
+# Coverage
 .coverage
 coverage/
 htmlcov/
 
-# Compressed files
+# Dependencies
+node_modules/
+vendor/
+
+# OS
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Icon?
+.TemporaryItems
+.Trashes
+*.nib
+*~
+*.bak
+*.swp
+*~.nib
+local.properties
+.settings/
+.loadpath
+.recommenders
+
+# Compressed
 *.zip
+*.tar.gz
+*.tar.bz2
+*.tar.xz
+*.rar
+*.7z
 *.gz
-*.tar
-*.tgz
 *.bz2
 *.xz
-*.7z
-*.rar
 *.zst
 *.lz4
 *.lzh
@@ -69,7 +85,86 @@ htmlcov/
 *.Z
 *.lz
 *.lzo
-*.tar.gz
-*.tar.bz2
-*.tar.xz
-*.tar.zst
+*.tar
+*.tgz
+
+# Compiled
+*.class
+*.o
+*.a
+*.obj
+*.so
+*.dll
+*.exe
+*.out
+*.app
+*.dylib
+*.jar
+*.war
+*.ear
+*.iml
+*.ipr
+*.iws
+*.sln
+*.csproj
+*.csproj.user
+*.vbproj
+*.vbproj.user
+*.vcxproj
+*.vcxproj.filters
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.vc.db
+*.vc.sln.ide
+*.opensdf
+*.sdf
+*.cachefile
+*.VC.VC.opendb
+*.aps
+*.ncb
+*.opt
+*.plg
+*.tlb
+*.tli
+*.tmp
+*.tmp_proj
+*_wpftmp.csproj
+*.log
+*.vspscc
+*.vssscc
+.builds
+*.pidb
+*.svclog
+*.scc
+*.DS_Store
+Thumbs.db
+ehthumbs.db
+Icon?
+.TemporaryItems
+.Trashes
+*.nib
+*~
+*.bak
+*.swp
+*~.nib
+local.properties
+.settings/
+.loadpath
+.recommenders
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Icon?
+.TemporaryItems
+.Trashes
+*.nib
+*~
+*.bak
+*.swp
+*~.nib
+local.properties
+.settings/
+.loadpath
+.recommenders
