@@ -19,7 +19,7 @@ CONFIG_FILE="${HOME}/.qwen_tam_config"
 LOG_DIR="${CODER_SCRIPT_DIR}/../logs"
 WORK_DIR="${CODER_SCRIPT_DIR}/../projects"
 readonly QWEN_API_ENDPOINT="${QWEN_API_ENDPOINT:-http://localhost:11434/api/generate}"
-readonly QWEN_MODEL="${QWEN_MODEL:-qwen-coder:latest}"
+readonly QWEN_MODEL="${QWEN_MODEL:-qwen/qwen3.6-max-preview}"
 
 # Kolory ANSI
 [[ -z "${RED:-}" ]] && RED='\033[0;31m'
