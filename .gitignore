@@ -1,3 +1,2 @@
-Nothing should be ignored in this case, as the only change is adding a markdown file (.md), which is a source/config file and not a build artifact, dependency, or temporary file.
-
-Output: (empty)
+# Documentation
+projekty/ziolowy/rozdzial_1.4_misja_wizja_wartosci.md
