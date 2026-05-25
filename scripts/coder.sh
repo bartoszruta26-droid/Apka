@@ -441,7 +441,18 @@ generate_shell_scripts() {
     echo -e "${CYAN}Generate Shell Scripts${NC}"
     echo ""
     
-    read -rp "Describe the shell script functionality: " description
+    # Jeśli mamy aktywny projekt, użyj kontekstu projektu
+    if [[ -n "${CURRENT_PROJECT_NAME:-}" ]]; then
+        echo -e "${YELLOW}Project context:${NC}"
+        echo -e "  Name: ${GREEN}${CURRENT_PROJECT_NAME}${NC}"
+        echo -e "  Goal: ${CYAN}${CURRENT_PROJECT_GOAL}${NC}"
+        echo ""
+        read -rp "Describe the shell script functionality (default: script for ${CURRENT_PROJECT_NAME}): " description
+        description="${description:-script for ${CURRENT_PROJECT_NAME}}"
+    else
+        read -rp "Describe the shell script functionality: " description
+    fi
+    
     read -rp "Script name (default: script.sh): " script_name
     script_name="${script_name:-script.sh}"
     
@@ -451,6 +462,13 @@ generate_shell_scripts() {
     if ! validate_file_path "$script_name"; then
         log_error "Invalid file path"
         return 1
+    fi
+    
+    # Jeśli mamy projekt, zapisz w katalogu projektu
+    if [[ -n "${CURRENT_PROJECT_NAME:-}" ]]; then
+        local project_dir="${WORK_DIR}/${CURRENT_PROJECT_NAME}"
+        mkdir -p "$project_dir"
+        script_name="${project_dir}/${script_name}"
     fi
     
     log_info "Generating shell script..."
@@ -557,6 +575,378 @@ generate_web_files() {
     wait_for_enter
 }
 
+#-------------------------------------------------------------------------------
+# Zmienne globalne projektu
+#-------------------------------------------------------------------------------
+CURRENT_PROJECT_NAME=""
+CURRENT_PROJECT_GOAL=""
+CURRENT_PROJECT_DESCRIPTION=""
+CURRENT_PROJECT_FUNCTIONS=""
+
+#-------------------------------------------------------------------------------
+# Funkcja tworzenia nowego projektu z pytaniami o założenia
+#-------------------------------------------------------------------------------
+create_new_project() {
+    show_header
+    echo -e "${CYAN}Create New Project${NC}"
+    echo ""
+    
+    # Pytanie o nazwę projektu
+    read -rp "Enter project name: " project_name
+    if [[ -z "$project_name" ]]; then
+        log_error "Project name cannot be empty"
+        wait_for_enter
+        return 1
+    fi
+    CURRENT_PROJECT_NAME="$project_name"
+    
+    # Pytanie o główne założenie projektu (cel)
+    echo ""
+    echo -e "${YELLOW}What is the main goal/assumption of this project?${NC}"
+    echo "(Describe what this project should accomplish)"
+    read -rp "> " project_goal
+    if [[ -z "$project_goal" ]]; then
+        log_error "Project goal cannot be empty"
+        wait_for_enter
+        return 1
+    fi
+    CURRENT_PROJECT_GOAL="$project_goal"
+    
+    # Pytanie o funkcje projektu
+    echo ""
+    echo -e "${YELLOW}What functions/features should the project have?${NC}"
+    echo "(List main features separated by commas)"
+    read -rp "> " project_functions
+    CURRENT_PROJECT_FUNCTIONS="${project_functions:-basic functionality}"
+    
+    # Pytanie o opis projektu
+    echo ""
+    echo -e "${YELLOW}Provide a detailed description of the project:${NC}"
+    read -rp "> " project_description
+    CURRENT_PROJECT_DESCRIPTION="${project_description:-A project named $CURRENT_PROJECT_NAME}"
+    
+    # Tworzenie struktury katalogów projektu
+    local project_dir="${WORK_DIR}/${CURRENT_PROJECT_NAME}"
+    mkdir -p "$project_dir"
+    
+    # Zapisz informacje o projekcie do pliku konfiguracyjnego
+    cat > "${project_dir}/.project_config" << EOF
+PROJECT_NAME=${CURRENT_PROJECT_NAME}
+PROJECT_GOAL=${CURRENT_PROJECT_GOAL}
+PROJECT_FUNCTIONS=${CURRENT_PROJECT_FUNCTIONS}
+PROJECT_DESCRIPTION=${CURRENT_PROJECT_DESCRIPTION}
+CREATED_DATE=$(date '+%Y-%m-%d %H:%M:%S')
+EOF
+    
+    log_info "Project '$CURRENT_PROJECT_NAME' created successfully"
+    log_event "Created project: $CURRENT_PROJECT_NAME with goal: $CURRENT_PROJECT_GOAL"
+    
+    # Generuj README na podstawie zebranych informacji
+    generate_project_readme "$project_dir"
+    
+    echo ""
+    echo -e "${GREEN}✓ Project created successfully!${NC}"
+    echo -e "${CYAN}  Name: $CURRENT_PROJECT_NAME${NC}"
+    echo -e "${CYAN}  Goal: $CURRENT_PROJECT_GOAL${NC}"
+    echo -e "${CYAN}  Location: $project_dir${NC}"
+    echo ""
+    
+    wait_for_enter
+    
+    # Teraz przejdź do menu generowania kodu dla tego projektu
+    show_project_generation_menu
+}
+
+#-------------------------------------------------------------------------------
+# Funkcja wczytywania istniejącego projektu
+#-------------------------------------------------------------------------------
+load_existing_project() {
+    show_header
+    echo -e "${CYAN}Load Existing Project${NC}"
+    echo ""
+    
+    # Sprawdź czy katalog z projektami istnieje
+    if [[ ! -d "$WORK_DIR" ]]; then
+        log_error "No projects directory found at: $WORK_DIR"
+        wait_for_enter
+        return 1
+    fi
+    
+    # Znajdź wszystkie projekty (katalogi z plikiem .project_config)
+    local projects=()
+    local project_dirs=()
+    
+    while IFS= read -r -d '' dir; do
+        if [[ -f "${dir}/.project_config" ]]; then
+            local project_name=$(basename "$dir")
+            projects+=("$project_name")
+            project_dirs+=("$dir")
+        fi
+    done < <(find "$WORK_DIR" -mindepth 1 -maxdepth 1 -type d -print0 2>/dev/null | sort -z)
+    
+    # Sprawdź czy znaleziono jakieś projekty
+    if [[ ${#projects[@]} -eq 0 ]]; then
+        echo -e "${YELLOW}No existing projects found.${NC}"
+        echo "Create a new project first using option 1."
+        wait_for_enter
+        return 1
+    fi
+    
+    # Wyświetl listę projektów
+    echo -e "${GREEN}Available Projects:${NC}"
+    echo "─────────────────────────────────────────"
+    for i in "${!projects[@]}"; do
+        local idx=$((i + 1))
+        local project_name="${projects[$i]}"
+        local project_dir="${project_dirs[$i]}"
+        
+        # Wczytaj krótki opis z pliku konfiguracyjnego
+        local goal=""
+        if [[ -f "${project_dir}/.project_config" ]]; then
+            goal=$(grep "^PROJECT_GOAL=" "${project_dir}/.project_config" 2>/dev/null | cut -d'=' -f2-)
+        fi
+        
+        echo -e "  ${idx}) ${GREEN}${project_name}${NC}"
+        if [[ -n "$goal" ]]; then
+            echo -e "     ${CYAN}Goal: ${goal:0:60}$( [[ ${#goal} -gt 60 ]] && echo "...")${NC}"
+        fi
+        echo ""
+    done
+    echo "─────────────────────────────────────────"
+    echo "  0) Cancel"
+    echo ""
+    
+    # Wybór projektu
+    read -rp "Select project to load [0-${#projects[@]}]: " choice
+    
+    if [[ "$choice" -eq 0 ]]; then
+        return 0
+    fi
+    
+    if [[ "$choice" -lt 1 || "$choice" -gt ${#projects[@]} ]]; then
+        log_error "Invalid choice"
+        wait_for_enter
+        return 1
+    fi
+    
+    # Wczytaj wybrany projekt
+    local selected_idx=$((choice - 1))
+    local selected_project="${projects[$selected_idx]}"
+    local selected_dir="${project_dirs[$selected_idx]}"
+    
+    echo ""
+    log_info "Loading project: $selected_project"
+    
+    # Wczytaj konfigurację projektu
+    if [[ -f "${selected_dir}/.project_config" ]]; then
+        source "${selected_dir}/.project_config"
+        CURRENT_PROJECT_NAME="$PROJECT_NAME"
+        CURRENT_PROJECT_GOAL="$PROJECT_GOAL"
+        CURRENT_PROJECT_FUNCTIONS="$PROJECT_FUNCTIONS"
+        CURRENT_PROJECT_DESCRIPTION="$PROJECT_DESCRIPTION"
+        
+        echo -e "${GREEN}✓ Project loaded successfully!${NC}"
+        echo -e "${CYAN}  Name: $CURRENT_PROJECT_NAME${NC}"
+        echo -e "${CYAN}  Goal: $CURRENT_PROJECT_GOAL${NC}"
+        echo -e "${CYAN}  Functions: $CURRENT_PROJECT_FUNCTIONS${NC}"
+        echo -e "${CYAN}  Location: $selected_dir${NC}"
+        echo ""
+        
+        log_event "Loaded project: $CURRENT_PROJECT_NAME"
+        wait_for_enter
+        
+        # Przejdź do menu generowania kodu dla tego projektu
+        show_project_generation_menu
+    else
+        log_error "Project configuration file not found"
+        wait_for_enter
+        return 1
+    fi
+}
+
+#-------------------------------------------------------------------------------
+# Menu generowania kodu dla projektu
+#-------------------------------------------------------------------------------
+show_project_generation_menu() {
+    while true; do
+        clear_screen
+        show_header
+        echo -e "${PURPLE}╔══════════════════════════════════════════════════════════════╗${NC}"
+        echo -e "${PURPLE}║         PROJECT: ${CURRENT_PROJECT_NAME}                           ║${NC}"
+        echo -e "${PURPLE}╠══════════════════════════════════════════════════════════════╣${NC}"
+        echo -e "${PURPLE}║  GOAL: ${CURRENT_PROJECT_GOAL:0:55}$( [[ ${#CURRENT_PROJECT_GOAL} -gt 55 ]] && echo "...")║${NC}"
+        echo -e "${PURPLE}╚══════════════════════════════════════════════════════════════╝${NC}"
+        echo ""
+        echo -e "${YELLOW}Select what to generate for this project:${NC}"
+        echo ""
+        echo "  1) 📜 Bash Shell Script"
+        echo "  2) ⚙️  Daemon/Service Script"
+        echo "  3) 📱 Android App"
+        echo "  4) 🖥️  GUI Application (C/C++/GTK)"
+        echo "  5) 🌐 WebUI (HTML/CSS/JS)"
+        echo "  6) 🐍 Python Script"
+        echo "  7) 📝 Documentation/Markdown"
+        echo "  8) ✏️  Edit Existing File with AI"
+        echo "  9) 📂 View Project Structure"
+        echo "  10) ➕ Add More Features to Project"
+        echo "  11) ⬅️  Back to Main Menu"
+        echo ""
+        
+        read -rp "  Choice [1-11]: " choice
+        
+        case $choice in
+            1) generate_shell_scripts ;;
+            2) generate_daemon_script ;;
+            3) create_android_app ;;
+            4) generate_cpp_gui_code ;;
+            5) generate_webui_scripts ;;
+            6) generate_python_scripts ;;
+            7) generate_markdown ;;
+            8) edit_existing_file ;;
+            9) view_project_structure ;;
+            10) add_project_features ;;
+            11) break ;;
+            *) echo -e "${RED}Invalid option!${NC}"; sleep 1 ;;
+        esac
+    done
+}
+
+#-------------------------------------------------------------------------------
+# Generowanie README projektu na podstawie zebranych informacji
+#-------------------------------------------------------------------------------
+generate_project_readme() {
+    local project_dir="$1"
+    
+    local readme_prompt="Create a comprehensive README.md for a project with the following details:
+Project Name: ${CURRENT_PROJECT_NAME}
+Main Goal: ${CURRENT_PROJECT_GOAL}
+Features: ${CURRENT_PROJECT_FUNCTIONS}
+Description: ${CURRENT_PROJECT_DESCRIPTION}
+
+Include sections: Overview, Features, Installation, Usage, Configuration, License."
+    
+    local readme_content
+    readme_content=$(call_qwen_coder "$readme_prompt" "markdown" "")
+    
+    echo "$readme_content" > "${project_dir}/README.md"
+    log_info "README.md generated for project"
+}
+
+#-------------------------------------------------------------------------------
+# Wyświetlanie struktury projektu
+#-------------------------------------------------------------------------------
+view_project_structure() {
+    show_header
+    echo -e "${CYAN}Project Structure: ${CURRENT_PROJECT_NAME}${NC}"
+    echo ""
+    
+    local project_dir="${WORK_DIR}/${CURRENT_PROJECT_NAME}"
+    
+    if [[ -d "$project_dir" ]]; then
+        echo -e "${GREEN}Files and directories:${NC}"
+        find "$project_dir" -type f -o -type d | sort | sed "s|$project_dir||"
+        echo ""
+        
+        if [[ -f "${project_dir}/.project_config" ]]; then
+            echo -e "${YELLOW}Project Configuration:${NC}"
+            cat "${project_dir}/.project_config"
+        fi
+    else
+        log_error "Project directory not found: $project_dir"
+    fi
+    
+    wait_for_enter
+}
+
+#-------------------------------------------------------------------------------
+# Dodawanie nowych funkcji do projektu
+#-------------------------------------------------------------------------------
+add_project_features() {
+    show_header
+    echo -e "${CYAN}Add New Features to Project${NC}"
+    echo ""
+    
+    echo -e "Current project: ${GREEN}${CURRENT_PROJECT_NAME}${NC}"
+    echo -e "Current goal: ${CYAN}${CURRENT_PROJECT_GOAL}${NC}"
+    echo ""
+    
+    read -rp "Enter new features to add (comma-separated): " new_features
+    if [[ -n "$new_features" ]]; then
+        CURRENT_PROJECT_FUNCTIONS="${CURRENT_PROJECT_FUNCTIONS}, ${new_features}"
+        
+        # Aktualizacja pliku konfiguracyjnego
+        local project_dir="${WORK_DIR}/${CURRENT_PROJECT_NAME}"
+        cat > "${project_dir}/.project_config" << EOF
+PROJECT_NAME=${CURRENT_PROJECT_NAME}
+PROJECT_GOAL=${CURRENT_PROJECT_GOAL}
+PROJECT_FUNCTIONS=${CURRENT_PROJECT_FUNCTIONS}
+PROJECT_DESCRIPTION=${CURRENT_PROJECT_DESCRIPTION}
+UPDATED_DATE=$(date '+%Y-%m-%d %H:%M:%S')
+EOF
+        
+        log_info "Added new features: $new_features"
+        echo -e "${GREEN}✓ Features added successfully!${NC}"
+    fi
+    
+    wait_for_enter
+}
+
+#-------------------------------------------------------------------------------
+# Generowanie skryptu Daemona/Usługi
+#-------------------------------------------------------------------------------
+generate_daemon_script() {
+    show_header
+    echo -e "${CYAN}Generate Daemon/Service Script${NC}"
+    echo ""
+    
+    echo -e "Project context:"
+    echo -e "  Name: ${GREEN}${CURRENT_PROJECT_NAME}${NC}"
+    echo -e "  Goal: ${CYAN}${CURRENT_PROJECT_GOAL}${NC}"
+    echo ""
+    
+    read -rp "Describe daemon functionality (default: background service for ${CURRENT_PROJECT_NAME}): " daemon_desc
+    daemon_desc="${daemon_desc:-background service for ${CURRENT_PROJECT_NAME}}"
+    
+    read -rp "Daemon script name (default: ${CURRENT_PROJECT_NAME}_daemon.sh): " script_name
+    script_name="${script_name:-${CURRENT_PROJECT_NAME}_daemon.sh}"
+    
+    [[ ! "$script_name" =~ \.sh$ ]] && script_name="${script_name}.sh"
+    
+    local project_dir="${WORK_DIR}/${CURRENT_PROJECT_NAME}"
+    mkdir -p "$project_dir"
+    script_name="${project_dir}/${script_name}"
+    
+    log_info "Generating daemon script..."
+    
+    local daemon_prompt="Create a robust bash daemon/service script for: ${CURRENT_PROJECT_NAME}
+Project Goal: ${CURRENT_PROJECT_GOAL}
+Features: ${CURRENT_PROJECT_FUNCTIONS}
+Description: ${daemon_desc}
+
+The daemon should include:
+- Start/stop/restart/status functions
+- PID file management
+- Logging to syslog or file
+- Signal handling (SIGTERM, SIGHUP)
+- Configuration file support
+- Error handling and recovery
+- Run as background process"
+    
+    local content
+    content=$(call_qwen_coder "$daemon_prompt" "bash" "")
+    
+    echo "$content" > "$script_name"
+    chmod +x "$script_name"
+    
+    log_info "Daemon script saved to: $script_name"
+    log_event "Generated daemon script: $script_name"
+    
+    wait_for_enter
+}
+
+#-------------------------------------------------------------------------------
+# Funkcja tworzenia projektu - wersja podstawowa (zachowana dla kompatybilności)
+#-------------------------------------------------------------------------------
 create_project_structure() {
     show_header
     echo -e "${CYAN}Create Project Structure${NC}"
@@ -856,26 +1246,29 @@ show_coder_menu() {
         clear_screen
         show_header
         echo -e "${YELLOW}Select option:${NC}"
-        echo "  1) 📁 Create/Update Project Structure"
-        echo "  2) 📜 Create/Update Shell Script"
-        echo "  3) 💻 Create/Update C/C#/C++ Code with GUI"
-        echo "  4) 🌐 Create/Update WebUI Script"
-        echo "  5) 📱 Create/Update Android App"
-        echo "  6) ✏️  Edit Existing File with AI"
-        echo "  7) 📂 Project Templates Manager"
-                echo "  8) ⬅️  Back to Main Menu"
+        echo "  1) 📁 Create New Project (with AI setup)"
+        echo "  2) 📂 Load Existing Project"
+        echo "  3) 📜 Create/Update Shell Script"
+        echo "  4) 💻 Create/Update C/C#/C++ Code with GUI"
+        echo "  5) 🌐 Create/Update WebUI Script"
+        echo "  6) 📱 Create/Update Android App"
+        echo "  7) ✏️  Edit Existing File with AI"
+        echo "  8) 📂 Project Templates Manager"
+        echo "  9) ⚙️  Daemon/Service Generator"
+        echo "  0) ⬅️  Back to Main Menu"
         echo ""
         
-        read -rp "  Choice [1-8]: " choice
+        read -rp "  Choice [0-9]: " choice
         
         case $choice in
-            1) create_project_structure ;;
-            2) generate_shell_scripts ;;
-            3) generate_cpp_gui_code ;;
-            4) generate_webui_scripts ;;
-            5) create_android_app ;;
-            6) edit_existing_file ;;
-            7) 
+            1) create_new_project ;;
+            2) load_existing_project ;;
+            3) generate_shell_scripts ;;
+            4) generate_cpp_gui_code ;;
+            5) generate_webui_scripts ;;
+            6) create_android_app ;;
+            7) edit_existing_file ;;
+            8) 
                 # Launch Templates Manager
                 if [[ -f "${CODER_SCRIPT_DIR}/../templates-manager.sh" ]]; then
                     bash "${CODER_SCRIPT_DIR}/../templates-manager.sh"
@@ -884,7 +1277,8 @@ show_coder_menu() {
                     sleep 2
                 fi
                 ;;
-            8) break ;;
+            9) generate_daemon_script ;;
+            0) break ;;
             *) echo -e "${RED}Invalid option!${NC}"; sleep 1 ;;
         esac
     done

@@ -1,1 +1,1 @@
-Nothing needs to be added to .gitignore since only a markdown file (.md) was modified and there are no build artifacts, dependencies, or temporary files in the changes.
+Nothing should be ignored based on the provided file changes, as they only include shell script files (.sh) which are source files.
