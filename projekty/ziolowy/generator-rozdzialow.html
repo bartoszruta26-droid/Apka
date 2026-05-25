@@ -562,12 +562,12 @@ Napisz teraz kompletny rozdział:`;
         // Generowanie treści z Qwen AI przez Puter.js
         async function generateWithQwen(prompt) {
             try {
-                log('Wysyłanie żądania do Qwen AI...', 'info');
+                log('Wysyłanie żądania do Qwen AI (qwen-max)...', 'info');
                 
-                // Użyj qwen-turbo lub domyślnego modelu Qwen
-                // Puter.js obsługuje różne modele Qwen: qwen-turbo, qwen-plus, qwen-max
+                // Użyj najlepszego dostępnego modelu Qwen
+                // Dostępne modele: qwen-turbo (szybki), qwen-plus (zbalansowany), qwen-max (najpotężniejszy)
                 const response = await puter.ai.chat(prompt, {
-                    model: 'qwen-turbo'  // Darmowy, szybki model Qwen
+                    model: 'qwen-max'  // Najlepszy darmowy model Qwen - maksymalna jakość odpowiedzi
                 });
                 
                 if (!response || !response.message) {
